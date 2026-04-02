@@ -14,12 +14,23 @@ public class ObjectManager : MonoBehaviour
     
     public GameObject objectPrefab;
     private List<GameObject> activeObjects = new List<GameObject>();
+    private List<Vector3> point = new List<Vector3>();
+    private Dictionary<Vector3, bool> objectDictionary = new Dictionary<Vector3, bool>();
     private bool spawnPaused = false;
 
-    private void Awake() => Instance = this;
+    private void Awake()
+    {
+        if(Instance ==null) Instance =this;
+        else Destroy(gameObject);
+    }
 
     private void Start()
     {
+        point = new List<Vector3>(SpawnPointManager.Instance.objectsSpawnPositions);
+        foreach(Vector3 pos in point)
+        {
+            objectDictionary[pos] =false;
+        }
         StartCoroutine(SpawnRoutine());
     }
 
