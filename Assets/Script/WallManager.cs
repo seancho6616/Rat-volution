@@ -26,11 +26,11 @@ public class WallManager : MonoBehaviour
     private void Start()
     {
         point = new List<Vector3>(SpawnPointManager.Instance.objectsSpawnPositions);
-        Debug.Log(point.Count);
+        //Debug.Log(point.Count);
         foreach(Vector3 pos in point)
         {
             wallSpawnDictionary[pos] = false;
-            Debug.Log(wallSpawnDictionary[pos]);
+            //Debug.Log(wallSpawnDictionary[pos]);
         }
         StartCoroutine(SpawnWallRoutine());
     }
@@ -52,7 +52,7 @@ public class WallManager : MonoBehaviour
 
         if (emptyPoints.Count == 0)
         {
-            Debug.LogWarning("[WallManager] 벽을 스폰할 빈 공간이 없습니다.");
+            //Debug.LogWarning("[WallManager] 벽을 스폰할 빈 공간이 없습니다.");
             return;
         }
         Vector3 spawnPos = emptyPoints[Random.Range(0, emptyPoints.Count)];
@@ -65,7 +65,7 @@ public class WallManager : MonoBehaviour
         
         wallSpawnDictionary[spawnPos] = true;
 
-        Debug.Log($"[WallManager] 벽 스폰: {spawnPos}");
+        //Debug.Log($"[WallManager] 벽 스폰: {spawnPos}");
     }
     public void ReleaseWall(Vector3 pos)
     {
