@@ -2,12 +2,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
     [Header("Stats")]
     public int maxHeart = 3;
     public int currentHeart;
+    [Header("UI Settings")]
+    public Image[] heartImages;
     [Header("Movement Settings")]
     public float gridSize = 10f;       // 한 칸의 길이 10
     public float moveTime = 1.25f;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
@@ -31,9 +34,28 @@ public class PlayerControl : MonoBehaviour
     {
         currentHeart -= damage;
         Debug.Log($"[Player] 목숨 -1, 남은 목숨: {currentHeart}");
+
+        UpdateHeartUI();
         if (currentHeart <= 0)
         {
             RestartGame();
+        }
+    }
+
+    // 체력 UI 업데이트 로직
+    private void UpdateHeartUI()
+    {
+        for (int i = 0; i < heartImages.Length; i++)
+        {
+            // 현재 체력보다 인덱스가 작으면 하트를 켜고, 크거나 같으면 끕니다.
+            if (i < currentHeart)
+            {
+                heartImages[i].enabled = true;
+            }
+            else
+            {
+                heartImages[i].enabled = false;
+            }
         }
     }
 
