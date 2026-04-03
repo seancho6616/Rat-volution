@@ -52,12 +52,12 @@ public class PlayerControl : MonoBehaviour
     Vector3 startPosition = transform.position;
     Vector3 targetPosition = startPosition + (direction * gridSize);
 
-    if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize, wallLayer))
+    if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
 {
     Wall wall = hit.collider.GetComponent<Wall>();
     if (wall != null)
     {
-        wall.TakeDamage(); // 1 데미지
+        wall.TakeDamage(1); // 1 데미지
     }
 
     yield return StartCoroutine(BumpAndReturn(startPosition, direction));

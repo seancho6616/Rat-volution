@@ -56,9 +56,24 @@ public class WallManager : MonoBehaviour
             return;
         }
         Vector3 spawnPos = emptyPoints[Random.Range(0, emptyPoints.Count)];
+        // 가로 세로 방향 랜덤 결정
+        bool isVertical = Random.value > 0.5f;
 
-        // Y축 rotation 0 또는 180 랜덤
-        Quaternion rotation = Quaternion.Euler(0, Random.value > 0.5f ? 180f : 0f, 0);
+        Vector3 adjustedPos = spawnPos;
+        Quaternion rotation;
+
+        if (isVertical)
+        {
+            // 세로 벽: Y축 90도 회전 z축 반칸 이동
+            adjustedPos.z += 0.5f;
+            rotation = Quaternion.Euler(0, 90f, 0);
+        }
+        else
+        {
+            // 가로 벽: X축으로 반칸 이동
+            adjustedPos.x += 0.5f;
+            rotation = Quaternion.Euler(0, 0, 0);
+        }
 
         GameObject wallObj = Instantiate(wallPrefab, spawnPos, rotation);
         wallObj.GetComponent<Wall>().Init(spawnPos);

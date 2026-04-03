@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1708068469630662315}
   - component: {fileID: 4546274744982640099}
   - component: {fileID: 3439927771148774247}
+  - component: {fileID: 4728431035683510169}
   - component: {fileID: 1666574728128129512}
   - component: {fileID: 7089471716344728078}
   m_Layer: 0
@@ -138,6 +139,21 @@ MonoBehaviour:
   objectLayer:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &4728431035683510169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7058411208144566400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 521b33c6d75aa7e4bb6bde5d89adca9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHitEffect
+  duration: 1.5
+  flickerSpeed: 0.1
+  alphaValue: 0.3
 --- !u!114 &1666574728128129512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,7 +207,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0

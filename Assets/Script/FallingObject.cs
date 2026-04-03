@@ -10,7 +10,7 @@ public class FallingObject : MonoBehaviour, IDamageable
     [Header("Stats")]
     public float maxHealth = 10f;
     private float currentHealth;
-    private bool isDestroyedByPlayer = false;
+    // private bool isDestroyedByPlayer = false;
 
     [Header("Grid Settings")]
     private float gridSize = 10f; // 한 칸의 길이
@@ -72,6 +72,29 @@ public class FallingObject : MonoBehaviour, IDamageable
             DestroyObject(false);
     }
 
+    // 플레이어와 부딪혔을 때 처리
+    private void OnTriggerEnter(Collider other)
+    {
+        // 낙하 중이 아닐 때는 충돌 무시
+        if (CurrentState != ObjectState.Falling) return;
+        if (other.CompareTag("Player"))
+        {
+            PlayerHitEffect hitEffect = other.GetComponent<PlayerHitEffect>();
+            if (hitEffect != null)
+            {
+                hitEffect.PlayHitEffect();
+            }
+        }
+        if (other.CompareTag("Wall"))
+        {
+            Wall wall = other.GetComponent<Wall>();
+            if (wall != null)
+            {
+                wall.TakeDamage(999); // 벽에 데미지를 주고 즉시 파괴
+            }
+        }
+    }
+
     private void CheckWallCollision()
     {
         // 2x2 범위를 체크 (중심점에서 각 방향으로 10유닛씩)
@@ -104,6 +127,11 @@ public class FallingObject : MonoBehaviour, IDamageable
 
     public void SetVisualAlpha(float alpha)
     {
-        objectColor.material.color = new Color(objectColor.material.color.r, objectColor.material.color.g, objectColor.material.color.b, alpha);
+        if (objectColor != null && objectColor.material != null)
+        {
+            Color color = objectColor.material.color;
+            color.a = alpha;
+            objectColor.material.color = color;
+        }
     }
 }
