@@ -9,7 +9,7 @@ public class SpawnPointManager : MonoBehaviour
     public static SpawnPointManager Instance;
     [SerializeField] private int gridSize = 7;
     [SerializeField] private int objectgridSize = 6;
-    [SerializeField] private float cellSize = 10f;
+    public readonly float cellSize = 10f;
 
     public readonly List<Vector3> objectsSpawnPositions = new List<Vector3>();
     public List<Vector3> itemSpawnPositions = new List<Vector3>();

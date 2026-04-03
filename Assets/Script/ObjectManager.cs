@@ -51,30 +51,42 @@ public class ObjectManager : MonoBehaviour
 
     private void SpawnFallingObject()
     {
-        // 7x7 그리드 내에서 2x2가 들어갈 랜덤 좌표 선정 (0~5 사이의 인덱스)
-        int xIdx = Random.Range(-1, 2);
-        while(xIdx == 0)
+        Vector2 playerIdx = GetPlayerPointIndex();
+        List<Vector3> candidates = new List<Vector3>
         {
-            xIdx = Random.Range(-1,2);
-        }
-        int zIdx = Random.Range(-1, 2);
-        while(zIdx == 0)
-        {
-            zIdx = Random.Range(-1,2);
-        }
-        Transform transform = player.transform;
-        
-        // 유닛 사이즈 10을 곱해 실제 좌표 계산 (중심점 보정 +5)
-        Vector3 spawnPos = new Vector3(xIdx*5f + Mathf.Round(transform.position.x), 0, 
-        zIdx*5f + Mathf.Round(transform.position.z));
+            new Vector3(playerIdx.x + 5f, 0, playerIdx.y + 5f),
+            new Vector3(playerIdx.x + 5f, 0, playerIdx.y - 5f),
+            new Vector3(playerIdx.x - 5f, 0, playerIdx.y + 5f),
+            new Vector3(playerIdx.x - 5f, 0, playerIdx.y - 5f)
+        };
 
+        List<Vector3> validCandidates = candidates.FindAll(c => 
+        point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
+        if (validCandidates.Count == 0)
+        {
+            Debug.Log("유효한 스폰 위치 없음");
+            return;
+        }
+
+        // 유닛 사이즈 10을 곱해 실제 좌표 계산 (중심점 보정 +5)
+        Vector3 spawnPos = validCandidates[Random.Range(0, validCandidates.Count)];
+        objectDictionary[spawnPos] = true;
         GameObject obj = Instantiate(objectPrefab, spawnPos, Quaternion.identity);
         obj.GetComponent<FallingObject>().Init(10f, unitSize); // HP 10 전달
         activeObjects.Add(obj);
     }
 
+    private Vector2 GetPlayerPointIndex()
+    {
+        int cellSize = (int)SpawnPointManager.Instance.cellSize;
+        int xIdx = Mathf.RoundToInt(player.transform.position.x / cellSize);
+        int zIdx = Mathf.RoundToInt(player.transform.position.z / cellSize);
+        return new Vector2Int(xIdx*cellSize, zIdx*cellSize);
+    }
+
     public void OnObjectRemoved(GameObject obj, bool byPlayer)
     {
+        objectDictionary[obj.transform.position] = false;
         activeObjects.Remove(obj);
         if (byPlayer)
         {
