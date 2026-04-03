@@ -7,8 +7,6 @@ public class PlayerControl : MonoBehaviour
 {
     [Header("Stats")]
     public int maxHeart = 3;
-    private int currentHeart;
-
     [Header("Movement Settings")]
     public float gridSize = 10f;       // 한 칸의 길이 10
     public float moveTime = 1.25f;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
