@@ -72,7 +72,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             DestroyObject(false);
     }
 
-    // 플레이어와 부딪혔을 때 처리
+    // 다른 물체와 부딪혔을 때 처리
     private void OnTriggerEnter(Collider other)
     {
         // 낙하 중이 아닐 때는 충돌 무시
@@ -84,6 +84,13 @@ public class FallingObject : MonoBehaviour, IDamageable
             {
                 hitEffect.PlayHitEffect();
             }
+
+            PlayerControl player = other.GetComponent<PlayerControl>();
+            if (player != null)
+            {
+                player.TakeDamage(1);
+            }
+            Debug.Log("플레이어 공격, 데미지 -1");
         }
         if (other.CompareTag("Wall"))
         {
