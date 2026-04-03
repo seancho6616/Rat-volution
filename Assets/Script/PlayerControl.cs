@@ -4,6 +4,9 @@ using System.Collections;
 
 public class PlayerControl : MonoBehaviour
 {
+    [Header("Stats")]
+    public int maxHeart = 3;
+    public int currentHeart;
     [Header("Movement Settings")]
     public float gridSize = 10f;       // 한 칸의 길이 10
     public float moveTime = 1.25f;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
@@ -17,6 +20,10 @@ public class PlayerControl : MonoBehaviour
 
     private Vector2 moveInput;
 
+    private void Start()
+    {
+        currentHeart = maxHeart;   
+    }
     // Input System에서 Move 액션이 시작될 때(Started) 호출
     public void OnMove(InputValue value)
     {
