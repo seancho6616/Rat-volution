@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -25,6 +26,23 @@ public class PlayerControl : MonoBehaviour
         currentHeart = maxHeart;   
     }
     // Input System에서 Move 액션이 시작될 때(Started) 호출
+
+    public void TakeDamage(int damage)
+    {
+        currentHeart -= damage;
+        Debug.Log($"[Player] 목숨 -1, 남은 목숨: {currentHeart}");
+        if (currentHeart <= 0)
+        {
+            RestartGame();
+        }
+    }
+
+    private void RestartGame()
+    {
+        Debug.Log("[Player] 게임 재시작");
+        // 현재 활성화된 씬을 다시 로드함
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
     public void OnMove(InputValue value)
     {
         // 이미 이동 중이면 새로운 입력을 무시함 (Key Down 시 1회 이동 보장)

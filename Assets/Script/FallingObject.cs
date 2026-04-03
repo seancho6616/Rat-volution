@@ -84,7 +84,14 @@ public class FallingObject : MonoBehaviour, IDamageable
             {
                 hitEffect.PlayHitEffect();
             }
+            PlayerControl player = other.GetComponent<PlayerControl>();
+            if (player != null)
+            {
+                player.TakeDamage(1);
+            }
+            Debug.Log("플레이어 공격, 데미지 -1");
         }
+
         if (other.CompareTag("Wall"))
         {
             Wall wall = other.GetComponent<Wall>();
