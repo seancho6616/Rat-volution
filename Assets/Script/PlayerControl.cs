@@ -15,6 +15,11 @@ public class PlayerControl : MonoBehaviour
     public float gridSize = 10f;       // 한 칸의 길이 10
     public float moveTime = 1.25f;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
     private bool isMoving = false;    // 이동 중 중복 입력 방지
+    // 이동 제한 범위 설정 (중앙 기준으로 ±20 범위)
+    [Header("Boundary Settings")]
+    public float moveLimit = 32f;
+    public float centerX = 8.70429f;
+    public float centerZ = 0.70631f;
 
     [Header("Attack Settings")]
     public float attackDamage = 1f;
@@ -26,7 +31,10 @@ public class PlayerControl : MonoBehaviour
 
     private void Start()
     {
-        currentHeart = maxHeart;   
+        currentHeart = maxHeart;
+        UpdateHeartUI();
+        centerX = transform.position.x;
+        centerZ = transform.position.z;
     }
     // Input System에서 Move 액션이 시작될 때(Started) 호출
 
@@ -98,6 +106,18 @@ public class PlayerControl : MonoBehaviour
     isMoving = true;
     Vector3 startPosition = transform.position;
     Vector3 targetPosition = startPosition + (direction * gridSize);
+
+    // 바닥의 중심으로부터 거리 계산
+    float distanceFromCenterX = Mathf.Abs(targetPosition.x - centerX);
+    float distanceFromCenterZ = Mathf.Abs(targetPosition.z - centerZ);
+
+    if (distanceFromCenterX > moveLimit || distanceFromCenterZ > moveLimit)
+    {
+        Debug.Log("[Player] 판 밖으로 이동 시도 - 이동 불가");
+        yield return StartCoroutine(BumpAndReturn(startPosition, direction));
+        isMoving = false;
+        yield break;
+    }
 
     if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
 {
