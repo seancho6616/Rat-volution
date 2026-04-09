@@ -114,7 +114,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5000001
-  m_Height: 2
+  m_Height: 2.0000002
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!114 &3439927771148774247
@@ -129,13 +129,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 982aec4cae21f1b4880e8fd648f71c33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
+  maxHeart: 3
+  currentHeart: 0
+  heartImages:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   gridSize: 10
   moveTime: 1.25
+  moveLimit: 32
+  centerX: 8.70429
+  centerZ: 0.70631
   attackDamage: 1
   autoAttackRange: 15
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   objectLayer:
     serializedVersion: 2
     m_Bits: 0
