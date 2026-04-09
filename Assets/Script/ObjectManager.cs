@@ -62,6 +62,18 @@ public class ObjectManager : MonoBehaviour
 
         List<Vector3> validCandidates = candidates.FindAll(c => 
         point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
+
+        validCandidates = validCandidates.FindAll(c =>
+        {
+            foreach (var obj in activeObjects)
+            {
+                if (obj != null && Vector3.Distance(c, obj.transform.position) < 15f)
+                {
+                    return false; // 너무 가까운 위치는 제외
+                }
+            }
+            return true;
+        });
         if (validCandidates.Count == 0)
         {
             Debug.Log("유효한 스폰 위치 없음");
