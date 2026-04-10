@@ -16,7 +16,9 @@ public class Item : MonoBehaviour
             {
                 stageScript.OnItemCollected(); 
             }
-            gameObject.SetActive(false);
+            ItemManager.Instance.itemSpawnCount--;
+            Debug.Log(ItemManager.Instance.itemSpawnCount);
+            Destroy(gameObject);
         }
     }
 }
