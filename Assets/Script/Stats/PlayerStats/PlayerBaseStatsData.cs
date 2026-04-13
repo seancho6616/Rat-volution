@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlayerBaseStatData", menuName = "Scriptable Objects/PlayerBaseStatData")]
-public class PlayerBaseStatData : ScriptableObject
+[CreateAssetMenu(fileName = "PlayerBaseStatsData", menuName = "Scriptable Objects/PlayerBaseStatsData")]
+public class PlayerBaseStatsData : ScriptableObject
 {
     [Header("생존")]
     public int      maxHP           = 3;    //최대 체력

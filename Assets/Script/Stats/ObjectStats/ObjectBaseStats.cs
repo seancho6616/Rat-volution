@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ObjectStats", menuName = "Scriptable Objects/ObjectStats")]
-public class ObjectStats : ScriptableObject
+[CreateAssetMenu(fileName = "ObjectBaseStats", menuName = "Scriptable Objects/ObjectBaseStats")]
+public class ObjectBaseStats : ScriptableObject
 {
     public float hp = 15f;
     public float minSpawnTime = 3f;

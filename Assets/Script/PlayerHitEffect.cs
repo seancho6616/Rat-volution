@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerHitEffect : MonoBehaviour
+public class PlayerHitEffect : PlayerStats
 {
     [Header("효과 설정")]
     // 효과 지속 시간
