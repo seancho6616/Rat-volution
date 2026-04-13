@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerControl : MonoBehaviour
+public class PlayerControl : PlayerStats
 {
     [Header("Stats")]
     public int maxHeart = 3;

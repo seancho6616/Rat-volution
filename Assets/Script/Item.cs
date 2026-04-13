@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    public int count = 1;
     void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
         {
+            PlayerStats stats = other.GetComponent<PlayerStats>();
             // 1. 게이지 상승 (기존 로직 유지)
             Gauge gaugeScript = Object.FindAnyObjectByType<Gauge>();
             if (gaugeScript != null) gaugeScript.AddScore(1);
