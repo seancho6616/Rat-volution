@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class RunBonus
 {
-    public int maxHP;
-    public int wallCount;
-    public float moveSpeed;
-    public float attackSpeed;
-    public float objectAttack;
-    public float wallAttack;
-    public float luck;
-    public float insight;
+    public int maxHP =0;
+    public int wallCount = 0;
+    public float moveSpeed = 0f;
+    public float attackSpeed =0f;
+    public float objectAttack =0f;
+    public float wallAttack =0f;
+    public float luck =0f;
+    public float insight =0f;
 
     public void Reset()
     {

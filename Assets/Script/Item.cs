@@ -7,7 +7,7 @@ public class Item : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player"))
         {
-            PlayerStats stats = other.GetComponent<PlayerStats>();
+            PlayerStats.Instance.currentCheese++;
             // 1. 게이지 상승 (기존 로직 유지)
             Gauge gaugeScript = Object.FindAnyObjectByType<Gauge>();
             if (gaugeScript != null) gaugeScript.AddScore(1);

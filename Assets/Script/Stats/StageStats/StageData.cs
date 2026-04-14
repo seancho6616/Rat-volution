@@ -1,17 +1,25 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class StageData : MonoBehaviour
 {
-    public StageBaseStats baseStats;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static StageData Instance;
+    public StageBaseStats baseData;
+    public int finalGridSizeCount;
+    public int finalObjGridSizeCount;
+    void Awake()
     {
-        Debug.Log(baseStats.objGridSizeCount);
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+        finalGridSizeCount = baseData.gridSizeCount;
+        finalObjGridSizeCount = baseData.objGridSizeCount;
     }
-
-    // Update is called once per frame
-    void Update()
+    public void GridSizeUP(int level)
     {
-        
+        if(level /5 == 0)
+        {
+            finalGridSizeCount += baseData.gridSizeCountPerLevel;
+            finalObjGridSizeCount += baseData.gridSizeCountPerLevel;
+        }
     }
 }

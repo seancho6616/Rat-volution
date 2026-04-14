@@ -12,20 +12,25 @@ public class PlayerStats : MonoBehaviour
     public PlayerBaseStatsData baseData;
     public RunBonus runBonus = new RunBonus();
 
-    public int finalMaxHP =>baseData.maxHP + runBonus.maxHP;
-    public int finalWallCount => baseData.wallCount + runBonus.wallCount;
-    public float finalMoveSpeed => baseData.moveSpeed + runBonus.moveSpeed;
-    public float finalAttackSpeed => baseData.attackSpeed + runBonus.attackSpeed;
-    public float finalObjectAttack => baseData.objectAttack + runBonus.objectAttack;
-    public float finalWallAttack => baseData.wallAttack + runBonus.wallAttack;
-    public float finalLuck => baseData.luck + runBonus.luck;
-    public float finalInsight => baseData.insight + runBonus.insight;
+    public int FinalMaxHP =>baseData.maxHP + runBonus.maxHP;
+    public int FinalWallCount => baseData.wallCount + runBonus.wallCount;
+    public float FinalMoveSpeed => baseData.moveSpeed + runBonus.moveSpeed;
+    public float FinalAttackSpeed => baseData.attackSpeed + runBonus.attackSpeed;
+    public float FinalObjectAttack => baseData.objectAttack + runBonus.objectAttack;
+    public float FinalWallAttack => baseData.wallAttack + runBonus.wallAttack;
+    public float FinalLuck => baseData.luck + runBonus.luck;
+    public float FinalInsight => baseData.insight + runBonus.insight;
 
     [Header("치즈 개수")]
     public float maxCheese = 49;
     public float currentCheese =0;
     public int level = 1;
 
+    void Awake()
+    {
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
     public void GainCheese(float amount)
     {
         currentCheese += amount;
