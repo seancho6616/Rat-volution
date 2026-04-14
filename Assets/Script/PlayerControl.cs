@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class PlayerControl : PlayerStats
 {
     [Header("Stats")]
-    public int maxHeart = 3;
+    public int maxHeart => FinalMaxHP;
     public int currentHeart;
     [Header("UI Settings")]
     public Image[] heartImages;
