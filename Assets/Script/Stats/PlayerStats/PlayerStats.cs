@@ -38,10 +38,11 @@ public class PlayerStats : MonoBehaviour
             LevelUP();
     }
 
-    private void LevelUP()
+    public void LevelUP()
     {
         level++;
         currentCheese = 0;
         maxCheese += 5;
+        StageMaker.Instance.GridSizeUP(level);
     }
 }
