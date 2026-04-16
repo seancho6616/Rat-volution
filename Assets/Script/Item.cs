@@ -19,7 +19,6 @@ public class Item : MonoBehaviour
                 stageScript.OnItemCollected(); 
             }
             ItemManager.Instance.itemSpawnCount--;
-            Debug.Log(ItemManager.Instance.itemSpawnCount);
             Destroy(gameObject);
         }
     }
