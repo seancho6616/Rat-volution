@@ -30,7 +30,8 @@ public class PlayerStats : MonoBehaviour
     void Awake()
     {
         if(Instance == null) Instance = this;
-        // else Destroy(gameObject);
+        //else Destroy(gameObject);
+        runBonus.Reset();
     }
     public void GainCheese(float amount)
     {
@@ -52,17 +53,34 @@ public class PlayerStats : MonoBehaviour
         switch (card.cardType)
         {
             case CardType.StatUp:
-                StatType type = card.statCardData.statType;
-                InvsetStatPoint(type);
+                StatType statType = card.statCardData.statType;
+                InvestStatPoint(statType);
                 break;
             case CardType.Item:
                 break;
             case CardType.Debuff:
+                DebuffType debuffType = card.debuffCardData.debuffType;
+                float amount = Random.Range(card.debuffCardData.minAmount,
+                card.debuffCardData.mixAmount);
+                switch (debuffType)
+                {
+                    case DebuffType.ObjHp:
+                    case DebuffType.ObjLivingTime:
+                    case DebuffType.ObjReBuildTime:
+                    case DebuffType.ObjSpawnTime:
+                    case DebuffType.ObjWarningTime:
+                        ObjectManager.Instance.InvsetObjStatPoint(debuffType, amount);
+                        break;
+                    case DebuffType.WallHp:
+                    case DebuffType.WallBuildTime:
+                        WallManager.Instance.InvsetWallStatPoint(debuffType, amount);
+                        break;
+                }
                 break;
         }
     }
     
-    public void InvsetStatPoint(StatType type)
+    public void InvestStatPoint(StatType type)
     {
         switch (type)
         {
@@ -74,7 +92,7 @@ public class PlayerStats : MonoBehaviour
                 runBonus.luck +=0.05f;
                 break;
             case StatType.MoveSpeed:
-                runBonus.moveSpeed += 0.1f;
+                runBonus.moveSpeed += 2f;
                 break;
             case StatType.ObjectAttack:
                 runBonus.objectAttack += 2f;
@@ -87,6 +105,8 @@ public class PlayerStats : MonoBehaviour
                 break;
         }
     }
+
+    
     public void OnPlayerDead()
     {
         runBonus.Reset();

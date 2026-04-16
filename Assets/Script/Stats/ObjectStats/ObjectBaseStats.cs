@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ObjectBaseStats", menuName = "Scriptable Objects/ObjectBaseStats")]
 public class ObjectBaseStats : ScriptableObject
 {
-    public float hp = 15f;
+    public int hp = 15;
     public float minSpawnTime = 3f;
     public float mixSpawnTime = 4f;
     public float minWarningTime = 1.5f;

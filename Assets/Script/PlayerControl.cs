@@ -13,7 +13,7 @@ public class PlayerControl : PlayerStats
     public Image[] heartImages;
     [Header("Movement Settings")]
     public float gridSize = 10f;       // 한 칸의 길이 10
-    public float moveTime => 1f / FinalMoveSpeed;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
+    public float MoveTime => 1f / FinalMoveSpeed;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
     private bool isMoving = false;    // 이동 중 중복 입력 방지
     // 이동 제한 범위 설정 (중앙 기준으로 ±20 범위)
     [Header("Boundary Settings")]
@@ -75,6 +75,7 @@ public class PlayerControl : PlayerStats
     }
     public void OnMove(InputValue value)
     {
+        Debug.Log(MoveTime);
         // 이미 이동 중이면 새로운 입력을 무시함 (Key Down 시 1회 이동 보장)
         if (isMoving) return;
 
@@ -143,7 +144,7 @@ private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction)
     Vector3 bumpTarget = startPosition + direction * (gridSize * 0.4f);
 
     float elapsed = 0f;
-    float bumpTime = moveTime * 0.25f; // 빠르게 치고 나가기
+    float bumpTime = MoveTime * 0.25f; // 빠르게 치고 나가기
 
     while (elapsed < bumpTime)
     {
@@ -154,7 +155,7 @@ private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction)
 
     // 원래 위치로 복귀
     elapsed = 0f;
-    float returnTime = moveTime * 0.35f;
+    float returnTime = MoveTime * 0.35f;
 
     while (elapsed < returnTime)
     {
@@ -169,7 +170,7 @@ private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction)
 private IEnumerator SmoothMove(Vector3 from, Vector3 to)
 {
     float elapsed = 0f;
-    float duration = moveTime * Vector3.Distance(from, to) / gridSize; // 거리 비례 시간
+    float duration = MoveTime * Vector3.Distance(from, to) / gridSize; // 거리 비례 시간
 
     while (elapsed < duration)
     {

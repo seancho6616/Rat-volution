@@ -1,9 +1,10 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WallStats", menuName = "Scriptable Objects/WallStats")]
-public class WallStats : ScriptableObject
+public class WallStats : MonoBehaviour
 {
-    public float hp = 6f;
-    public float objBuildTime = 0.5f;
-    public int objBuildCount = 6;
+    public WallBaseStats baseData;
+    public WallRunBonus runBonus = new WallRunBonus();
+    public int Finalhp => baseData.hp + runBonus.hp;
+    public float FinalObjBuildTime => baseData.objBuildTime + runBonus.objBuildTime;
+    public int FinalObjBuildCount =>  baseData.objBuildCount + runBonus.objBuildCount;
 }

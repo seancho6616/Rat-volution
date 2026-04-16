@@ -4,7 +4,7 @@ public class ObjectData : MonoBehaviour
 {
     public ObjectBaseStats baseData;
     public ObjectRunBonus runBonus = new ObjectRunBonus();
-    public float Finalhp => baseData.hp + runBonus.hp;
+    public int Finalhp => baseData.hp + runBonus.hp;
     public float FinalMinSpawnTime => baseData.minSpawnTime + runBonus.minSpawnTime;
     public float FinalMixSpawnTime => baseData.mixSpawnTime + runBonus.mixSpawnTime;
     public float FinalMinWarningTime => baseData.minWarningTime + runBonus.minWarningTime;

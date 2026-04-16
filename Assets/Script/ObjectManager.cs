@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ObjectManager : MonoBehaviour
+public class ObjectManager : ObjectData
 {
     public static ObjectManager Instance;
     [SerializeField] private GameObject player;
@@ -112,5 +112,29 @@ public class ObjectManager : MonoBehaviour
         Debug.Log("플레이어가 물체 파괴! 5초간 생성 중단");
         yield return new WaitForSeconds(5f);
         spawnPaused = false;
+    }
+
+    public void InvsetObjStatPoint(DebuffType type, float amount)
+    {
+        switch (type)
+        {
+            case DebuffType.ObjHp:
+                runBonus.hp += (int)amount;
+                break;
+            case DebuffType.ObjLivingTime:
+                runBonus.livingTime -= amount;
+                break;
+            case DebuffType.ObjReBuildTime:
+                runBonus.reBuildTime -= amount;
+                break;
+            case DebuffType.ObjSpawnTime:
+                runBonus.minSpawnTime -= amount;
+                runBonus.mixSpawnTime -= amount;
+                break;
+            case DebuffType.ObjWarningTime:
+                runBonus.minWarningTime -= amount;
+                runBonus.mixWarningTime -= amount;
+                break;
+        }
     }
 }

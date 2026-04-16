@@ -33,7 +33,6 @@ public class ItemManager : MonoBehaviour
             GameObject obj = Instantiate(itemPrefab, pos, Quaternion.identity);
             itemSpawnCount++;
         }
-        Debug.Log(itemSpawnCount);
         StartCoroutine(ItemSpawn());
     }
 
