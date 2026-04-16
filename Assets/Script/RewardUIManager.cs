@@ -82,37 +82,38 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonAttackPower()
     {
         PlayerStats.Instance.InvestStatPoint(StatType.ObjectAttack);
-        Debug.Log(PlayerStats.Instance.FinalObjectAttack);
+        Debug.Log(PlayerStats.Instance.runBonus.objectAttack);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonAttackSpeed()
     {
         PlayerStats.Instance.InvestStatPoint(StatType.AttackSpeed);
-        Debug.Log(PlayerStats.Instance.FinalAttackSpeed);
+        Debug.Log(PlayerStats.Instance.runBonus.attackSpeed);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonHealth()
     {
         PlayerStats.Instance.InvestStatPoint(StatType.MaxHP);
-        Debug.Log(PlayerStats.Instance.FinalMaxHP);
+        Debug.Log(PlayerStats.Instance.runBonus.maxHP);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonLuck()
     {
         PlayerStats.Instance.InvestStatPoint(StatType.Luck);
-        Debug.Log(PlayerStats.Instance.FinalLuck);
+        Debug.Log(PlayerStats.Instance.runBonus.luck);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonMoveSpeed()
     {
         PlayerStats.Instance.InvestStatPoint(StatType.MoveSpeed);
-        Debug.Log(PlayerStats.Instance.FinalMoveSpeed);
+        Debug.Log(StatType.MoveSpeed);
+        Debug.Log(PlayerStats.Instance.runBonus.moveSpeed);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonStrength()
     {
         PlayerStats.Instance.InvestStatPoint(StatType.WallAttack);
-        Debug.Log(PlayerStats.Instance.FinalWallAttack);
+        Debug.Log(PlayerStats.Instance.runBonus.wallAttack);
         HideUIGameObj(pickStatGroup);
     }
 }

@@ -1,10 +1,10 @@
 using UnityEngine;
-
+[System.Serializable]
 public class RunBonus
 {
     public int   maxHP;
     public int   wallCount;
-    public float moveSpeed;
+    public float moveSpeed =0;
     public float attackSpeed;
     public float objectAttack;
     public float wallAttack;

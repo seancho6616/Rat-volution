@@ -29,9 +29,17 @@ public class PlayerStats : MonoBehaviour
 
     void Awake()
     {
-        if(Instance == null) Instance = this;
-        //else Destroy(gameObject);
-        runBonus.Reset();
+        if (Instance == null)
+        {
+            Instance = this;
+            Debug.Log($"PlayerStats Instance 설정됨: {gameObject.name}"); // ✅ 어떤 오브젝트인지 확인
+        }
+        else
+        {
+            Debug.LogWarning($"중복 PlayerStats 발견: {gameObject.name}"); // ✅ 중복 여부 확인
+            Destroy(gameObject);
+        }
+        // runBonus.Reset();
     }
     public void GainCheese(float amount)
     {
@@ -82,6 +90,11 @@ public class PlayerStats : MonoBehaviour
     
     public void InvestStatPoint(StatType type)
     {
+        if (runBonus == null)
+        {
+            Debug.LogError("runBonus가 null입니다!");
+            return;
+        }
         switch (type)
         {
             case StatType.MaxHP:
@@ -92,7 +105,8 @@ public class PlayerStats : MonoBehaviour
                 runBonus.luck +=0.05f;
                 break;
             case StatType.MoveSpeed:
-                runBonus.moveSpeed += 2f;
+                runBonus.moveSpeed += 0.1f;
+                Debug.Log($"moveSpeed 적용 후: {runBonus.moveSpeed}"); // 값 확인
                 break;
             case StatType.ObjectAttack:
                 runBonus.objectAttack += 2f;
