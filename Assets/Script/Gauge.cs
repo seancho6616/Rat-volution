@@ -7,9 +7,6 @@ public class Gauge : MonoBehaviour
     public Image gaugeImage;
     public TextMeshProUGUI countText;
 
-    private float currentScore = 0f;
-    public float maxScore = 49f;
-
     void Start()
     {
         UpdateUI();
@@ -17,17 +14,28 @@ public class Gauge : MonoBehaviour
 
     public void AddScore(float amount)
     {
-        currentScore += amount;
         UpdateUI();
     }
 
     void UpdateUI()
     {
-        if (gaugeImage != null)
-            gaugeImage.fillAmount = currentScore / maxScore;
-        
-        // 텍스트를 "현재 점수 / 최대 점수" 형식으로 변경
-        if (countText != null)
-            countText.text = $"{currentScore} / {maxScore}";
+       // PlayerStats의 싱글톤 인스턴스가 있는지 확인 후 데이터 가져옴
+        if (PlayerStats.Instance != null)
+        {
+            float current = PlayerStats.Instance.currentCheese;
+            float max = PlayerStats.Instance.maxCheese;
+
+            // 게이지 바 채우기
+            if (gaugeImage != null)
+            {
+                gaugeImage.fillAmount = current / max;
+            }
+            
+            // 텍스트 업데이트
+            if (countText != null)
+            {
+                countText.text = $"{current} / {max}";
+            }
+        }
     }
 }
