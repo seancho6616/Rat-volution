@@ -4,6 +4,7 @@ public class RewardUIManager : MonoBehaviour
 {
     [Header("UI 연결")]
     public GameObject rewardBTGroup; 
+    public GameObject pickStatGroup;
 
     // 이전 레벨을 기억해 둘 변수
     private int lastLevel; 
@@ -49,6 +50,14 @@ public class RewardUIManager : MonoBehaviour
         }
     }
 
+    public void ShowPickStatUI()
+    {
+        HideRewardUI();
+        pickStatGroup.SetActive(true);
+
+        //Time.timeScale = 0f;
+    }
+
     // 보상 창을 닫는 함수 (나중에 Card Button이나 Stat Button을 눌렀을 때 호출되도록 연결)
     public void HideRewardUI()
     {
@@ -57,7 +66,7 @@ public class RewardUIManager : MonoBehaviour
             rewardBTGroup.SetActive(false); // Reward BT Group 비활성화
             
             //게임 일시정지 해제
-            Time.timeScale = 1f;
+            //Time.timeScale = 1f;
         }
     }
 }
