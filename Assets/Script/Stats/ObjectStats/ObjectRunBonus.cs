@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ObjectRunBonus
 {
-    public float hp;
+    public int hp;
     public float minSpawnTime;
     public float mixSpawnTime;
     public float minWarningTime;
@@ -26,7 +26,7 @@ public class ObjectRunBonus
     {
         if (level % 3 == 0)
         {
-            hp += 10f;
+            hp += 10;
             minSpawnTime -= 0.5f;
             mixSpawnTime -= 0.5f;
         }
