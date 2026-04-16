@@ -13,7 +13,7 @@ public class PlayerControl : PlayerStats
     public Image[] heartImages;
     [Header("Movement Settings")]
     public float gridSize = 10f;       // 한 칸의 길이 10
-    public float moveTime = 1.25f;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
+    public float moveTime => 1f / FinalMoveSpeed;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
     private bool isMoving = false;    // 이동 중 중복 입력 방지
     // 이동 제한 범위 설정 (중앙 기준으로 ±20 범위)
     [Header("Boundary Settings")]
@@ -22,7 +22,7 @@ public class PlayerControl : PlayerStats
     public float centerZ = 0.70631f;
 
     [Header("Attack Settings")]
-    public float attackDamage = 1f;
+    public float attackDamage => FinalObjectAttack;
     public float autoAttackRange = 15f; // 3x3 범위 (그리드가 10이므로 반경 15 정도)
     public LayerMask wallLayer;
     public LayerMask objectLayer;

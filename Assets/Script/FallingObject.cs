@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq.Expressions;
 
 public class FallingObject : MonoBehaviour, IDamageable
 {
@@ -77,6 +78,19 @@ public class FallingObject : MonoBehaviour, IDamageable
     {
         // 낙하 중이 아닐 때는 충돌 무시
         if (CurrentState != ObjectState.Falling) return;
+        // 우선순위 벽으로 설정
+        if (other.CompareTag("Wall"))
+        {
+            Wall wall = other.GetComponent<Wall>();
+            if (wall != null)
+            {
+                // wall.TakeDamage(999); // 벽에 데미지를 주고 즉시 파괴
+                wall.InstantDestroy();
+                CurrentState = ObjectState.Grounded; // 상태가 변경되어 더이상 공격하지 않음
+                return;
+            }
+        }
+
         if (other.CompareTag("Player"))
         {
             PlayerHitEffect hitEffect = other.GetComponent<PlayerHitEffect>();
@@ -90,15 +104,6 @@ public class FallingObject : MonoBehaviour, IDamageable
                 player.TakeDamage(1);
             }
             Debug.Log("플레이어 공격, 데미지 -1");
-        }
-
-        if (other.CompareTag("Wall"))
-        {
-            Wall wall = other.GetComponent<Wall>();
-            if (wall != null)
-            {
-                wall.TakeDamage(999); // 벽에 데미지를 주고 즉시 파괴
-            }
         }
     }
 

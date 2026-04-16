@@ -29,7 +29,7 @@ public class PlayerStats : MonoBehaviour
     void Awake()
     {
         if(Instance == null) Instance = this;
-        else Destroy(gameObject);
+        // else Destroy(gameObject);
     }
     public void GainCheese(float amount)
     {
