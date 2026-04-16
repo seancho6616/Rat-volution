@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class WallManager : MonoBehaviour
+public class WallManager : WallStats
 {
     public static WallManager Instance;
     public GameObject wallPrefab;
@@ -86,5 +86,18 @@ public class WallManager : MonoBehaviour
     {
         if (wallSpawnDictionary.ContainsKey(pos))
             wallSpawnDictionary[pos] = false;
+    }
+
+    public void InvsetWallStatPoint(DebuffType type, float amount)
+    {
+        switch (type)
+        {
+            case DebuffType.WallHp:
+                runBonus.hp += (int)amount;
+                break;
+            case DebuffType.WallBuildTime:
+                runBonus.objBuildTime += amount;
+                break;
+        }
     }
 }
