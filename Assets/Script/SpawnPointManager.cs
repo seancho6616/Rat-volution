@@ -31,23 +31,6 @@ public class SpawnPointManager : MonoBehaviour
         GenerateGridObject();
     }
 
-    // 겹치지 않는 위치를 반환하는 메서드
-    public Vector3 GetSafeRandomObjectPosition()
-    {
-        Vector3 selectedPos;
-        int safetyBreak = 0; // 무한 루프 방지
-
-        do
-        {
-            // 랜덤 위치 생성
-            selectedPos = objectsSpawnPositions[Random.Range(0, objectsSpawnPositions.Count)];
-            safetyBreak++;
-        } while (Vector3.Distance(selectedPos, lastSpawnPos) < 21f && safetyBreak < 10);
-
-        // 마지막으로 생성된 위치 업데이트
-        return lastSpawnPos = selectedPos;
-    }
-
     private void GenerateGridItem()
     {
         itemSpawnPositions.Clear();

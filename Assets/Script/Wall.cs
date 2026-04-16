@@ -26,17 +26,7 @@ public class Wall : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        // 고양이 발 충돌 시 즉시 파괴
-        if (other.gameObject.CompareTag("Object"))
-        {
-            Debug.Log($"[Wall] 고양이 발과 충돌! 즉시 파괴됩니다.");
-            InstantDestroy();
-        }
-    }
-
-    private void InstantDestroy()
+    public void InstantDestroy()
     {
         if (WallManager.Instance != null)
         {
