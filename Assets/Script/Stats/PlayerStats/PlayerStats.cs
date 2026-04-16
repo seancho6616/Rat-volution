@@ -25,6 +25,7 @@ public class PlayerStats : MonoBehaviour
     public float maxCheese = 49;
     public float currentCheese =0;
     public int level = 1;
+    private int hpCount =0;
 
     void Awake()
     {
@@ -44,5 +45,50 @@ public class PlayerStats : MonoBehaviour
         currentCheese = 0;
         maxCheese += 5;
         StageMaker.Instance.GridSizeUP(level);
+    }
+
+    public void ApplyCard(CardData card)
+    {
+        switch (card.cardType)
+        {
+            case CardType.StatUp:
+                StatType type = card.statCardData.statType;
+                InvsetStatPoint(type);
+                break;
+            case CardType.Item:
+                break;
+            case CardType.Debuff:
+                break;
+        }
+    }
+    
+    public void InvsetStatPoint(StatType type)
+    {
+        switch (type)
+        {
+            case StatType.MaxHP:
+                hpCount++;
+                if(hpCount%2==0)    runBonus.maxHP+=1;
+                break;
+            case StatType.Luck:
+                runBonus.luck +=0.05f;
+                break;
+            case StatType.MoveSpeed:
+                runBonus.moveSpeed += 0.1f;
+                break;
+            case StatType.ObjectAttack:
+                runBonus.objectAttack += 2f;
+                break;
+            case StatType.WallAttack:
+                runBonus.wallAttack += 2f;
+                break;
+            case StatType.AttackSpeed:
+                runBonus.attackSpeed += 0.1f;
+                break;
+        }
+    }
+    public void OnPlayerDead()
+    {
+        runBonus.Reset();
     }
 }
