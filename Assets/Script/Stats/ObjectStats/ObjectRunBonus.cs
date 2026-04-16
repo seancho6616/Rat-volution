@@ -5,6 +5,8 @@ public class ObjectRunBonus
     public float hp;
     public float minSpawnTime;
     public float mixSpawnTime;
+    public float minWarningTime;
+    public float mixWarningTime;
     public float fallingTime;
     public float objBuildCount;
     public float livingTime;
