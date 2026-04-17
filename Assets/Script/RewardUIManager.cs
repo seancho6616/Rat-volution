@@ -1,4 +1,6 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class RewardUIManager : MonoBehaviour
 {
@@ -6,8 +8,18 @@ public class RewardUIManager : MonoBehaviour
     public GameObject rewardBTGroup; 
     public GameObject pickStatGroup;
 
+    [Header("스탯 텍스트 연결 (버튼 내부의 Text들)")]
+    public TMP_Text txtAttackPower;
+    public TMP_Text txtAttackSpeed;
+    public TMP_Text txtHealth;
+    public TMP_Text txtInsight;
+    public TMP_Text txtLuck;
+    public TMP_Text txtMoveSpeed;
+    public TMP_Text txtStrength;
+
     // 이전 레벨을 기억해 둘 변수
     private int lastLevel; 
+    private bool isViewMode = false; // 현재 창이 '단순 보기' 모드인지 확인
 
     void Start()
     {
@@ -15,6 +27,11 @@ public class RewardUIManager : MonoBehaviour
         if (rewardBTGroup != null)
         {
             rewardBTGroup.SetActive(false);
+        }
+
+        if (pickStatGroup != null)
+        {
+            pickStatGroup.SetActive(false);
         }
 
         // 게임 시작 시점의 PlayerStats 레벨을 기억
@@ -33,8 +50,49 @@ public class RewardUIManager : MonoBehaviour
             if (PlayerStats.Instance.level > lastLevel)
             {
                 lastLevel = PlayerStats.Instance.level; // 다음 레벨업을 위해 기억 갱신
+                isViewMode = false; // 레벨업 시에는 '강화 모드'
                 ShowRewardUI(); // 보상 창 열기
             }
+        }
+    }
+
+    // 스탯 확인 버튼 클릭 시
+    public void OpenStatView()
+    {
+        isViewMode = true; // '단순 보기' 모드 활성화
+        UpdateStatTexts(); // 텍스트 갱신
+        pickStatGroup.SetActive(true);
+        Time.timeScale = 0f; // 게임 일시정지
+    }
+
+    // 실제 데이터를 UI에 반영하는 함수
+    private void UpdateStatTexts()
+    {
+        var stats = PlayerStats.Instance;
+        if (stats == null) return;
+
+        if (isViewMode)
+        {
+            // 1. [확인 모드] 내 현재 능력치 상태 보기
+            // PlayerStats.cs에 정의된 Final... 속성값을 가져옴
+            if (txtAttackPower != null) txtAttackPower.text = $"{stats.FinalObjectAttack}";
+            if (txtAttackSpeed != null) txtAttackSpeed.text = $"{stats.FinalAttackSpeed:F1}";
+            if (txtHealth != null)      txtHealth.text = $"{stats.FinalMaxHP}";
+            if (txtInsight != null)     txtInsight.text = $"{stats.FinalInsight}";
+            if (txtLuck != null)        txtLuck.text = $"{stats.FinalLuck:F2}";
+            if (txtMoveSpeed != null)   txtMoveSpeed.text = $"{stats.FinalMoveSpeed:F1}";
+            if (txtStrength != null)    txtStrength.text = $"{stats.FinalWallAttack}";
+        }
+        else
+        {
+            // 2. [보상 모드] 스탯 상승량 고정 표시 (+n)
+            if (txtAttackPower != null) txtAttackPower.text = "+ 2";
+            if (txtAttackSpeed != null) txtAttackSpeed.text = "+ 0.1";
+            if (txtHealth != null)      txtHealth.text = "+ 0.5";
+            if (txtInsight != null)     txtInsight.text = "-";
+            if (txtLuck != null)        txtLuck.text = "+ 0.05";
+            if (txtMoveSpeed != null)   txtMoveSpeed.text = "+ 0.1";
+            if (txtStrength != null)    txtStrength.text = "+ 2";
         }
     }
 
@@ -52,6 +110,8 @@ public class RewardUIManager : MonoBehaviour
 
     public void ShowPickStatUI()
     {
+        isViewMode = false; // 레벨업으로 들어온 경우 '강화 모드'
+        UpdateStatTexts();
         HideRewardUI();
         pickStatGroup.SetActive(true);
 
@@ -79,32 +139,38 @@ public class RewardUIManager : MonoBehaviour
         }
     }
 
+// --- 버튼 클릭 함수들 (isViewMode일 때는 작동 안 하게 방어 코드 추가) ---
     public void ButtonAttackPower()
     {
+        if (isViewMode) return; // 보기 모드면 클릭 무시
         PlayerStats.Instance.InvestStatPoint(StatType.ObjectAttack);
         Debug.Log(PlayerStats.Instance.runBonus.objectAttack);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonAttackSpeed()
     {
+        if (isViewMode) return;
         PlayerStats.Instance.InvestStatPoint(StatType.AttackSpeed);
         Debug.Log(PlayerStats.Instance.runBonus.attackSpeed);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonHealth()
     {
+        if (isViewMode) return;
         PlayerStats.Instance.InvestStatPoint(StatType.MaxHP);
         Debug.Log(PlayerStats.Instance.runBonus.maxHP);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonLuck()
     {
+        if (isViewMode) return;
         PlayerStats.Instance.InvestStatPoint(StatType.Luck);
         Debug.Log(PlayerStats.Instance.runBonus.luck);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonMoveSpeed()
     {
+        if (isViewMode) return;
         PlayerStats.Instance.InvestStatPoint(StatType.MoveSpeed);
         Debug.Log(StatType.MoveSpeed);
         Debug.Log(PlayerStats.Instance.runBonus.moveSpeed);
@@ -112,6 +178,7 @@ public class RewardUIManager : MonoBehaviour
     }
     public void ButtonStrength()
     {
+        if (isViewMode) return;
         PlayerStats.Instance.InvestStatPoint(StatType.WallAttack);
         Debug.Log(PlayerStats.Instance.runBonus.wallAttack);
         HideUIGameObj(pickStatGroup);
