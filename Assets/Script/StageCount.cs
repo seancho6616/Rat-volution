@@ -21,7 +21,7 @@ public class StageCount : MonoBehaviour
     {
         if (PlayerStats.Instance != null && stageText != null)
         {
-            stageText.text = "STAGE : " + PlayerStats.Instance.level;
+            stageText.text = "WAVE : " + PlayerStats.Instance.level;
         }
     }
 }

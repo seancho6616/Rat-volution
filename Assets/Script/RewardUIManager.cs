@@ -8,6 +8,9 @@ public class RewardUIManager : MonoBehaviour
     public GameObject rewardBTGroup; 
     public GameObject pickStatGroup;
 
+    [Header("Choose 텍스트 연결")]
+    public TMP_Text txtChoose; // Hierarchy의 'Choose' 오브젝트 연결
+
     [Header("스탯 텍스트 연결 (버튼 내부의 Text들)")]
     public TMP_Text txtAttackPower;
     public TMP_Text txtAttackSpeed;
@@ -101,11 +104,27 @@ public class RewardUIManager : MonoBehaviour
     {
         if (rewardBTGroup != null)
         {
-            rewardBTGroup.SetActive(true); // Reward BT Group 활성화
             
-            // 게임 일시정지
-            Time.timeScale = 0f; 
+            if (txtChoose != null) txtChoose.text = "CHOOSE"; // 초기화
+            rewardBTGroup.SetActive(true);
+            Time.timeScale = 0f;
         }
+    }
+
+    // --- 마우스 오버 시 호출될 함수들 ---
+    public void OnHoverStat()
+    {
+        if (txtChoose != null) txtChoose.text = "STAT";
+    }
+
+    public void OnHoverCard()
+    {
+        if (txtChoose != null) txtChoose.text = "CARD";
+    }
+
+    public void OnHoverExit()
+    {
+        if (txtChoose != null) txtChoose.text = "CHOOSE";
     }
 
     public void ShowPickStatUI()
