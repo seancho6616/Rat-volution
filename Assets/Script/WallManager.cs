@@ -13,7 +13,7 @@ public class WallData
     public GameObject wallObject; // 씬에 실제로 생성된 벽 게임 오브젝트
 }
 
-public class WallManager : MonoBehaviour
+public class WallManager : WallStats
 {
     public static WallManager Instance;
     public List<WallData> activeWalls = new List<WallData>();

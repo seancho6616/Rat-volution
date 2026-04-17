@@ -168,7 +168,7 @@ public class PlayerControl : PlayerStats
         if (isBlocked)
             {
                 Debug.Log("[Player] 오브젝트로 인해 이동 불가");
-                yield return StartCoroutine(BumpAndReturn(startPosition, direction));
+                yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
                 isMoving = false;
                 yield break;
             }
