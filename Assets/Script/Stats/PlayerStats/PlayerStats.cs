@@ -12,7 +12,7 @@ public class PlayerStats : MonoBehaviour
     public PlayerBaseStatsData baseData;
     public RunBonus runBonus = new RunBonus();
 
-    public int FinalMaxHP =>baseData.maxHP + runBonus.maxHP;
+    public int FinalMaxHP =>baseData.maxHP + (int)runBonus.maxHP;
     public int FinalWallCount => baseData.wallCount + runBonus.wallCount;
     public float FinalMoveSpeed => baseData.moveSpeed + runBonus.moveSpeed;
     public float FinalAttackSpeed => baseData.attackSpeed + runBonus.attackSpeed;
@@ -22,10 +22,10 @@ public class PlayerStats : MonoBehaviour
     public float FinalInsight => baseData.insight + runBonus.insight;
 
     [Header("치즈 개수")]
+    public float totalCheese;
     public float maxCheese = 49;
     public float currentCheese =0;
     public int level = 1;
-    private int hpCount =0;
 
     void Awake()
     {
@@ -51,6 +51,7 @@ public class PlayerStats : MonoBehaviour
     public void LevelUP()
     {
         level++;
+        totalCheese += currentCheese;
         currentCheese = 0;
         maxCheese += 5;
         StageMaker.Instance.GridSizeUP(level);
@@ -98,8 +99,7 @@ public class PlayerStats : MonoBehaviour
         switch (type)
         {
             case StatType.MaxHP:
-                hpCount++;
-                if(hpCount%2==0)    runBonus.maxHP+=1;
+                runBonus.maxHP += 0.5f;
                 break;
             case StatType.Luck:
                 runBonus.luck +=0.05f;
