@@ -36,41 +36,61 @@ public class FallingObject : MonoBehaviour, IDamageable
 
     private IEnumerator LifecycleRoutine()
     {
-        // 1. 생성 단계
-        CurrentState = ObjectState.Warning;
-        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.enabled =false;
-        SetVisualAlpha(0f); 
-        yield return new WaitForSeconds(1f);
-        meshRenderer.enabled = true;
-        // 2. 예고 단계
-        SetVisualAlpha(0.3f); // 반투명한 그림자 상태
-        yield return new WaitForSeconds(3f);
-
-        // 2. 낙하 단계 (1초)
-        CurrentState = ObjectState.Falling;
-        SetVisualAlpha(1.0f);
-        Vector3 startPos = transform.position + Vector3.up * 35f;
-        Vector3 endPos = transform.position;
-        
-        float elapsed = 0;
-        while (elapsed < 1f)
+        while (true)
         {
-            transform.position = Vector3.Lerp(startPos, endPos, elapsed / 1f);
-            elapsed += Time.deltaTime;
-            yield return null;
+            // 1. 생성 단계
+            CurrentState = ObjectState.Warning;
+            MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+            meshRenderer.enabled =false;
+            SetVisualAlpha(0f); 
+            yield return new WaitForSeconds(1f);
+            meshRenderer.enabled = true;
+            // 2. 예고 단계
+            SetVisualAlpha(0.3f); // 반투명한 그림자 상태
+            yield return new WaitForSeconds(3f);
+
+            // 2. 낙하 단계 (1초)
+            CurrentState = ObjectState.Falling;
+            SetVisualAlpha(1.0f);
+            Vector3 startPos = transform.position + Vector3.up * 35f;
+            Vector3 endPos = transform.position;
+            
+            float elapsed = 0;
+            while (elapsed < 1f)
+            {
+                transform.position = Vector3.Lerp(startPos, endPos, elapsed / 1f);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            transform.position = endPos;
+
+            // 3. 착지 시 벽 충돌 체크 (2x2 범위 = 20x20 유닛)
+            CheckWallCollision();
+
+            // 4. 유지 단계 (3초)
+            CurrentState = ObjectState.Grounded;
+            yield return new WaitForSeconds(3f);
+            // 5. 상승 단계
+            elapsed = 0;
+            while (elapsed < 1f)
+            {
+                transform.position = Vector3.Lerp(endPos, startPos, elapsed / 1f);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            transform.position = startPos;
+
+            // 위치 이동
+            ObjectManager.Instance.ReleasePosition(endPos);
+
+            Vector3 nextPos = ObjectManager.Instance.GetNextSpawnPosition();
+            if (nextPos != Vector3.zero)
+            {
+                transform.position = nextPos;
+            }
+            // if (CurrentState == ObjectState.Grounded) 
+            //     DestroyObject(false);
         }
-        transform.position = endPos;
-
-        // 3. 착지 시 벽 충돌 체크 (2x2 범위 = 20x20 유닛)
-        CheckWallCollision();
-
-        // 4. 유지 단계 (3초)
-        CurrentState = ObjectState.Grounded;
-        yield return new WaitForSeconds(3f);
-
-        if (CurrentState == ObjectState.Grounded) 
-            DestroyObject(false);
     }
 
     // 플레이어와 부딪혔을 때 처리
@@ -84,9 +104,9 @@ public class FallingObject : MonoBehaviour, IDamageable
             Wall wall = other.GetComponent<Wall>();
             if (wall != null)
             {
-                // wall.TakeDamage(999); // 벽에 데미지를 주고 즉시 파괴
-                wall.InstantDestroy();
-                CurrentState = ObjectState.Grounded; // 상태가 변경되어 더이상 공격하지 않음
+                Debug.Log("벽과 직접 충돌 - 둘 다 파괴");
+                wall.InstantDestroy(); // 벽 즉시 파괴
+                DestroyObject(false); // 자신도 파괴
                 return;
             }
         }
@@ -103,6 +123,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             {
                 player.TakeDamage(1);
             }
+            CurrentState = ObjectState.Grounded;
             Debug.Log("플레이어 공격, 데미지 -1");
         }
     }
@@ -110,7 +131,7 @@ public class FallingObject : MonoBehaviour, IDamageable
     private void CheckWallCollision()
     {
         // 2x2 범위를 체크 (중심점에서 각 방향으로 10유닛씩)
-        Collider[] hitWalls = Physics.OverlapBox(transform.position, new Vector3(9f, 5f, 9f), Quaternion.identity, LayerMask.GetMask("Wall"));
+        Collider[] hitWalls = Physics.OverlapBox(transform.position, new Vector3(4.5f, 5f, 4.5f), Quaternion.identity, LayerMask.GetMask("Wall"));
         
         if (hitWalls.Length > 0)
         {

@@ -120,19 +120,40 @@ public class PlayerControl : PlayerStats
         yield break;
     }
 
+    // 벽 충돌 체크
     if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
-{
-    Wall wall = hit.collider.GetComponent<Wall>();
-    if (wall != null)
     {
-        wall.TakeDamage(1); // 1 데미지
+        Wall wall = hit.collider.GetComponent<Wall>();
+        if (wall != null)
+        {
+            wall.TakeDamage(1); // 1 데미지
+        }
+
+        yield return StartCoroutine(BumpAndReturn(startPosition, direction));
+        isMoving = false;
+        yield break;
     }
 
-    yield return StartCoroutine(BumpAndReturn(startPosition, direction));
-    isMoving = false;
-    yield break;
-}
+    // 오브젝트 진입 차단
+    Collider[] hitObjects = Physics.OverlapBox(targetPosition, new Vector3(4.5f, 2f, 4.5f), Quaternion.identity, objectLayer);
+    bool isBlocked = false;
 
+    foreach (var obj in hitObjects)
+        {
+            FallingObject fallingObject = obj.GetComponent<FallingObject>();
+            if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Grounded)
+            {
+                isBlocked = true;
+                break;
+            }
+        }
+    if (isBlocked)
+        {
+            Debug.Log("[Player] 오브젝트로 인해 이동 불가");
+            yield return StartCoroutine(BumpAndReturn(startPosition, direction));
+            isMoving = false;
+            yield break;
+        }
     // 정상 이동
     yield return StartCoroutine(SmoothMove(startPosition, targetPosition));
     isMoving = false;
