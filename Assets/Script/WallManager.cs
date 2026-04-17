@@ -3,14 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class WallManager : WallStats
+public enum WallType { Horizontal, Vertical }
+
+[System.Serializable] 
+public class WallData
+{
+    public Vector3 position;      // 벽이 생성된 기준 좌표 (중복 생성 방지 체크용)
+    public WallType type;         // 가로(Horizontal) 또는 세로(Vertical) 타입
+    public GameObject wallObject; // 씬에 실제로 생성된 벽 게임 오브젝트
+}
+
+public class WallManager : MonoBehaviour
 {
     public static WallManager Instance;
+    public List<WallData> activeWalls = new List<WallData>();
+    [Header("Prefab")]
     public GameObject wallPrefab;
-    [SerializeField] private float wallSecound =10f;
+
+    [Header("Settings")]
+    [SerializeField] private float wallSecound =5f;
+    private const int MAxWallCount = 6; // 최대 벽 개수
 
     private List<Vector3> point = new List<Vector3>();
-    private Dictionary<Vector3, bool> wallSpawnDictionary = new Dictionary<Vector3, bool>();
 
     private void Awake()
     {
@@ -27,11 +41,6 @@ public class WallManager : WallStats
     {
         point = new List<Vector3>(SpawnPointManager.Instance.objectsSpawnPositions);
         //Debug.Log(point.Count);
-        foreach(Vector3 pos in point)
-        {
-            wallSpawnDictionary[pos] = false;
-            //Debug.Log(wallSpawnDictionary[pos]);
-        }
         StartCoroutine(SpawnWallRoutine());
     }
 
@@ -41,51 +50,49 @@ public class WallManager : WallStats
         {
             
             yield return new WaitForSeconds(wallSecound);
-            SpawnWallAtRandom();
+            if (activeWalls.Count < MAxWallCount)
+            {
+                SpawnWallAtRandom();
+            }
         }
     }
     private void SpawnWallAtRandom()
     {
-        List<Vector3> emptyPoints = new List<Vector3>();
-        foreach (var kvp in wallSpawnDictionary)
-            if (!kvp.Value) emptyPoints.Add(kvp.Key);
+        if (point.Count == 0) return;
 
-        if (emptyPoints.Count == 0)
-        {
-            //Debug.LogWarning("[WallManager] 벽을 스폰할 빈 공간이 없습니다.");
-            return;
-        }
-        Vector3 spawnPos = emptyPoints[Random.Range(0, emptyPoints.Count)];
-        // 가로 세로 방향 랜덤 결정
-        bool isVertical = Random.value > 0.5f;
+        Vector3 spawnPos = point[Random.Range(0, point.Count)];
+
+        WallType selectedType = (Random.value > 0.5f) ? WallType.Horizontal : WallType.Vertical;
+
+        bool isDuplicate = activeWalls.Any(w => w.position == spawnPos && w.type == selectedType);
+        if (isDuplicate) return;
+
+        Quaternion rotation = (selectedType == WallType.Vertical) ? Quaternion.Euler(0, 90f, 0) : Quaternion.identity;
 
         Vector3 adjustedPos = spawnPos;
-        Quaternion rotation;
-
-        if (isVertical)
+        if (selectedType == WallType.Vertical)
         {
-            // 세로 벽: Y축 90도 회전 z축 반칸 이동
             adjustedPos.z += 0.5f;
-            rotation = Quaternion.Euler(0, 90f, 0);
         }
         else
         {
-            // 가로 벽: X축으로 반칸 이동
             adjustedPos.x += 0.5f;
-            rotation = Quaternion.Euler(0, 0, 0);
         }
 
-        GameObject wallObj = Instantiate(wallPrefab, spawnPos, rotation);
-        wallObj.GetComponent<Wall>().Init(spawnPos);
-        
-        wallSpawnDictionary[spawnPos] = true;
-
-        //Debug.Log($"[WallManager] 벽 스폰: {spawnPos}");
+        GameObject wallObj = Instantiate(wallPrefab, adjustedPos, rotation);
+        if (wallObj.GetComponent<Wall>() != null)
+        {
+            wallObj.GetComponent<Wall>().Init(spawnPos);
+        }
+        activeWalls.Add(new WallData { position = spawnPos, type = selectedType, wallObject = wallObj });
     }
-    public void ReleaseWall(Vector3 pos)
+    public void ReleaseWall(GameObject wallObj)
     {
-        if (wallSpawnDictionary.ContainsKey(pos))
-            wallSpawnDictionary[pos] = false;
+        WallData data = activeWalls.Find(w => w.wallObject == wallObj);
+        if (data != null)
+        {
+            activeWalls.Remove(data);
+        }
     }
 
     public void InvsetWallStatPoint(DebuffType type, float amount)
