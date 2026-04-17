@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 3439927771148774247}
   - component: {fileID: 1666574728128129512}
   - component: {fileID: 7089471716344728078}
-  - component: {fileID: 2123835193768529639}
   - component: {fileID: 5526087251229042110}
   m_Layer: 7
   m_Name: Player
@@ -207,22 +206,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &2123835193768529639
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7058411208144566400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2347d90e27e1d6648965593c7546a3fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  baseData: {fileID: 11400000, guid: d9ebb8bc8d5eb254e9899ea2a4d5ed43, type: 2}
-  maxCheese: 49
-  currentCheese: 0
-  level: 1
 --- !u!114 &5526087251229042110
 MonoBehaviour:
   m_ObjectHideFlags: 0

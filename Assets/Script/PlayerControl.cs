@@ -15,6 +15,7 @@ public class PlayerControl : PlayerStats
     public float gridSize = 10f;       // 한 칸의 길이 10
     public float MoveTime => 1f / FinalMoveSpeed;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
     private bool isMoving = false;    // 이동 중 중복 입력 방지
+
     // 이동 제한 범위 설정 (중앙 기준으로 ±20 범위)
     [Header("Boundary Settings")]
     public float moveLimit = 32f;
@@ -28,6 +29,7 @@ public class PlayerControl : PlayerStats
     public LayerMask objectLayer;
 
     private Vector2 moveInput;
+    private bool pendingMove = false;
 
     private void Start()
     {
@@ -73,19 +75,19 @@ public class PlayerControl : PlayerStats
         // 현재 활성화된 씬을 다시 로드함
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
     public void OnMove(InputValue value)
     {
-        Debug.Log(MoveTime);
         // 이미 이동 중이면 새로운 입력을 무시함 (Key Down 시 1회 이동 보장)
-        if (isMoving) return;
-
         moveInput = value.Get<Vector2>();
 
-        if (moveInput != Vector2.zero)
+        //if (isMoving) return;
+
+        if (moveInput != Vector2.zero && !isMoving)
         {
             // 대각선 방지 및 방향 확정
             Vector3 direction = GetDirection(moveInput);
-            StartCoroutine(TryMove(direction));
+            StartCoroutine(MoveLoop(direction));
         }
     }
 
@@ -101,65 +103,81 @@ public class PlayerControl : PlayerStats
             return new Vector3(0, 0, input.y > 0 ? 1 : -1);
         }
     }
-
-    private IEnumerator TryMove(Vector3 direction)
-{
-    isMoving = true;
-    Vector3 startPosition = transform.position;
-    Vector3 targetPosition = startPosition + (direction * gridSize);
-
-    // 바닥의 중심으로부터 거리 계산
-    float distanceFromCenterX = Mathf.Abs(targetPosition.x - centerX);
-    float distanceFromCenterZ = Mathf.Abs(targetPosition.z - centerZ);
-
-    if (distanceFromCenterX > moveLimit || distanceFromCenterZ > moveLimit)
+    private IEnumerator MoveLoop(Vector3 firstDirection)
     {
-        Debug.Log("[Player] 판 밖으로 이동 시도 - 이동 불가");
-        yield return StartCoroutine(BumpAndReturn(startPosition, direction));
-        isMoving = false;
-        yield break;
-    }
-
-    // 벽 충돌 체크
-    if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
-    {
-        Wall wall = hit.collider.GetComponent<Wall>();
-        if (wall != null)
+        isMoving = true;
+        Vector3 direction = firstDirection;
+        while (true)
         {
-            wall.TakeDamage(1); // 1 데미지
-        }
+            float capturedMoveTime = MoveTime;
+            yield return StartCoroutine(TryMove(direction, capturedMoveTime));
 
-        yield return StartCoroutine(BumpAndReturn(startPosition, direction));
-        isMoving = false;
-        yield break;
-    }
-
-    // 오브젝트 진입 차단
-    Collider[] hitObjects = Physics.OverlapBox(targetPosition, new Vector3(4.5f, 2f, 4.5f), Quaternion.identity, objectLayer);
-    bool isBlocked = false;
-
-    foreach (var obj in hitObjects)
-        {
-            FallingObject fallingObject = obj.GetComponent<FallingObject>();
-            if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Grounded)
+            if(moveInput == Vector2.zero)
             {
-                isBlocked = true;
                 break;
             }
+            else    direction = GetDirection(moveInput);
         }
-    if (isBlocked)
+        isMoving = false;
+    }
+
+    private IEnumerator TryMove(Vector3 direction, float moveTime)
+    {
+        Debug.Log($"FinalMoveSpeed: {FinalMoveSpeed}, MoveTime: {MoveTime}, RunBonus: {runBonus.moveSpeed}");
+        // isMoving = true;
+        Vector3 startPosition = transform.position;
+        Vector3 targetPosition = startPosition + (direction * gridSize);
+
+        // 바닥의 중심으로부터 거리 계산
+        float distanceFromCenterX = Mathf.Abs(targetPosition.x - centerX);
+        float distanceFromCenterZ = Mathf.Abs(targetPosition.z - centerZ);
+
+        if (distanceFromCenterX > moveLimit || distanceFromCenterZ > moveLimit)
         {
-            Debug.Log("[Player] 오브젝트로 인해 이동 불가");
-            yield return StartCoroutine(BumpAndReturn(startPosition, direction));
+            Debug.Log("[Player] 판 밖으로 이동 시도 - 이동 불가");
+            yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
             isMoving = false;
             yield break;
         }
-    // 정상 이동
-    yield return StartCoroutine(SmoothMove(startPosition, targetPosition));
-    isMoving = false;
-}
 
-private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction)
+        if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
+        {
+            Wall wall = hit.collider.GetComponent<Wall>();
+            if (wall != null)
+            {
+                wall.TakeDamage(1); // 1 데미지
+            }
+
+            yield return StartCoroutine(BumpAndReturn(startPosition, direction, MoveTime));
+            // isMoving = false;
+            yield break;
+        }
+        // 오브젝트 진입 차단
+        Collider[] hitObjects = Physics.OverlapBox(targetPosition, new Vector3(4.5f, 2f, 4.5f), Quaternion.identity, objectLayer);
+        bool isBlocked = false;
+
+        foreach (var obj in hitObjects)
+            {
+                FallingObject fallingObject = obj.GetComponent<FallingObject>();
+                if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Grounded)
+                {
+                    isBlocked = true;
+                    break;
+                }
+            }
+        if (isBlocked)
+            {
+                Debug.Log("[Player] 오브젝트로 인해 이동 불가");
+                yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
+                isMoving = false;
+                yield break;
+            }
+        // 정상 이동
+        yield return StartCoroutine(SmoothMove(startPosition, targetPosition, moveTime));
+        // isMoving = false;
+    }
+
+private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction, float moveTime)
 {
     // 앞으로 절반 이동
     Vector3 bumpTarget = startPosition + direction * (gridSize * 0.4f);
@@ -188,7 +206,7 @@ private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction)
     transform.position = startPosition; // 정확히 원위치 스냅
 }
 
-private IEnumerator SmoothMove(Vector3 from, Vector3 to)
+private IEnumerator SmoothMove(Vector3 from, Vector3 to, float moveTime)
 {
     float elapsed = 0f;
     float duration = MoveTime * Vector3.Distance(from, to) / gridSize; // 거리 비례 시간
