@@ -31,7 +31,7 @@ public class Wall : MonoBehaviour
         if (WallManager.Instance != null)
         {
             // WallManager의 디렉토리에서 해당 위치를 다시 스폰 가능하게 함
-            WallManager.Instance.ReleaseWall(spawnPos);
+            WallManager.Instance.ReleaseWall(gameObject);
         }
         Destroy(gameObject);
     }

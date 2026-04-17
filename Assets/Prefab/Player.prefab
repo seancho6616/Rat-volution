@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1666574728128129512}
   - component: {fileID: 7089471716344728078}
   - component: {fileID: 5526087251229042110}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -130,16 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
   baseData: {fileID: 11400000, guid: d9ebb8bc8d5eb254e9899ea2a4d5ed43, type: 2}
-  runBonus:
-    maxHP: 0
-    wallCount: 0
-    moveSpeed: 0
-    attackSpeed: 0
-    objectAttack: 0
-    wallAttack: 0
-    luck: 0
-    insight: 0
-  maxCheese: 2
+  maxCheese: 5
   currentCheese: 0
   level: 1
   currentHeart: 0
@@ -228,16 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHitEffect
   baseData: {fileID: 11400000, guid: d9ebb8bc8d5eb254e9899ea2a4d5ed43, type: 2}
-  runBonus:
-    maxHP: 0
-    wallCount: 0
-    moveSpeed: 0
-    attackSpeed: 0
-    objectAttack: 0
-    wallAttack: 0
-    luck: 0
-    insight: 0
-  maxCheese: 2
+  maxCheese: 49
   currentCheese: 0
   level: 1
   duration: 1.5
