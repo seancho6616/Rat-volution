@@ -7,6 +7,7 @@ public class RewardUIManager : MonoBehaviour
     [Header("UI 연결")]
     public GameObject rewardBTGroup; 
     public GameObject pickStatGroup;
+    public GameObject pickCardGroup;
 
     [Header("Choose 텍스트 연결")]
     public TMP_Text txtChoose; // Hierarchy의 'Choose' 오브젝트 연결
@@ -35,6 +36,11 @@ public class RewardUIManager : MonoBehaviour
         if (pickStatGroup != null)
         {
             pickStatGroup.SetActive(false);
+        }
+
+        if (pickCardGroup != null)
+        {
+            pickCardGroup.SetActive(false);
         }
 
         // 게임 시작 시점의 PlayerStats 레벨을 기억
@@ -111,6 +117,7 @@ public class RewardUIManager : MonoBehaviour
         }
     }
 
+    // 보상 선택 창
     // --- 마우스 오버 시 호출될 함수들 ---
     public void OnHoverStat()
     {
@@ -127,6 +134,35 @@ public class RewardUIManager : MonoBehaviour
         if (txtChoose != null) txtChoose.text = "CHOOSE";
     }
 
+
+
+    // 카드 선택을 골랐을 때
+    public void ShowPickCardUI()
+    {
+        HideRewardUI();
+        pickCardGroup.SetActive(true);
+
+        Time.timeScale = 0f;
+    }
+
+    public void ButtonCard1()
+    {
+        HideUIGameObj(pickCardGroup);
+    }
+
+    public void ButtonCard2()
+    {
+        HideUIGameObj(pickCardGroup);
+    }
+
+    public void ButtonCard3()
+    {
+        HideUIGameObj(pickCardGroup);
+    }
+
+
+
+    // 스탯 선택을 골랐을 때
     public void ShowPickStatUI()
     {
         isViewMode = false; // 레벨업으로 들어온 경우 '강화 모드'
