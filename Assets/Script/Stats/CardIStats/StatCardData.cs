@@ -1,12 +1,20 @@
 using UnityEngine;
 
-/*  스탯 카드 데이터
-StatType는 Stats-PlayerStats-PlayerStats에 있음
-*/
-
 [CreateAssetMenu(fileName = "StatCardData", menuName = "Scriptable Objects/StatCardData")]
-public class StatCardData : ScriptableObject
+public class StatCardData : BaseCardData
 {
-    public StatType statType;   // 스탯 타입
-    public float    amount;     // 증가 수치
+    public StatType statType;
+
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        cardType = CardType.StatUp; // 자동 고정
+
+        if (statType == StatType.None)
+            Debug.LogWarning($"[StatCardData] '{cardName}': StatType이 설정되지 않았습니다.", this);
+        if (amount <= 0)
+            Debug.LogWarning($"[StatCardData] '{cardName}': amount가 0 이하입니다.", this);
+    }
+#endif
 }

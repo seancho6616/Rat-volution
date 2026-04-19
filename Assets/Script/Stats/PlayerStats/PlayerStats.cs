@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum StatType
 {
+    None = -1,
     MaxHP, WallCount, Luck, Insight,
     MoveSpeed, ObjectAttack, AttackSpeed, WallAttack,
 }
@@ -62,7 +63,7 @@ public class PlayerStats : MonoBehaviour
         switch (card.cardType)
         {
             case CardType.StatUp:
-                StatType statType = card.statCardData.statType;
+                StatType statType = card.statType;
                 InvestStatPoint(statType);
                 break;
             case CardType.Item:

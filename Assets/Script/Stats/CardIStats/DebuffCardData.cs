@@ -9,9 +9,20 @@ public enum DebuffType{
     }
 
 [CreateAssetMenu(fileName = "DebuffCardData", menuName = "Scriptable Objects/DebuffCardData")]
-public class DebuffCardData : ScriptableObject
+public class DebuffCardData : BaseCardData
 {
-    public float        minAmount;      // 최소값
-    public float        mixAmount;      // 최대값
     public DebuffType   debuffType;     // 디버프 타입
+    public float        minAmount;      // 최소값
+    public float        maxAmount;      // 최대값
+
+
+#if UNITY_EDITOR
+private void OnValidate()
+{
+    cardType = CardType.Debuff; // 자동 고정
+
+    if (minAmount > maxAmount)
+        Debug.LogWarning($"[DebuffCardData] '{cardName}': minAmount가 maxAmount보다 큽니다.", this);
+}
+#endif
 }
