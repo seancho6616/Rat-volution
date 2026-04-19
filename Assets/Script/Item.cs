@@ -7,7 +7,7 @@ public class Item : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player"))
         {
-            PlayerStats.Instance.currentCheese++;
+            PlayerStats.Instance.GainCheese(count);
             // 1. 게이지 상승 (기존 로직 유지)
             Gauge gaugeScript = Object.FindAnyObjectByType<Gauge>();
             if (gaugeScript != null) gaugeScript.AddScore(1);
@@ -19,7 +19,6 @@ public class Item : MonoBehaviour
                 stageScript.OnItemCollected(); 
             }
             ItemManager.Instance.itemSpawnCount--;
-            Debug.Log(ItemManager.Instance.itemSpawnCount);
             Destroy(gameObject);
         }
     }

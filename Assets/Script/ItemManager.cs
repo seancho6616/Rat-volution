@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Mono.Cecil.Cil;
 using UnityEngine;
 
 public class ItemManager : MonoBehaviour
@@ -33,7 +32,6 @@ public class ItemManager : MonoBehaviour
             GameObject obj = Instantiate(itemPrefab, pos, Quaternion.identity);
             itemSpawnCount++;
         }
-        Debug.Log(itemSpawnCount);
         StartCoroutine(ItemSpawn());
     }
 

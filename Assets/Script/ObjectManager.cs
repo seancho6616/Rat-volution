@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ObjectManager : MonoBehaviour
+public class ObjectManager : ObjectData
 {
     public static ObjectManager Instance;
     [SerializeField] private GameObject player;
@@ -34,12 +34,60 @@ public class ObjectManager : MonoBehaviour
         StartCoroutine(SpawnRoutine());
     }
 
+    // 오브젝트 상승 후 재배치 루틴
+    public void ReleasePosition(Vector3 pos)
+    {
+        if (objectDictionary.ContainsKey(pos))
+        {
+            objectDictionary[pos] = false;
+        }
+    }
+
+    // 생성된 오브젝트 위치 변환
+    public Vector3 GetNextSpawnPosition()
+    {
+        Vector2 playerIdx = GetPlayerPointIndex();
+        List<Vector3> candidates = new List<Vector3>
+        {
+            new Vector3(playerIdx.x + 5f, 0, playerIdx.y + 5f),
+            new Vector3(playerIdx.x + 5f, 0, playerIdx.y - 5f),
+            new Vector3(playerIdx.x - 5f, 0, playerIdx.y + 5f),
+            new Vector3(playerIdx.x - 5f, 0, playerIdx.y - 5f)
+        };
+        List<Vector3> validCandidates = candidates.FindAll(c =>
+        point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
+
+        validCandidates = validCandidates.FindAll(c =>
+        {
+            foreach (var obj in activeObjects)
+            {
+                if (obj != null && Vector3.Distance(c, obj.transform.position) < 18f)
+                {
+                    return false; // 너무 가까운 위치는 제외
+                }
+            }
+            return true;
+        });
+
+        if (validCandidates.Count > 0)
+        {
+            Vector3 spawnPos = validCandidates[Random.Range(0, validCandidates.Count)];
+            objectDictionary[spawnPos] = true;
+            return spawnPos;
+        }
+        else
+        {
+            Debug.Log("유효한 스폰 위치 없음");
+            return Vector3.zero; // 유효한 위치가 없을 때
+        }
+    }
+
     private IEnumerator SpawnRoutine()
     {
         while (true)
         {
             // 레벨 1 기준 3~4초 간격 생성
-            yield return new WaitForSeconds(Random.Range(3f, 4f));
+            yield return new WaitForSeconds(Random.Range(FinalMinSpawnTime, FinalMixSpawnTime));
 
             // 생성 조건: 유예 기간이 아니고, 최대 개수(3개) 미만일 때
             if (!spawnPaused && activeObjects.Count < 3)
@@ -67,9 +115,13 @@ public class ObjectManager : MonoBehaviour
         {
             foreach (var obj in activeObjects)
             {
-                if (obj != null && Vector3.Distance(c, obj.transform.position) < 15f)
+                if (obj != null)
                 {
-                    return false; // 너무 가까운 위치는 제외
+                    Vector3 objPosXZ = new Vector3(obj.transform.position.x, 0, obj.transform.position.z);
+                    if (Vector3.Distance(c, objPosXZ) < 18f)
+                    {
+                        return false; // 너무 가까운 위치는 제외
+                    }
                 }
             }
             return true;
@@ -112,5 +164,29 @@ public class ObjectManager : MonoBehaviour
         Debug.Log("플레이어가 물체 파괴! 5초간 생성 중단");
         yield return new WaitForSeconds(5f);
         spawnPaused = false;
+    }
+
+    public void InvsetObjStatPoint(DebuffType type, float amount)
+    {
+        switch (type)
+        {
+            case DebuffType.ObjHp:
+                runBonus.hp += (int)amount;
+                break;
+            case DebuffType.ObjLivingTime:
+                runBonus.livingTime -= amount;
+                break;
+            case DebuffType.ObjReBuildTime:
+                runBonus.reBuildTime -= amount;
+                break;
+            case DebuffType.ObjSpawnTime:
+                runBonus.minSpawnTime -= amount;
+                runBonus.mixSpawnTime -= amount;
+                break;
+            case DebuffType.ObjWarningTime:
+                runBonus.minWarningTime -= amount;
+                runBonus.mixWarningTime -= amount;
+                break;
+        }
     }
 }

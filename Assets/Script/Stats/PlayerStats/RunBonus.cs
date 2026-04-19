@@ -1,15 +1,15 @@
 using UnityEngine;
-
+[System.Serializable]
 public class RunBonus
 {
-    public int maxHP =0;
-    public int wallCount = 0;
-    public float moveSpeed = 0f;
-    public float attackSpeed =0f;
-    public float objectAttack =0f;
-    public float wallAttack =0f;
-    public float luck =0f;
-    public float insight =0f;
+    public float   maxHP;
+    public int   wallCount;
+    public float moveSpeed =0;
+    public float attackSpeed;
+    public float objectAttack;
+    public float wallAttack;
+    public float luck;
+    public float insight;
 
     public void Reset()
     {
