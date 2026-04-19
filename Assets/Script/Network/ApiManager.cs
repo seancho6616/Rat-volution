@@ -91,7 +91,8 @@ public class ApiManager : MonoBehaviour
     // -------- API 메서드 --------
 
     // 회원가입
-    public IEnumerator Register(string login_id, string nickname, string password)
+    public IEnumerator Register(string login_id, string nickname, string password,
+        System.Action onSuccess, System.Action<string> onFail)
     {
         RegisterRequest data = new RegisterRequest
         {
@@ -100,14 +101,15 @@ public class ApiManager : MonoBehaviour
             password = password
         };
 
-        yield return StartCoroutine(Post("/auth/register", JsonUtility.ToJson(data), (result) =>
-        {
-            Debug.Log("회원가입 성공: " + result);
-        }));
+        yield return StartCoroutine(Post("/auth/register", JsonUtility.ToJson(data),
+            onSuccess: (result) => onSuccess?.Invoke(),
+            onFail: (error) => onFail?.Invoke(error)
+        ));
     }
 
     // 로그인
-    public IEnumerator Login(string login_id, string password)
+    public IEnumerator Login(string login_id, string password,
+        System.Action onSuccess, System.Action<string> onFail)
     {
         LoginRequest data = new LoginRequest
         {
@@ -115,17 +117,20 @@ public class ApiManager : MonoBehaviour
             password = password
         };
 
-        yield return StartCoroutine(Post("/auth/login", JsonUtility.ToJson(data), (result) =>
-        {
-            LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
-            GameManager.instance.userId = response.user_id;
-            GameManager.instance.nickname = response.nickname;
-            Debug.Log("로그인 성공: " + response.nickname);
-        }));
+        yield return StartCoroutine(Post("/auth/login", JsonUtility.ToJson(data),
+            onSuccess: (result) =>
+            {
+                LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
+                GameManager.instance.userId = response.user_id;
+                GameManager.instance.nickname = response.nickname;
+                onSuccess?.Invoke();
+            },
+            onFail: (error) => onFail?.Invoke(error)
+        ));
     }
 
     // 게스트 로그인
-    public IEnumerator GuestLogin()
+    public IEnumerator GuestLogin(System.Action onSuccess, System.Action<string> onFail)
     {
         string uuid = PlayerPrefs.GetString("guest_uuid", "");
         if (uuid == "")
@@ -136,14 +141,40 @@ public class ApiManager : MonoBehaviour
 
         GuestRequest data = new GuestRequest { uuid = uuid };
 
-        yield return StartCoroutine(Post("/auth/guest", JsonUtility.ToJson(data), (result) =>
-        {
-            LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
-            GameManager.instance.userId = response.user_id;
-            GameManager.instance.nickname = response.nickname;
-            Debug.Log("게스트 로그인 성공: " + response.nickname);
-        }));
+        yield return StartCoroutine(Post("/auth/guest", JsonUtility.ToJson(data),
+            onSuccess: (result) =>
+            {
+                LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
+                GameManager.instance.userId = response.user_id;
+                GameManager.instance.nickname = response.nickname;
+                onSuccess?.Invoke();
+            },
+            onFail: (error) => onFail?.Invoke(error)
+        ));
     }
+
+    // 공통 POST (onFail 추가)
+    private IEnumerator Post(string endpoint, string json,
+        System.Action<string> onSuccess, System.Action<string> onFail)
+    {
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+
+        UnityWebRequest request = new UnityWebRequest(baseUrl + endpoint, "POST");
+        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.downloadHandler = new DownloadHandlerBuffer();
+        request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            onSuccess?.Invoke(request.downloadHandler.text);
+        }
+        else
+        {
+            onFail?.Invoke(request.downloadHandler.text);
+        }
+    }    
 
     // 게임 시작
     public IEnumerator GameStart()
