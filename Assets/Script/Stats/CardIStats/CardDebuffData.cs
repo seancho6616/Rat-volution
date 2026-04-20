@@ -8,8 +8,8 @@ public enum DebuffType{
     WallHp, WallBuildTime,
     }
 
-[CreateAssetMenu(fileName = "DebuffCardData", menuName = "Scriptable Objects/DebuffCardData")]
-public class DebuffCardData : BaseCardData
+[CreateAssetMenu(fileName = "CardDebuffData", menuName = "Scriptable Objects/CardDebuffData")]
+public class CardDebuffData : BaseCardData
 {
     public DebuffType   debuffType;     // 디버프 타입
     public float        minAmount;      // 최소값
@@ -22,7 +22,7 @@ private void OnValidate()
     cardType = CardType.Debuff; // 자동 고정
 
     if (minAmount > maxAmount)
-        Debug.LogWarning($"[DebuffCardData] '{cardName}': minAmount가 maxAmount보다 큽니다.", this);
+        Debug.LogWarning($"[CardDebuffData] '{cardName}': minAmount가 maxAmount보다 큽니다.", this);
 }
 #endif
 }

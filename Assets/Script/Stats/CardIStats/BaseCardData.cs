@@ -13,6 +13,7 @@ public class BaseCardData : ScriptableObject
 {
     [Header("공통 정보")]
     public string       cardName;       // 카드 이름
+    [TextArea]
     public string       description;    // 카드 설명
     public CardType     cardType;       // 카드 종류
     public CardRarity   cardRarity;     // 카드 등급
