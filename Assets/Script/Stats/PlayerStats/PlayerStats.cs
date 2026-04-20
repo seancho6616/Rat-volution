@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum StatType
 {
+    None = -1,
     MaxHP, WallCount, Luck, Insight,
     MoveSpeed, ObjectAttack, AttackSpeed, WallAttack,
 }
@@ -57,37 +58,37 @@ public class PlayerStats : MonoBehaviour
         StageMaker.Instance.GridSizeUP(level);
     }
 
-    public void ApplyCard(CardData card)
-    {
-        switch (card.cardType)
-        {
-            case CardType.StatUp:
-                StatType statType = card.statCardData.statType;
-                InvestStatPoint(statType);
-                break;
-            case CardType.Item:
-                break;
-            case CardType.Debuff:
-                DebuffType debuffType = card.debuffCardData.debuffType;
-                float amount = Random.Range(card.debuffCardData.minAmount,
-                card.debuffCardData.mixAmount);
-                switch (debuffType)
-                {
-                    case DebuffType.ObjHp:
-                    case DebuffType.ObjLivingTime:
-                    case DebuffType.ObjReBuildTime:
-                    case DebuffType.ObjSpawnTime:
-                    case DebuffType.ObjWarningTime:
-                        ObjectManager.Instance.InvsetObjStatPoint(debuffType, amount);
-                        break;
-                    case DebuffType.WallHp:
-                    case DebuffType.WallBuildTime:
-                        WallManager.Instance.InvsetWallStatPoint(debuffType, amount);
-                        break;
-                }
-                break;
-        }
-    }
+    // public void ApplyCard(CardData card)
+    // {
+    //     switch (card.cardType)
+    //     {
+    //         case CardType.StatUp:
+    //             StatType statType = card.statType;
+    //             InvestStatPoint(statType);
+    //             break;
+    //         case CardType.Item:
+    //             break;
+    //         case CardType.Debuff:
+    //             DebuffType debuffType = card.debuffCardData.debuffType;
+    //             float amount = Random.Range(card.debuffCardData.minAmount,
+    //             card.debuffCardData.mixAmount);
+    //             switch (debuffType)
+    //             {
+    //                 case DebuffType.ObjHp:
+    //                 case DebuffType.ObjLivingTime:
+    //                 case DebuffType.ObjReBuildTime:
+    //                 case DebuffType.ObjSpawnTime:
+    //                 case DebuffType.ObjWarningTime:
+    //                     ObjectManager.Instance.InvsetObjStatPoint(debuffType, amount);
+    //                     break;
+    //                 case DebuffType.WallHp:
+    //                 case DebuffType.WallBuildTime:
+    //                     WallManager.Instance.InvsetWallStatPoint(debuffType, amount);
+    //                     break;
+    //             }
+    //             break;
+    //     }
+    // }
     
     public void InvestStatPoint(StatType type)
     {

@@ -1,0 +1,62 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CardManager : MonoBehaviour
+{
+    public static CardManager Instance;
+    [Header("카드")]
+    [SerializeField] private List<CardStatData> statCards;
+    [SerializeField] private List<CardItemData> itemCards;
+    [SerializeField] private List<CardDebuffData> debuffCards;
+
+    [Header("레어도 가중치")]
+    [SerializeField] private int weightCommon = 50;
+    [SerializeField] private int weightEpic = 35;
+    [SerializeField] private int weightLegend = 15;
+
+    void Awake()
+    {
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    public void LevelUP()
+    {
+        List<BaseCardData> pickCard = DrawCards(3);
+    }
+    
+    private List<BaseCardData> DrawCards(int count)
+    {
+        var allCards = new List<BaseCardData>();
+        allCards.AddRange(statCards);
+        allCards.AddRange(itemCards);
+        allCards.AddRange(debuffCards);
+
+        var drawn = new List<BaseCardData>();
+        var pool = new List<BaseCardData>(allCards);
+
+        for(int i=0; i<count&& pool.Count>0; i++)
+        {
+            CardRarity rarity = PickRarity();
+            var candidates = pool.FindAll(c => c.cardRarity == rarity);
+            if(candidates.Count == 0)
+                candidates = pool.FindAll(c => c.cardRarity == CardRarity.Common);
+            if(candidates.Count == 0)   break;
+
+            BaseCardData picked = candidates[Random.Range(0, candidates.Count)];
+            drawn.Add(picked);
+            pool.Remove(picked);
+        }
+
+        return drawn;
+    }
+
+    private CardRarity PickRarity()
+    {
+        int total = weightCommon + weightEpic + weightLegend;
+        int one = Random.Range(0, total);
+        if (one < weightCommon) return CardRarity.Common;
+        if (one < weightEpic + weightEpic) return CardRarity.Epic;
+        return CardRarity.Legend;
+    }
+}
