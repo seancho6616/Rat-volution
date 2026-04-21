@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: DisposableShield_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
-  cardName: DisposableShield_Epic
+  cardName: DisposableShield
   description: 
   cardType: 1
   cardRarity: 1
   amount: 1
   icon: {fileID: 0}
   itemType: 1
-  scalePerStack: 0
+  scalePerStack: 1
   maxStack: 3

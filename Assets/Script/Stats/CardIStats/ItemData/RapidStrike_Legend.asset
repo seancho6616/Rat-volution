@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: RapidStrike_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
-  cardName: RapidStrike_Legend
+  cardName: RapidStrike
   description: 
   cardType: 1
   cardRarity: 2
   amount: 0.2
   icon: {fileID: 0}
   itemType: 0
-  scalePerStack: 0
+  scalePerStack: 0.2
   maxStack: 1
