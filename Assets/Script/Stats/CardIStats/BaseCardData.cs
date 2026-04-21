@@ -8,7 +8,7 @@ CardRarity  - 카드 등급 선언
 icon은 인벤토리 UI에 동일 사용
 */
 public enum CardType{ StatUp, Item, Debuff }
-public enum CardRarity{Common, Epic, Legend, Debuff }
+public enum CardRarity{Normal, Rare, Legend, Debuff }
 public class BaseCardData : ScriptableObject
 {
     [Header("공통 정보")]

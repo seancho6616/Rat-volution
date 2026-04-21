@@ -17,12 +17,12 @@ public class CardDebuffData : BaseCardData
 
 
 #if UNITY_EDITOR
-private void OnValidate()
-{
-    cardType = CardType.Debuff; // 자동 고정
+    private void OnValidate()
+    {
+        cardType = CardType.Debuff; // 자동 고정
 
-    if (minAmount > maxAmount)
-        Debug.LogWarning($"[CardDebuffData] '{cardName}': minAmount가 maxAmount보다 큽니다.", this);
-}
+        if (minAmount > maxAmount)
+            Debug.LogWarning($"[CardDebuffData] '{cardName}': minAmount가 maxAmount보다 큽니다.", this);
+    }
 #endif
 }

@@ -11,8 +11,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private List<CardDebuffData> debuffCards;
 
     [Header("레어도 가중치")]
-    [SerializeField] private int weightCommon = 50;
-    [SerializeField] private int weightEpic = 35;
+    [SerializeField] private int weightNormal = 50;
+    [SerializeField] private int weightRare = 35;
     [SerializeField] private int weightLegend = 15;
 
     public List<GameObject> cardUIs; 
@@ -48,7 +48,7 @@ public class CardManager : MonoBehaviour
             CardRarity rarity = PickRarity();
             var candidates = pool.FindAll(c => c.cardRarity == rarity);
             if(candidates.Count == 0)
-                candidates = pool.FindAll(c => c.cardRarity == CardRarity.Common);
+                candidates = pool.FindAll(c => c.cardRarity == CardRarity.Normal);
             if(candidates.Count == 0)   break;
 
             BaseCardData picked = candidates[Random.Range(0, candidates.Count)];
@@ -61,10 +61,10 @@ public class CardManager : MonoBehaviour
 
     private CardRarity PickRarity()
     {
-        int total = weightCommon + weightEpic + weightLegend;
+        int total = weightNormal + weightRare + weightLegend;
         int one = Random.Range(0, total);
-        if (one < weightCommon) return CardRarity.Common;
-        if (one < weightEpic + weightEpic) return CardRarity.Epic;
+        if (one < weightNormal) return CardRarity.Normal;
+        if (one < weightRare + weightRare) return CardRarity.Rare;
         return CardRarity.Legend;
     }
 }
