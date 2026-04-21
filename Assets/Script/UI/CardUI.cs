@@ -10,29 +10,29 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public GameObject Motion; // 회전시킬 오브젝트
     public GameObject frontView; // FrontView 연결
     public GameObject backView;  // BackView 연결
-    // public Image imgIcon;
-    // public TMP_Text txtName;
-    // public TMP_Text txtRarity;
-    // public TMP_Text txtDesc;
+    public Image imgIcon;
+    public TMP_Text txtName;
+    public TMP_Text txtRarity;
+    public TMP_Text txtDesc;
 
-    // private CardData currentData;
+    private BaseCardData currentData;
     private bool isFlipped = false;
     private Coroutine flipCoroutine;
     private float flipDuration = 0.25f;
 
     // 카드 데이터 설정
-    // public void SetCardData(CardData data)
-    // {
-    //     currentData = data;
-    //     if (imgIcon != null) imgIcon.sprite = data.icon;
-    //     if (txtName != null) txtName.text = data.cardName;
-    //     if (txtRarity != null) txtRarity.text = data.cardRarity.ToString();
-    //     if (txtDesc != null) txtDesc.text = data.description;
+    public void SetCardData(BaseCardData data)
+    {
+        currentData = data;
+        if (imgIcon != null) imgIcon.sprite = data.icon;
+        if (txtName != null) txtName.text = data.cardName;
+        if (txtRarity != null) txtRarity.text = data.cardRarity.ToString();
+        if (txtDesc != null) txtDesc.text = data.description;
         
-    //     // 초기 상태: 앞면(커버)이 보이도록 설정
-    //     Motion.transform.rotation = Quaternion.identity;
-    //     isFlipped = false;
-    // }
+        // 초기 상태: 앞면(커버)이 보이도록 설정
+        Motion.transform.rotation = Quaternion.identity;
+        isFlipped = false;
+    }
     
 
     // 마우스 올렸을 때: 뒷면(정보)으로 회전

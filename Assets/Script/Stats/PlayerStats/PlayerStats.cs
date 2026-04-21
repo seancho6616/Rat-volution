@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum StatType
@@ -12,6 +13,7 @@ public class PlayerStats : MonoBehaviour
     public static PlayerStats Instance;
     public PlayerBaseStatsData baseData;
     public RunBonus runBonus = new RunBonus();
+    public InventoryItem item = new InventoryItem();
 
     public int FinalMaxHP =>baseData.maxHP + (int)runBonus.maxHP;
     public int FinalWallCount => baseData.wallCount + runBonus.wallCount;
@@ -27,6 +29,9 @@ public class PlayerStats : MonoBehaviour
     public float maxCheese = 49;
     public float currentCheese =0;
     public int level = 1;
+
+    public int shield;
+    
 
     void Awake()
     {
@@ -56,6 +61,7 @@ public class PlayerStats : MonoBehaviour
         currentCheese = 0;
         maxCheese += 5;
         StageMaker.Instance.GridSizeUP(level);
+        CardManager.Instance.LevelUP();
     }
 
     // public void ApplyCard(CardData card)

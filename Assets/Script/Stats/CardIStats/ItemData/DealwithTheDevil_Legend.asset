@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: DealwithTheDevil_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
-  cardName: DealwithTheDevil_Legend
+  cardName: DealwithTheDevil
   description: 
   cardType: 1
   cardRarity: 2
-  amount: -1
+  amount: 0.15
   icon: {fileID: 0}
   itemType: 1
-  scalePerStack: 0
-  maxStack: 0
+  scalePerStack: 0.15
+  maxStack: 1

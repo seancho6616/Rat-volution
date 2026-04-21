@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CardManager : MonoBehaviour
@@ -14,6 +15,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private int weightEpic = 35;
     [SerializeField] private int weightLegend = 15;
 
+    public List<GameObject> cardUIs; 
+
     void Awake()
     {
         if(Instance == null) Instance = this;
@@ -22,9 +25,14 @@ public class CardManager : MonoBehaviour
 
     public void LevelUP()
     {
-        List<BaseCardData> pickCard = DrawCards(3);
+        List<BaseCardData> pickCard = DrawCards(cardUIs.Count);
+        for(int i=0; i<pickCard.Count; i++)
+        {
+            CardUI cardUI = cardUIs[i].GetComponent<CardUI>();
+            cardUI.SetCardData(pickCard[i]);
+        }
     }
-    
+
     private List<BaseCardData> DrawCards(int count)
     {
         var allCards = new List<BaseCardData>();
