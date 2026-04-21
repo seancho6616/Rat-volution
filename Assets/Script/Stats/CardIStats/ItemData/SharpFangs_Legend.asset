@@ -20,4 +20,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   itemType: 0
   scalePerStack: 0.1
-  maxStack: 7
+  maxStack: 1

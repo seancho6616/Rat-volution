@@ -13,7 +13,7 @@ public class PlayerStats : MonoBehaviour
     public static PlayerStats Instance;
     public PlayerBaseStatsData baseData;
     public RunBonus runBonus = new RunBonus();
-    public InventoryItem item = new InventoryItem();
+    public InventoryItem item => Inventory.Instance.item;
 
     public int FinalMaxHP =>baseData.maxHP + (int)runBonus.maxHP;
     public int FinalWallCount => baseData.wallCount + runBonus.wallCount;
@@ -31,7 +31,6 @@ public class PlayerStats : MonoBehaviour
     public int level = 1;
 
     public int shield;
-    
 
     void Awake()
     {

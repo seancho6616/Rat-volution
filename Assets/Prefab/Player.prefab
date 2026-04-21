@@ -130,9 +130,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerControl
   baseData: {fileID: 11400000, guid: d9ebb8bc8d5eb254e9899ea2a4d5ed43, type: 2}
+  runBonus:
+    maxHP: 0
+    wallCount: 0
+    moveSpeed: 0
+    attackSpeed: 0
+    objectAttack: 0
+    wallAttack: 0
+    luck: 0
+    insight: 0
+  totalCheese: 0
   maxCheese: 5
   currentCheese: 0
   level: 1
+  shield: 0
   currentHeart: 0
   heartImages:
   - {fileID: 0}
@@ -218,10 +229,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 521b33c6d75aa7e4bb6bde5d89adca9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHitEffect
-  baseData: {fileID: 11400000, guid: d9ebb8bc8d5eb254e9899ea2a4d5ed43, type: 2}
-  maxCheese: 49
-  currentCheese: 0
-  level: 1
   duration: 1.5
   flickerSpeed: 0.1
   alphaValue: 0.3
