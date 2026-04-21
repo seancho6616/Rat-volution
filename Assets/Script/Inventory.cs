@@ -5,9 +5,8 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public static Inventory Instance;
-    public readonly Dictionary<CardItemData, int> itemCheck = new Dictionary<CardItemData, int>();
-    InventoryItem item = PlayerStats.Instance.item;
-
+    public readonly Dictionary<CardItemData, float> itemCheck = new Dictionary<CardItemData, float>();
+    public InventoryItem item = new InventoryItem();
     void Awake()
     {
         if(Instance ==null) Instance = this;
@@ -16,21 +15,24 @@ public class Inventory : MonoBehaviour
 
     void AddItem(CardItemData card)
     {
-        int currentStack = itemCheck.ContainsKey(card) ? itemCheck[card] : 0;
+        float currentStack = itemCheck.ContainsKey(card) ? itemCheck[card] : 0;
         if (currentStack >= card.maxStack)
         {
             Debug.Log("최대 중복수 도달");
             return;
         }
-        itemCheck[card] = currentStack + 1;
+        if(card.cardName == "SharpFangs")   itemCheck[card] = currentStack + card.scalePerStack;
+        else itemCheck[card] = currentStack + 1;
         AddItemValue(card);
     }
 
     private void AddItemValue(CardItemData card)
     {
-        float amount = itemCheck[card] == 1 ? card.amount : card.scalePerStack;
-        int stack = itemCheck[card];
-
+        float amount = itemCheck.ContainsKey(card) ? card.amount : card.scalePerStack;
+        if (!item.invetory.ContainsKey(card))
+        {
+            item.invetory.Add(card, true);
+        }
         switch (card.cardName)
         {
             case "DisposableShield":

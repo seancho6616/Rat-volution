@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331d5c47d8408e54893eaa7fb08fc4d1, type: 3}
   m_Name: MoveSpeed_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
-  cardName: MoveSpeed_Legend
+  cardName: MoveSpeed
   description: 
   cardType: 0
   cardRarity: 2

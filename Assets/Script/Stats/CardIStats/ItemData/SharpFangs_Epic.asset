@@ -19,5 +19,5 @@ MonoBehaviour:
   amount: 0.1
   icon: {fileID: 0}
   itemType: 0
-  scalePerStack: 0.05
-  maxStack: 7
+  scalePerStack: 0.1
+  maxStack: 1
