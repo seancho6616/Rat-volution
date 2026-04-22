@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331d5c47d8408e54893eaa7fb08fc4d1, type: 3}
   m_Name: ObjAttack_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
+  code: STAT_ATTACK_POWER_LEGEND
   cardName: ObjAttack
   description: "\uACF5\uACA9\uB825 \uC99D\uAC00\n\uACE0\uC591\uC774 \uBC1C\uC5D0\uAC8C
     \uC904 \uC218 \uC788\uB294 \uD53C\uD574"

@@ -12,6 +12,7 @@ public enum CardRarity{Normal, Rare, Legend, Debuff }
 public class BaseCardData : ScriptableObject
 {
     [Header("공통 정보")]
+    public string       code;           // 서버 cards_master.code 와 1:1 매칭
     public string       cardName;       // 카드 이름
     [TextArea]
     public string       description;    // 카드 설명

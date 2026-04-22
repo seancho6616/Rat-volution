@@ -48,8 +48,52 @@ public class PlayerControl : PlayerStats
         UpdateHeartUI();
         if (currentHeart <= 0)
         {
-            RestartGame();
+            StartCoroutine(HandleGameOver());
         }
+    }
+
+    // 게임오버 처리: 서버에 결과 전송 후 씬 재시작 (API-GAM-002 / REQ-043)
+    private IEnumerator HandleGameOver()
+    {
+        Debug.Log("[Player] 게임 오버 - 서버에 결과 전송");
+
+        // 이번 판 누적 치즈 (클리어된 라운드 합계 + 현재 라운드 진행분)
+        int totalCheeseEarned = (int)(PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese);
+
+        // 현재 스탯 스냅샷 (PlayerStats → 서버 Stats 스키마 매핑)
+        ApiManager.Stats stats = new ApiManager.Stats
+        {
+            move_speed   = PlayerStats.Instance.FinalMoveSpeed,
+            luck         = PlayerStats.Instance.FinalLuck,
+            insight      = PlayerStats.Instance.FinalInsight,
+            attack_speed = PlayerStats.Instance.FinalAttackSpeed,
+            power        = PlayerStats.Instance.FinalWallAttack,
+            attack_power = PlayerStats.Instance.FinalObjectAttack
+        };
+
+        // 방어: 네트워크 매니저나 game_run_id 없으면 API 스킵하고 바로 재시작
+        if (ApiManager.instance == null
+            || GameManager.instance == null
+            || string.IsNullOrEmpty(GameManager.instance.gameRunId))
+        {
+            Debug.LogWarning("[Player] API 정보 없음 - 서버 전송 스킵하고 재시작");
+            RestartGame();
+            yield break;
+        }
+
+        // 서버 전송 (응답 대기)
+        yield return StartCoroutine(ApiManager.instance.GameEnd(
+            status: "dead",
+            final_wave: PlayerStats.Instance.level,
+            total_cheese: totalCheeseEarned,
+            final_hp: currentHeart,
+            stats: stats,
+            onSuccess: () => Debug.Log("[Player] 게임 종료 저장 완료"),
+            onFail: (error) => Debug.LogError("[Player] 게임 종료 저장 실패: " + error)
+        ));
+
+        // 성공/실패 무관하게 재시작 (UX 유지)
+        RestartGame();
     }
 
     // 체력 UI 업데이트 로직
@@ -103,6 +147,7 @@ public class PlayerControl : PlayerStats
             return new Vector3(0, 0, input.y > 0 ? 1 : -1);
         }
     }
+
     private IEnumerator MoveLoop(Vector3 firstDirection)
     {
         isMoving = true;
@@ -112,11 +157,11 @@ public class PlayerControl : PlayerStats
             float capturedMoveTime = MoveTime;
             yield return StartCoroutine(TryMove(direction, capturedMoveTime));
 
-            if(moveInput == Vector2.zero)
+            if (moveInput == Vector2.zero)
             {
                 break;
             }
-            else    direction = GetDirection(moveInput);
+            else direction = GetDirection(moveInput);
         }
         isMoving = false;
     }
@@ -157,69 +202,69 @@ public class PlayerControl : PlayerStats
         bool isBlocked = false;
 
         foreach (var obj in hitObjects)
+        {
+            FallingObject fallingObject = obj.GetComponent<FallingObject>();
+            if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Grounded)
             {
-                FallingObject fallingObject = obj.GetComponent<FallingObject>();
-                if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Grounded)
-                {
-                    isBlocked = true;
-                    break;
-                }
+                isBlocked = true;
+                break;
             }
+        }
         if (isBlocked)
-            {
-                Debug.Log("[Player] 오브젝트로 인해 이동 불가");
-                yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
-                isMoving = false;
-                yield break;
-            }
+        {
+            Debug.Log("[Player] 오브젝트로 인해 이동 불가");
+            yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
+            isMoving = false;
+            yield break;
+        }
         // 정상 이동
         yield return StartCoroutine(SmoothMove(startPosition, targetPosition, moveTime));
         // isMoving = false;
     }
 
-private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction, float moveTime)
-{
-    // 앞으로 절반 이동
-    Vector3 bumpTarget = startPosition + direction * (gridSize * 0.4f);
-
-    float elapsed = 0f;
-    float bumpTime = MoveTime * 0.25f; // 빠르게 치고 나가기
-
-    while (elapsed < bumpTime)
+    private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction, float moveTime)
     {
-        transform.position = Vector3.Lerp(startPosition, bumpTarget, elapsed / bumpTime);
-        elapsed += Time.deltaTime;
-        yield return null;
+        // 앞으로 절반 이동
+        Vector3 bumpTarget = startPosition + direction * (gridSize * 0.4f);
+
+        float elapsed = 0f;
+        float bumpTime = MoveTime * 0.25f; // 빠르게 치고 나가기
+
+        while (elapsed < bumpTime)
+        {
+            transform.position = Vector3.Lerp(startPosition, bumpTarget, elapsed / bumpTime);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // 원래 위치로 복귀
+        elapsed = 0f;
+        float returnTime = MoveTime * 0.35f;
+
+        while (elapsed < returnTime)
+        {
+            transform.position = Vector3.Lerp(bumpTarget, startPosition, elapsed / returnTime);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = startPosition; // 정확히 원위치 스냅
     }
 
-    // 원래 위치로 복귀
-    elapsed = 0f;
-    float returnTime = MoveTime * 0.35f;
-
-    while (elapsed < returnTime)
+    private IEnumerator SmoothMove(Vector3 from, Vector3 to, float moveTime)
     {
-        transform.position = Vector3.Lerp(bumpTarget, startPosition, elapsed / returnTime);
-        elapsed += Time.deltaTime;
-        yield return null;
+        float elapsed = 0f;
+        float duration = MoveTime * Vector3.Distance(from, to) / gridSize; // 거리 비례 시간
+
+        while (elapsed < duration)
+        {
+            transform.position = Vector3.Lerp(from, to, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = to;
     }
-
-    transform.position = startPosition; // 정확히 원위치 스냅
-}
-
-private IEnumerator SmoothMove(Vector3 from, Vector3 to, float moveTime)
-{
-    float elapsed = 0f;
-    float duration = MoveTime * Vector3.Distance(from, to) / gridSize; // 거리 비례 시간
-
-    while (elapsed < duration)
-    {
-        transform.position = Vector3.Lerp(from, to, elapsed / duration);
-        elapsed += Time.deltaTime;
-        yield return null;
-    }
-
-    transform.position = to;
-}
 
     // private void PerformAutoAttack()
     // {

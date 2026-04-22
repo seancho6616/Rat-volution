@@ -65,6 +65,11 @@ public class PlayerStats : MonoBehaviour
 
     public void ApplyCard(BaseCardData card)
     {
+        if (GameManager.instance != null && !string.IsNullOrEmpty(card.code))
+        {
+            GameManager.instance.AddDiscoveredCard(card.code);
+        }   
+        
         switch (card.cardType)
         {
             case CardType.StatUp:

@@ -86,6 +86,7 @@ public class ApiManager : MonoBehaviour
         public int total_cheese_earned;
         public int final_hp;
         public Stats stats;
+        public string[] discovered_cards;
     }
 
     // -------- API 메서드 --------
@@ -153,7 +154,61 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // 공통 POST (onFail 추가)
+    // 게임 시작
+    public IEnumerator GameStart(System.Action onSuccess = null, System.Action<string> onFail = null)
+    {
+        GameStartRequest data = new GameStartRequest
+        {
+            user_id = GameManager.instance.userId
+        };
+
+        yield return StartCoroutine(Post("/game/start", JsonUtility.ToJson(data),
+            onSuccess: (result) =>
+            {
+                GameStartResponse response = JsonUtility.FromJson<GameStartResponse>(result);
+                GameManager.instance.gameRunId = response.game_run_id;
+                GameManager.instance.ResetRunData();   // 새 판 시작 시 도감 배열 초기화
+                Debug.Log("게임 시작: " + response.game_run_id);
+                onSuccess?.Invoke();
+            },
+            onFail: (error) =>
+            {
+                Debug.LogError("게임 시작 실패: " + error);
+                onFail?.Invoke(error);
+            }
+        ));
+    }
+
+    // 게임 종료
+    public IEnumerator GameEnd(string status, int final_wave, int total_cheese, int final_hp, Stats stats,
+        System.Action onSuccess = null, System.Action<string> onFail = null)
+    {
+        GameEndRequest data = new GameEndRequest
+        {
+            game_run_id = GameManager.instance.gameRunId,
+            status = status,
+            final_wave = final_wave,
+            total_cheese_earned = total_cheese,
+            final_hp = final_hp,
+            stats = stats,
+            discovered_cards = GameManager.instance.discoveredCards.ToArray()
+        };
+
+        yield return StartCoroutine(Post("/game/end", JsonUtility.ToJson(data),
+            onSuccess: (result) =>
+            {
+                Debug.Log("게임 종료 저장 완료");
+                onSuccess?.Invoke();
+            },
+            onFail: (error) =>
+            {
+                Debug.LogError("게임 종료 실패: " + error);
+                onFail?.Invoke(error);
+            }
+        ));
+    }
+
+    // -------- 공통 POST 메서드 --------
     private IEnumerator Post(string endpoint, string json,
         System.Action<string> onSuccess, System.Action<string> onFail)
     {
@@ -173,63 +228,6 @@ public class ApiManager : MonoBehaviour
         else
         {
             onFail?.Invoke(request.downloadHandler.text);
-        }
-    }    
-
-    // 게임 시작
-    public IEnumerator GameStart()
-    {
-        GameStartRequest data = new GameStartRequest
-        {
-            user_id = GameManager.instance.userId
-        };
-
-        yield return StartCoroutine(Post("/game/start", JsonUtility.ToJson(data), (result) =>
-        {
-            GameStartResponse response = JsonUtility.FromJson<GameStartResponse>(result);
-            GameManager.instance.gameRunId = response.game_run_id;
-            Debug.Log("게임 시작: " + response.game_run_id);
-        }));
-    }
-
-    // 게임 종료
-    public IEnumerator GameEnd(string status, int final_wave, int total_cheese, int final_hp, Stats stats)
-    {
-        GameEndRequest data = new GameEndRequest
-        {
-            game_run_id = GameManager.instance.gameRunId,
-            status = status,
-            final_wave = final_wave,
-            total_cheese_earned = total_cheese,
-            final_hp = final_hp,
-            stats = stats
-        };
-
-        yield return StartCoroutine(Post("/game/end", JsonUtility.ToJson(data), (result) =>
-        {
-            Debug.Log("게임 종료 저장 완료");
-        }));
-    }
-
-    // -------- 공통 POST 메서드 --------
-    private IEnumerator Post(string endpoint, string json, System.Action<string> onSuccess)
-    {
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-
-        UnityWebRequest request = new UnityWebRequest(baseUrl + endpoint, "POST");
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
-
-        yield return request.SendWebRequest();
-
-        if (request.result == UnityWebRequest.Result.Success)
-        {
-            onSuccess(request.downloadHandler.text);
-        }
-        else
-        {
-            Debug.LogError(endpoint + " 실패: " + request.downloadHandler.text);
         }
     }
 }

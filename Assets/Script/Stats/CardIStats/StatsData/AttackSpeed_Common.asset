@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331d5c47d8408e54893eaa7fb08fc4d1, type: 3}
   m_Name: AttackSpeed_Common
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
+  code: STAT_ATTACK_SPEED_NORMAL
   cardName: AttackSpeed
   description: "\uACF5\uACA9\uC18D\uB3C4 \uC99D\uAC00"
   cardType: 0
