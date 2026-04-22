@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class RewardUIManager : MonoBehaviour
 {
+    public static RewardUIManager Instance;
     [Header("UI 연결")]
     public GameObject rewardBTGroup; 
     public GameObject pickStatGroup;
@@ -24,6 +25,11 @@ public class RewardUIManager : MonoBehaviour
     // 이전 레벨을 기억해 둘 변수
     private int lastLevel; 
     private bool isViewMode = false; // 현재 창이 '단순 보기' 모드인지 확인
+    void Awake()
+    {
+        if(Instance ==null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     void Start()
     {

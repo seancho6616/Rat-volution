@@ -6,9 +6,9 @@ public class CardManager : MonoBehaviour
 {
     public static CardManager Instance;
     [Header("카드")]
-    public readonly List<CardStatData> statCards;
-    public readonly List<CardItemData> itemCards;
-    public readonly List<CardDebuffData> debuffCards;
+    [SerializeField]private List<CardStatData> statCards;
+    [SerializeField]private List<CardItemData> itemCards;
+    [SerializeField]private List<CardDebuffData> debuffCards;
 
     [Header("레어도 가중치")]
     [SerializeField] private int weightNormal = 50;
