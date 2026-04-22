@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: LuckySeven_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   cardName: LuckySeven
-  description: 
+  description: "\uCE58\uC988\uB97C \uBA39\uC744 \uC2DC % \uCD94\uAC00\uB85C \uBA39\uC74C"
   cardType: 1
   cardRarity: 1
   amount: 0.1

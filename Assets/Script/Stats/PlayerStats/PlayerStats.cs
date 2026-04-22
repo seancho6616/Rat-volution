@@ -58,7 +58,7 @@ public class PlayerStats : MonoBehaviour
         level++;
         totalCheese += currentCheese;
         currentCheese = 0;
-        maxCheese += 5;
+        //maxCheese += 5;
         StageMaker.Instance.GridSizeUP(level);
         CardManager.Instance.LevelUP();
     }

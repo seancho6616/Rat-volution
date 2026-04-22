@@ -27,7 +27,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         if (imgIcon != null) imgIcon.sprite = data.icon;
         if (txtName != null) txtName.text = data.cardName;
         if (txtRarity != null) txtRarity.text = data.cardRarity.ToString();
-        if (txtDesc != null) txtDesc.text = data.description;
+        //if (txtDesc != null) txtDesc.text = data.description;
         
         // 초기 상태: 앞면(커버)이 보이도록 설정
         Motion.transform.rotation = Quaternion.identity;
@@ -53,17 +53,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     {
         Debug.Log(gameObject.name + " 선택됨!");
         PlayerStats.Instance.ApplyCard(currentData);
-        
-        GetComponentInParent<RewardUIManager>().HideUIGameObj(transform.parent.parent.gameObject);
-        // 부모인 RewardUIManager를 통해 창을 닫고 게임 재개
-        // RewardUIManager manager = Object.FindFirstObjectByType<RewardUIManager>();
-        // if (manager != null)
-        // {
-        //     manager.HideUIGameObj(transform.parent.gameObject); // PickCard Group 숨기기
-        // }
-        RewardUIManager.Instance.HideUIGameObj(transform.parent.gameObject);
-        // 클릭 시 카드 효과 적용 로직 (PlayerStats.ApplyCard 호출 등)
-        // 부모 UI 닫기
+        RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
     }
 
     private void StopFlip()

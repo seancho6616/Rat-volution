@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AttackSpeed_Common
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
   cardName: AttackSpeed
-  description: 
+  description: "\uACF5\uACA9\uC18D\uB3C4 \uC99D\uAC00"
   cardType: 0
   cardRarity: 0
   amount: 0.05

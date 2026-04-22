@@ -25,12 +25,16 @@ public class CardManager : MonoBehaviour
 
     public void LevelUP()
     {
+        Debug.Log("ss");
         List<BaseCardData> pickCard = DrawCards(cardUIs.Count);
         for(int i=0; i<pickCard.Count; i++)
         {
             CardUI cardUI = cardUIs[i].GetComponent<CardUI>();
             cardUI.SetCardData(pickCard[i]);
+            cardUI.frontView.SetActive(true);
+            cardUI.backView.SetActive(false);
         }
+        pickCard.Clear();
     }
 
     private List<BaseCardData> DrawCards(int count)

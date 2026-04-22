@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: ObjAttack_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
   cardName: ObjAttack
-  description: 
+  description: "\uACF5\uACA9\uB825 \uC99D\uAC00\n\uACE0\uC591\uC774 \uBC1C\uC5D0\uAC8C
+    \uC904 \uC218 \uC788\uB294 \uD53C\uD574"
   cardType: 0
   cardRarity: 1
   amount: 2

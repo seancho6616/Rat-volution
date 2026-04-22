@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: SharpFangs_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   cardName: SharpFangs
-  description: 
+  description: "\uBCBD\uC744 \uACF5\uACA9\uD560 \uB54C, \uD655\uB960\uB85C \uBCBD\uC744
+    \uD55C \uBC88\uC5D0 \uD30C\uAD34\uD568\n\uCD5C\uB300 60%\uAE4C\uC9C0 \uC99D\uAC00
+    \uAC00\uB2A5"
   cardType: 1
   cardRarity: 2
   amount: 0.2
   icon: {fileID: 0}
   itemType: 0
-  scalePerStack: 0.1
-  maxStack: 1
+  scalePerStack: 0.2
+  maxStack: 0.6
