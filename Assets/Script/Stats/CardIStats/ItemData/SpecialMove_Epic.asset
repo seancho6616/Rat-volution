@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: SpecialMove_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   cardName: SpecialMove
-  description: 
+  description: "\uBCBD\uC744 \uB6F0\uC5B4 \uB118\uB294 \uB2A5\uB825 \uBD80\uC5EC\n1\uBD84\uC5D0
+    \uD55C \uBC88 \uC0AC\uC6A9 \uAC00\uB2A5"
   cardType: 1
   cardRarity: 1
   amount: 60

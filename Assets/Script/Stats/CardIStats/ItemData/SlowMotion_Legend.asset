@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: SlowMotion_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   cardName: SlowMotion
-  description: 
+  description: "\uC0AC\uC6A9 \uC2DC 4\uCD08 \uB3D9\uC548 \uBB3C\uCCB4\uC640 \uBCBD\uC774
+    \uB5A8\uC5B4\uC9C0\uB294 \uC18D\uB3C4\uAC00  20% \uB290\uB824\uC9D0\n\uD55C \uBC88\uB9CC
+    \uC0AC\uC6A9"
   cardType: 1
   cardRarity: 2
   amount: 0.2

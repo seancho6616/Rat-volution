@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Magnet_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   cardName: Magnet
-  description: 
+  description: "\uC8FC\uC704 1\uCE78 \uCE58\uC988\uB97C \uAC00\uC9C0\uACE0 \uC640\uC11C
+    \uBA39\uC74C"
   cardType: 1
-  cardRarity: 1
+  cardRarity: 2
   amount: 3
   icon: {fileID: 0}
   itemType: 0

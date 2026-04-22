@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Luck_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
   cardName: Luck
-  description: 
+  description: "\uD589\uC6B4 \uC99D\uAC00\n\uC6B4\uC774 \uC88B\uC73C\uBA74 \uCE58\uC988\uAC00
+    \uCD94\uAC00\uB85C \uB4E4\uC5B4\uC634"
   cardType: 0
   cardRarity: 1
   amount: 0.1

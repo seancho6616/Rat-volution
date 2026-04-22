@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RapidStrike_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   cardName: RapidStrike
-  description: 
+  description: "\uACF5\uACA9\uB825\uC758 %\uB85C \uD55C \uBC88 \uB354 \uACF5\uACA9\uD568"
   cardType: 1
   cardRarity: 1
   amount: 0.1
