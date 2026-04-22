@@ -13,7 +13,7 @@ public class Inventory : MonoBehaviour
         else Destroy(gameObject); 
     }
 
-    void AddItem(CardItemData card)
+    public void AddItem(CardItemData card)
     {
         float currentStack = itemCheck.ContainsKey(card) ? itemCheck[card] : 0;
         if (currentStack >= card.maxStack)
