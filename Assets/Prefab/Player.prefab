@@ -140,7 +140,7 @@ MonoBehaviour:
     luck: 0
     insight: 0
   totalCheese: 0
-  maxCheese: 5
+  maxCheese: 49
   currentCheese: 0
   level: 1
   shield: 0
