@@ -17,6 +17,11 @@ public class Main1Manager : MonoBehaviour
     [Header("Hide Group")]
     public GameObject accountGroup;
     public GameObject languageGroup;
+    public GameObject titleGroup;
+
+    [Header("Exit")]
+    public GameObject popupGroup;
+    public GameObject exitGroup;
 
     // [Header("Exit Popup")]
     // public GameObject exitPopup;     // 게임 종료 확인 팝업창
@@ -27,7 +32,7 @@ public class Main1Manager : MonoBehaviour
     {
         // 시작할 때 페이드 이미지, 팝업 off
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
-        // if (exitPopup != null) exitPopup.SetActive(false);
+        if (popupGroup != null) popupGroup.SetActive(false);
         
     }
 
@@ -38,6 +43,7 @@ public class Main1Manager : MonoBehaviour
     {
         accountGroup.SetActive(false);
         languageGroup.SetActive(false);
+        titleGroup.SetActive(false);
         StartCoroutine(FadeAndLoadScene());
     }
 
@@ -97,27 +103,32 @@ public class Main1Manager : MonoBehaviour
     // --- 게임 종료 안내 팝업 ---
 
     // 화면의 빈 배경을 클릭했을 때 호출될 함수
-//     public void OnBackgroundClicked()
-//     {
-//         // 로그인/회원가입 창이 켜져있지 않을 때만 팝업이 뜨게 하고 싶다면 조건 추가 가능
-//         exitPopup.SetActive(true);
-//     }
+    public void OnBackgroundClicked()
+    {
+        // accountGroup이나 languageGroup이 활성화되어 있다면 배경 클릭 무시
+        // if (accountGroup.activeSelf || languageGroup.activeSelf) 
+        // {
+        //     return;
+        // }
 
-//     // 종료 팝업에서 [취소] 버튼을 눌렀을 때
-//     public void OnExitCancelClicked()
-//     {
-//         exitPopup.SetActive(false);
-//     }
+        popupGroup.SetActive(true);
+    }
 
-//     // 종료 팝업에서 [확인/종료] 버튼을 눌렀을 때
-//     public void OnExitConfirmClicked()
-//     {
-//         Debug.Log("게임을 종료합니다.");
-//         Application.Quit(); // 실제 빌드된 게임에서 종료됨
+    // 종료 팝업에서 [취소] 버튼을 눌렀을 때
+    public void OnNoButtonClicked()
+    {
+        popupGroup.SetActive(false);
+    }
 
-// #if UNITY_EDITOR
-//         UnityEditor.EditorApplication.isPlaying = false; // 에디터에서 플레이 중지
-// #endif
-//     }
+    // 종료 팝업에서 [확인/종료] 버튼을 눌렀을 때
+    public void OnYesButtonClicked()
+    {
+        Debug.Log("게임을 종료합니다.");
+        Application.Quit(); // 실제 빌드된 게임에서 종료됨
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // 에디터에서 플레이 중지
+#endif
+    }
 }
 
