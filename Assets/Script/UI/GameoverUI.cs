@@ -28,7 +28,7 @@ public class GameoverUI : MonoBehaviour
 
     void Start()
     {
-        //if (GameoverGroup != null) GameoverGroup.SetActive(false);
+        if (GameoverGroup != null) GameoverGroup.SetActive(false);
     }
 
     // 로비버튼 클릭 시
