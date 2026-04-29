@@ -30,7 +30,7 @@ public class PlayerStats : MonoBehaviour
     public float currentCheese =0;
     public int level = 1;
 
-    public int shield;
+    public int totalCardCount;
 
     void Awake()
     {
@@ -49,8 +49,14 @@ public class PlayerStats : MonoBehaviour
     public void GainCheese(float amount)
     {
         currentCheese += amount;
+        if(TryLuck()) currentCheese += amount;  
         if (currentCheese >= maxCheese)
             LevelUP();
+    }
+    private bool TryLuck()
+    {
+        float roll = Random.Range(0f, 1f);
+        return FinalLuck > roll;
     }
 
     public void LevelUP()
@@ -58,7 +64,7 @@ public class PlayerStats : MonoBehaviour
         level++;
         totalCheese += currentCheese;
         currentCheese = 0;
-        //maxCheese += 5;
+        maxCheese += 5;
         StageMaker.Instance.GridSizeUP(level);
         CardManager.Instance.LevelUP();
     }
@@ -69,7 +75,8 @@ public class PlayerStats : MonoBehaviour
         {
             GameManager.instance.AddDiscoveredCard(card.code);
         }   
-        
+        totalCardCount += 1;
+        Debug.Log(totalCardCount);
         switch (card.cardType)
         {
             case CardType.StatUp:
