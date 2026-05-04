@@ -10,17 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
-  m_Name: AdrenalineRush_Epic
+  m_Name: RapidStrike_Rare
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
-  code: CARD_ADRENALINE_RARE
-  cardName: AdrenalineRush
-  description: "\uACE0\uC591\uC774 \uBC1C \uADF8\uB9BC\uC790 \uBC94\uC704 \uC548\uC73C\uB85C
-    \uC9C1\uC811 \uB6F0\uC5B4\uB4E4\uBA74 2\uCD08 \uAC04 \uC774\uB3D9\uC18D\uB3C4\uAC00
-    1.5\uBC30 \uC99D\uAC00"
+  code: CARD_COMBO_RARE
+  cardName: RapidStrike
+  description: "\uACF5\uACA9\uB825\uC758 %\uB85C \uD55C \uBC88 \uB354 \uACF5\uACA9\uD568"
   cardType: 1
   cardRarity: 1
-  amount: 2
+  amount: 0.1
   icon: {fileID: 0}
   itemType: 0
-  scalePerStack: 2
+  scalePerStack: 0.1
   maxStack: 1

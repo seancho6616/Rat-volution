@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
-  m_Name: SpecialMove_Epic
+  m_Name: Magnet_Rare
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
-  code: ITEM_JUMP_RARE
-  cardName: SpecialMove
-  description: "\uBCBD\uC744 \uB6F0\uC5B4 \uB118\uB294 \uB2A5\uB825 \uBD80\uC5EC\n1\uBD84\uC5D0
-    \uD55C \uBC88 \uC0AC\uC6A9 \uAC00\uB2A5"
+  code: ITEM_VACUUM_RARE
+  cardName: Magnet
+  description: "\uC8FC\uC704 1\uCE78 \uCE58\uC988\uB97C \uAC00\uC9C0\uACE0 \uC640\uC11C
+    \uBA39\uC74C"
   cardType: 1
   cardRarity: 1
-  amount: 60
+  amount: 3
   icon: {fileID: 0}
   itemType: 0
-  scalePerStack: 0.6
-  maxStack: 3
+  scalePerStack: 3
+  maxStack: 1

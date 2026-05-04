@@ -10,16 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
-  m_Name: Magnet_Epic
+  m_Name: SharpFangs_Rare
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
-  code: ITEM_VACUUM_RARE
-  cardName: Magnet
-  description: "\uC8FC\uC704 1\uCE78 \uCE58\uC988\uB97C \uAC00\uC9C0\uACE0 \uC640\uC11C
-    \uBA39\uC74C"
+  code: CARD_SHARP_TOOTH_RARE
+  cardName: SharpFangs
+  description: "\uBCBD\uC744 \uACF5\uACA9\uD560 \uB54C, \uD655\uB960\uB85C \uBCBD\uC744
+    \uD55C \uBC88\uC5D0 \uD30C\uAD34\uD568\n\uCD5C\uB300 60%\uAE4C\uC9C0 \uC99D\uAC00
+    \uAC00\uB2A5"
   cardType: 1
-  cardRarity: 2
-  amount: 3
+  cardRarity: 1
+  amount: 0.1
   icon: {fileID: 0}
   itemType: 0
-  scalePerStack: 3
-  maxStack: 1
+  scalePerStack: 0.1
+  maxStack: 0.6

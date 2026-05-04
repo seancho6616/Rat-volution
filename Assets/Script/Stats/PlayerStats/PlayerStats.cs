@@ -67,6 +67,8 @@ public class PlayerStats : MonoBehaviour
         maxCheese += 5;
         StageMaker.Instance.GridSizeUP(level);
         CardManager.Instance.LevelUP();
+        ObjectManager.Instance.runBonus.LevelUP(level);
+        WallManager.Instance.runBonus.LevelUP(level);
     }
 
     public void ApplyCard(BaseCardData card)

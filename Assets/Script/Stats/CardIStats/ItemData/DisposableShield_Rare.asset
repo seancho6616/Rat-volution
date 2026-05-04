@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
-  m_Name: DisposableShield_Epic
+  m_Name: DisposableShield_Rare
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   code: ITEM_SHIELD_RARE
   cardName: DisposableShield
