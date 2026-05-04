@@ -27,7 +27,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         if (imgIcon != null) imgIcon.sprite = data.icon;
         if (txtName != null) txtName.text = data.cardName;
         if (txtRarity != null) txtRarity.text = data.cardRarity.ToString();
-        //if (txtDesc != null) txtDesc.text = data.description;
+        if (txtDesc != null) txtDesc.text = data.description;
         
         // 초기 상태: 앞면(커버)이 보이도록 설정
         Motion.transform.rotation = Quaternion.identity;
