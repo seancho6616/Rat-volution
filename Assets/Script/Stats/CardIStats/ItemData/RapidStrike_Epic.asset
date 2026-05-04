@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: RapidStrike_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
+  code: CARD_COMBO_RARE
   cardName: RapidStrike
   description: "\uACF5\uACA9\uB825\uC758 %\uB85C \uD55C \uBC88 \uB354 \uACF5\uACA9\uD568"
   cardType: 1

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: SlowMotion_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
+  code: ITEM_SLOW_LEGEND
   cardName: SlowMotion
   description: "\uC0AC\uC6A9 \uC2DC 4\uCD08 \uB3D9\uC548 \uBB3C\uCCB4\uC640 \uBCBD\uC774
     \uB5A8\uC5B4\uC9C0\uB294 \uC18D\uB3C4\uAC00  20% \uB290\uB824\uC9D0\n\uD55C \uBC88\uB9CC

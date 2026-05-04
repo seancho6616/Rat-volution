@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: DealwithTheDevil_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
+  code: ITEM_SHIELD_LEGEND
   cardName: DealwithTheDevil
   description: "\uBAA9\uC228\uC744 \uB2E4 \uC18C\uC9C4\uD558\uBA74 \uCD1D \uCE58\uC988\uB7C9\uC758
     15% \uC0AC\uC6A9\uD558\uC5EC \uC989\uC2DC \uBD80\uD65C"

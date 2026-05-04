@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: Magnet_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
+  code: ITEM_VACUUM_RARE
   cardName: Magnet
   description: "\uC8FC\uC704 1\uCE78 \uCE58\uC988\uB97C \uAC00\uC9C0\uACE0 \uC640\uC11C
     \uBA39\uC74C"

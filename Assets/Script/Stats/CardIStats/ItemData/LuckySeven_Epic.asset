@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: LuckySeven_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
+  code: CARD_777_RARE
   cardName: LuckySeven
   description: "\uCE58\uC988\uB97C \uBA39\uC744 \uC2DC % \uCD94\uAC00\uB85C \uBA39\uC74C"
   cardType: 1

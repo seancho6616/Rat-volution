@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e832307396bab4aa84682a8e42a4fa, type: 3}
   m_Name: SharpFangs_Epic
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
+  code: CARD_SHARP_TOOTH_RARE
   cardName: SharpFangs
   description: "\uBCBD\uC744 \uACF5\uACA9\uD560 \uB54C, \uD655\uB960\uB85C \uBCBD\uC744
     \uD55C \uBC88\uC5D0 \uD30C\uAD34\uD568\n\uCD5C\uB300 60%\uAE4C\uC9C0 \uC99D\uAC00

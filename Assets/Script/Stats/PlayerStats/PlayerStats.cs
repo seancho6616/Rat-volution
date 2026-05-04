@@ -65,11 +65,12 @@ public class PlayerStats : MonoBehaviour
 
     public void ApplyCard(BaseCardData card)
     {
+       // 도감 기록 (API-GAM-004 / REQ-047)
         if (GameManager.instance != null && !string.IsNullOrEmpty(card.code))
         {
             GameManager.instance.AddDiscoveredCard(card.code);
-        }   
-        
+        }
+
         switch (card.cardType)
         {
             case CardType.StatUp:

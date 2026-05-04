@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10ad9032165e9514aaabcd7a4424a9c5, type: 3}
   m_Name: WallHP
   m_EditorClassIdentifier: Assembly-CSharp::CardDebuffData
+  code: DEBUFF_WALL_HP
   cardName: WallHP
   description: 
   cardType: 2
