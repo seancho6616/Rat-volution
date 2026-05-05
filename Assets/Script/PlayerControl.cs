@@ -28,6 +28,12 @@ public class PlayerControl : PlayerStats
     public LayerMask wallLayer;
     public LayerMask objectLayer;
 
+    [Header("GameOver System")]
+    public GameoverUI gameoverUI;
+
+    [Header("Visuals")]
+    public Transform meshTransform;
+
     private Vector2 moveInput;
     private bool pendingMove = false;
 
@@ -48,6 +54,7 @@ public class PlayerControl : PlayerStats
         UpdateHeartUI();
         if (currentHeart <= 0)
         {
+            this.enabled = false; // 플레이어 컨트롤 비활성화
             StartCoroutine(HandleGameOver());
         }
     }
@@ -71,13 +78,24 @@ public class PlayerControl : PlayerStats
             attack_power = PlayerStats.Instance.FinalObjectAttack
         };
 
+        // UI 업데이트: 게임오버 패널 활성화 및 최종 결과 표시
+        if (gameoverUI != null)
+        {
+            Time.timeScale = 0f; // 게임 일시정지
+            gameoverUI.GameoverGroup.SetActive(true);
+            Debug.Log("[Player] 게임오버 UI 활성화");
+            gameoverUI.waveCheeseTxt.text = $"치즈 획득: {totalCheeseEarned}개";
+            gameoverUI.cardTxt.text = $"도달 레벨: {PlayerStats.Instance.level}";
+            gameoverUI.statTxt.text = $"최종 스탯 - 이동속도: {stats.move_speed}, 행운: {stats.luck}, 통찰력: {stats.insight}, 공격속도: {stats.attack_speed}, 벽 공격력: {stats.power}, 오브젝트 공격력: {stats.attack_power}";
+        }
+
         // 방어: 네트워크 매니저나 game_run_id 없으면 API 스킵하고 바로 재시작
         if (ApiManager.instance == null
             || GameManager.instance == null
             || string.IsNullOrEmpty(GameManager.instance.gameRunId))
         {
             Debug.LogWarning("[Player] API 정보 없음 - 서버 전송 스킵하고 재시작");
-            RestartGame();
+            // RestartGame();
             yield break;
         }
 
@@ -91,9 +109,6 @@ public class PlayerControl : PlayerStats
             onSuccess: () => Debug.Log("[Player] 게임 종료 저장 완료"),
             onFail: (error) => Debug.LogError("[Player] 게임 종료 저장 실패: " + error)
         ));
-
-        // 성공/실패 무관하게 재시작 (UX 유지)
-        RestartGame();
     }
 
     // 체력 UI 업데이트 로직
@@ -154,6 +169,8 @@ public class PlayerControl : PlayerStats
         Vector3 direction = firstDirection;
         while (true)
         {
+            UpdateRotation(direction);
+
             float capturedMoveTime = MoveTime;
             yield return StartCoroutine(TryMove(direction, capturedMoveTime));
 
@@ -164,6 +181,15 @@ public class PlayerControl : PlayerStats
             else direction = GetDirection(moveInput);
         }
         isMoving = false;
+    }
+
+    private void UpdateRotation(Vector3 direction)
+    {
+        if (direction != Vector3.zero && meshTransform != null)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            meshTransform.rotation = targetRotation;
+        }
     }
 
     private IEnumerator TryMove(Vector3 direction, float moveTime)
