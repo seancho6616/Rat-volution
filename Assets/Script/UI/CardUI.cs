@@ -6,61 +6,112 @@ using System.Collections;
 
 public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    public enum CardMode { Reward, Inventory, Popup }
+
     [Header("UI 연결")]
-    public GameObject Motion; // 회전시킬 오브젝트
-    public GameObject frontView; // FrontView 연결
-    public GameObject backView;  // BackView 연결
+    public GameObject Motion; 
+    public GameObject frontView; 
+    public GameObject backView;  
     public Image imgIcon;
     public TMP_Text txtName;
     public TMP_Text txtRarity;
     public TMP_Text txtDesc;
 
+    [Header("도감용")]
+    public GameObject unknownCard; // 미획득 시 표시할 물음표 가림막
+
     private BaseCardData currentData;
+    private CardMode currentMode = CardMode.Reward;
+    private bool isDiscovered = true;
     private bool isFlipped = false;
     private Coroutine flipCoroutine;
     private float flipDuration = 0.25f;
 
     // 카드 데이터 설정
-    public void SetCardData(BaseCardData data)
+    public void SetCardData(BaseCardData data, CardMode mode = CardMode.Reward, bool discovered = true)
     {
         currentData = data;
+        currentMode = mode;
+        isDiscovered = discovered;
+
         if (imgIcon != null) imgIcon.sprite = data.icon;
         if (txtName != null) txtName.text = data.cardName;
         if (txtRarity != null) txtRarity.text = data.cardRarity.ToString();
         if (txtDesc != null) txtDesc.text = data.description;
-        
-        // 초기 상태: 앞면(커버)이 보이도록 설정
+
         Motion.transform.rotation = Quaternion.identity;
         isFlipped = false;
-    }
-    
 
-    // 마우스 올렸을 때: 뒷면(정보)으로 회전
+        if (currentMode == CardMode.Inventory)
+        {
+            // 도감 모드: 획득 여부에 따라 앞면 or 물음표 완벽 고정 (뒷면은 무조건 끔)
+            frontView.SetActive(isDiscovered);
+            backView.SetActive(false);
+            if (unknownCard != null) unknownCard.SetActive(!isDiscovered);
+        }
+        else
+        {
+            // 보상 및 팝업 모드: 획득한 진짜 카드이므로 무조건 앞면 켬
+            frontView.SetActive(true);
+            backView.SetActive(false);
+            if (unknownCard != null) unknownCard.SetActive(false);
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        StopFlip();
-        flipCoroutine = StartCoroutine(RotateCard(180f));
+        // [기획 반영 2] 보상 모드일 때만 마우스 올리면 뒤집어짐 (도감 모드는 반응 안 함)
+        if (currentMode == CardMode.Reward)
+        {
+            StopFlip();
+            flipCoroutine = StartCoroutine(RotateCard(180f));
+        }
     }
 
-    // 마우스 뗐을 때: 다시 앞면(커버)으로 회전
     public void OnPointerExit(PointerEventData eventData)
     {
-        StopFlip();
-        flipCoroutine = StartCoroutine(RotateCard(0f));
+        // 보상 모드일 때만 마우스 떼면 원상복구
+        if (currentMode == CardMode.Reward)
+        {
+            StopFlip();
+            flipCoroutine = StartCoroutine(RotateCard(0f));
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log(gameObject.name + " 선택됨!");
-        PlayerStats.Instance.ApplyCard(currentData);
-        RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
+        if (currentMode == CardMode.Reward)
+        {
+            // [보상 모드] 카드 선택
+            Debug.Log(gameObject.name + " 선택됨!");
+            // (주의: 프로젝트 세팅에 맞춰 아래 주석 해제)
+            // PlayerStats.Instance.ApplyCard(currentData); 
+            // RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
+        }
+        else if (currentMode == CardMode.Inventory)
+        {
+            if (isDiscovered && CardInventoryUI.Instance != null)
+            {
+                CardInventoryUI.Instance.OpenCardPopup(currentData);
+            }
+        }
+        else if (currentMode == CardMode.Popup)
+        {
+            // [팝업 모드 클릭] 팝업창 한가운데 뜬 카드 클릭 시 앞/뒤로 뒤집힘!
+            float targetAngle = isFlipped ? 0f : 180f;
+            StopFlip();
+            flipCoroutine = StartCoroutine(RotateCard(targetAngle));
+            isFlipped = !isFlipped;
+        }
     }
 
+    // 회전 코루틴 정지
     private void StopFlip()
     {
         if (flipCoroutine != null) StopCoroutine(flipCoroutine);
     }
 
+    // 회전 애니메이션 로직 (인게임 보상창 전용 또는 팝업창에서 재활용)
     IEnumerator RotateCard(float targetY)
     {
         float elapsed = 0f;
@@ -69,13 +120,12 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
         while (elapsed < flipDuration)
         {
-            elapsed += Time.unscaledDeltaTime; // 일시정지 중에도 작동하도록 unscaled 사용
+            elapsed += Time.unscaledDeltaTime; 
             float progress = elapsed / flipDuration;
-            Motion.transform.rotation = Quaternion.Slerp(startRot, endRot, elapsed / flipDuration);
+            Motion.transform.rotation = Quaternion.Slerp(startRot, endRot, progress);
 
             float currentY = Motion.transform.rotation.eulerAngles.y;
 
-            // eulerAngles는 0~360 사이의 값을 가짐
             if (currentY > 90f && currentY < 270f)
             {
                 frontView.SetActive(false);
@@ -86,7 +136,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
                 frontView.SetActive(true);
                 backView.SetActive(false);
             }
-                yield return null;
+            yield return null;
         }
         Motion.transform.rotation = endRot;
     }
