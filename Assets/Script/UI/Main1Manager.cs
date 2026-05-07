@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Main1Manager : MonoBehaviour
 {
     [Header("Scene")]
-    public string nextSceneName = "SampleScene";
+    public string nextSceneName = "SecondScene";
 
     [Header("Fade Effect")]
     public Image fadeImage;             // 화면 전체를 덮을 검은색 이미지
