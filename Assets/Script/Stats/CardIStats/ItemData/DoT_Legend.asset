@@ -19,7 +19,7 @@ MonoBehaviour:
   cardType: 1
   cardRarity: 2
   amount: 0.05
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a5748d9ef4776dd4dad001042865a7fa, type: 3}
   itemType: 0
   scalePerStack: 0.05
   maxStack: 999
