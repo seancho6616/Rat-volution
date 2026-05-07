@@ -18,5 +18,5 @@ MonoBehaviour:
   cardType: 0
   cardRarity: 0
   amount: 0.05
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 71ce5299630eb1042a7f5e88b153185a, type: 3}
   statType: 6
