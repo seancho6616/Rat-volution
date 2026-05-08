@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 1666574728128129512}
   - component: {fileID: 7089471716344728078}
   - component: {fileID: 5526087251229042110}
+  - component: {fileID: 3922954016929597832}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -266,3 +267,29 @@ MonoBehaviour:
   duration: 1.5
   flickerSpeed: 0.1
   alphaValue: 0.3
+--- !u!114 &3922954016929597832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7058411208144566400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48430314024f2f3449c4027351c5a7af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSkill
+  playerControl: {fileID: 3439927771148774247}
+  playerStats: {fileID: 3439927771148774247}
+  canJumpOverWall: 0
+  isLegendaryJump: 0
+  jumpCount: 0
+  shieldCount: 0
+  isSharpFangsActive: 0
+  isSlowMotionActive: 0
+  hasAdrenalineRush: 0
+  hasDoT: 0
+  dotDamage: 0
+  hasRapidStrike: 0
+  hasLuckySeven: 0
+  hasDealWithDevil: 0
