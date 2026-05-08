@@ -208,35 +208,35 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonAttackPower()
     {
         if (isViewMode) return; // 보기 모드면 클릭 무시
-        PlayerStats.Instance.InvestStatPoint(StatType.ObjectAttack);
+        PlayerStats.Instance.InvestStatPoint(StatType.ObjectAttack, 0.1f);
         Debug.Log(PlayerStats.Instance.runBonus.objectAttack);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonAttackSpeed()
     {
         if (isViewMode) return;
-        PlayerStats.Instance.InvestStatPoint(StatType.AttackSpeed);
+        PlayerStats.Instance.InvestStatPoint(StatType.AttackSpeed, 0.1f);
         Debug.Log(PlayerStats.Instance.runBonus.attackSpeed);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonHealth()
     {
         if (isViewMode) return;
-        PlayerStats.Instance.InvestStatPoint(StatType.MaxHP);
+        PlayerStats.Instance.InvestStatPoint(StatType.MaxHP, 1f);
         Debug.Log(PlayerStats.Instance.runBonus.maxHP);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonLuck()
     {
         if (isViewMode) return;
-        PlayerStats.Instance.InvestStatPoint(StatType.Luck);
+        PlayerStats.Instance.InvestStatPoint(StatType.Luck, 0.05f);
         Debug.Log(PlayerStats.Instance.runBonus.luck);
         HideUIGameObj(pickStatGroup);
     }
     public void ButtonMoveSpeed()
     {
         if (isViewMode) return;
-        PlayerStats.Instance.InvestStatPoint(StatType.MoveSpeed);
+        PlayerStats.Instance.InvestStatPoint(StatType.MoveSpeed, 0.1f);
         Debug.Log(StatType.MoveSpeed);
         Debug.Log(PlayerStats.Instance.runBonus.moveSpeed);
         HideUIGameObj(pickStatGroup);
@@ -244,7 +244,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonStrength()
     {
         if (isViewMode) return;
-        PlayerStats.Instance.InvestStatPoint(StatType.WallAttack);
+        PlayerStats.Instance.InvestStatPoint(StatType.WallAttack, 1f);
         Debug.Log(PlayerStats.Instance.runBonus.wallAttack);
         HideUIGameObj(pickStatGroup);
     }

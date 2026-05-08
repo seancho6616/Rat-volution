@@ -5,6 +5,10 @@ using UnityEngine;
 public class CardManager : MonoBehaviour
 {
     public static CardManager Instance;
+
+    // 플레이어 능력 연동
+    public PlayerSkill playerSkill;
+
     [Header("카드")]
     [SerializeField]private List<CardStatData> statCards;
     [SerializeField]private List<CardItemData> itemCards;
@@ -68,7 +72,29 @@ public class CardManager : MonoBehaviour
         int total = weightNormal + weightRare + weightLegend;
         int one = Random.Range(0, total);
         if (one < weightNormal) return CardRarity.Normal;
-        if (one < weightRare + weightRare) return CardRarity.Rare;
+        if (one < weightNormal + weightRare) return CardRarity.Rare;
         return CardRarity.Legend;
+    }
+
+    // 카드 효과 적용
+    public void OnCardClick(BaseCardData data)
+    {
+        if (data == null) return;
+
+        if (playerSkill!= null && playerSkill.playerStats != null)
+        {
+            playerSkill.playerStats.ApplyCard(data);
+            Debug.Log($"카드 효과 적용: {data.cardName}");
+        }
+
+        if (playerSkill != null)
+        {
+            playerSkill.ApplyCard(data.cardName, data.amount);
+        }
+        else
+        {
+            Debug.LogWarning("PlayerSkill 컴포넌트가 할당되지 않았습니다.");
+        }
+        Debug.Log($"카드 효과 적용: {data.cardName} - {data.amount}");
     }
 }

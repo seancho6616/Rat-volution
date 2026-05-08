@@ -84,11 +84,18 @@ public class PlayerStats : MonoBehaviour
         {
             case CardType.StatUp:
                 if(card is CardStatData statData)
-                    InvestStatPoint(statData.statType);
+                    InvestStatPoint(statData.statType, card.amount); // 카드 적용 시 스탯 증가
                 break;
             case CardType.Item:
                 if(card is CardItemData itemData)
-                    Inventory.Instance.AddItem(itemData);
+                    if (Inventory.Instance != null)
+                    {
+                        Inventory.Instance.AddItem(itemData);
+                    }
+                    else
+                    {
+                        Debug.LogError("Inventory 인스턴스가 존재하지 않습니다!");
+                    }
                 break;
             case CardType.Debuff:
                 if(card is CardDebuffData debuffData)
@@ -113,7 +120,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
     
-    public void InvestStatPoint(StatType type)
+    public void InvestStatPoint(StatType type, float amount) // 카드 적용 시 스탯 증가
     {
         if (runBonus == null)
         {
@@ -123,23 +130,23 @@ public class PlayerStats : MonoBehaviour
         switch (type)
         {
             case StatType.MaxHP:
-                runBonus.maxHP += 0.5f;
+                runBonus.maxHP += amount;
                 break;
             case StatType.Luck:
-                runBonus.luck +=0.05f;
+                runBonus.luck += amount;
                 break;
             case StatType.MoveSpeed:
-                runBonus.moveSpeed += 0.1f;
+                runBonus.moveSpeed += amount;
                 Debug.Log($"moveSpeed 적용 후: {runBonus.moveSpeed}"); // 값 확인
                 break;
             case StatType.ObjectAttack:
-                runBonus.objectAttack += 2f;
+                runBonus.objectAttack += amount;
                 break;
             case StatType.WallAttack:
-                runBonus.wallAttack += 2f;
+                runBonus.wallAttack += amount;
                 break;
             case StatType.AttackSpeed:
-                runBonus.attackSpeed += 0.1f;
+                runBonus.attackSpeed += amount;
                 break;
         }
     }

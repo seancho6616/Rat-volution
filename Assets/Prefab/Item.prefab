@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 972434774189780681}
   - component: {fileID: 6130566806068942607}
   - component: {fileID: -1059733526527332501}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Item
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -126,3 +126,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040cdad6e5cb96043bf4be7d2f06aae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  count: 1
