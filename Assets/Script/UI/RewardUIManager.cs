@@ -193,11 +193,15 @@ public class RewardUIManager : MonoBehaviour
 
     public void HideUIGameObj(GameObject gameObject)
     {
-        if(gameObject != null)
+        if (isViewMode)
         {
-            gameObject.SetActive(false);
-            Time.timeScale = 1f;
+            if(gameObject != null)
+            {
+                gameObject.SetActive(false);
+                Time.timeScale = 1f;
+            }
         }
+        
     }
 
 // --- 버튼 클릭 함수들 (isViewMode일 때는 작동 안 하게 방어 코드 추가) ---
