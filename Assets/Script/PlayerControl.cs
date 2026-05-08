@@ -69,7 +69,7 @@ public class PlayerControl : PlayerStats
 
         // 이번 판 누적 치즈 (클리어된 라운드 합계 + 현재 라운드 진행분)
         int totalCheeseEarned = (int)(PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese);
-        Time.timeScale = 0f; // 게임 일시정지 (UI 표시를 위해)
+        // Time.timeScale = 0f; // 게임 일시정지 (UI 표시를 위해)
 
         // 현재 스탯 스냅샷 (PlayerStats → 서버 Stats 스키마 매핑)
         ApiManager.Stats stats = new ApiManager.Stats
@@ -85,13 +85,9 @@ public class PlayerControl : PlayerStats
         // UI 업데이트: 게임오버 패널 활성화 및 최종 결과 표시
         if (gameoverUI != null)
         {
-            gameoverUI.GameoverGroup.SetActive(true);
-            Debug.Log("[Player] 게임오버 UI 활성화");
-            Time.timeScale = 0f; // 게임 일시정지
-            gameoverUI.waveCheeseTxt.text = $"치즈 획득: {totalCheeseEarned}개";
-            gameoverUI.cardTxt.text = $"도달 레벨: {PlayerStats.Instance.level}";
-            gameoverUI.statTxt.text = $"최종 스탯 - 이동속도: {stats.move_speed}, 행운: {stats.luck}, 통찰력: {stats.insight}, 공격속도: {stats.attack_speed}, 벽 공격력: {stats.power}, 오브젝트 공격력: {stats.attack_power}";
+            gameoverUI.SetupGameOverUI(PlayerStats.Instance.level, totalCheeseEarned, stats);
         }
+        Time.timeScale = 0f;
 
         // 방어: 네트워크 매니저나 game_run_id 없으면 API 스킵하고 바로 재시작
         if (ApiManager.instance == null
