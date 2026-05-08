@@ -193,15 +193,25 @@ public class RewardUIManager : MonoBehaviour
 
     public void HideUIGameObj(GameObject gameObject)
     {
-        if (isViewMode)
+        if(gameObject != null)
         {
-            if(gameObject != null)
-            {
-                gameObject.SetActive(false);
-                Time.timeScale = 1f;
-            }
+            gameObject.SetActive(false);
+            Time.timeScale = 1f;
         }
         
+        
+    }
+
+    public void CloseFromBackground(GameObject targetGroup)
+    {
+        // 현재 창이 '보상 선택 모드(강화 모드)'라면 클릭을 무시하고 닫지 않음
+        if (isViewMode == false) 
+        {
+            return; 
+        }
+
+        // '단순 보기 모드'일 때만 창을 닫음
+        HideUIGameObj(targetGroup);
     }
 
 // --- 버튼 클릭 함수들 (isViewMode일 때는 작동 안 하게 방어 코드 추가) ---
