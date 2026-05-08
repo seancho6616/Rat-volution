@@ -48,6 +48,8 @@ public class PlayerControl : PlayerStats
 
     public void TakeDamage(int damage)
     {
+        if (GetComponent<PlayerSkill>().CheckShield()) return; // 보호막이 있으면 데미지 무효화
+
         currentHeart -= damage;
         Debug.Log($"[Player] 목숨 -1, 남은 목숨: {currentHeart}");
 
@@ -81,9 +83,9 @@ public class PlayerControl : PlayerStats
         // UI 업데이트: 게임오버 패널 활성화 및 최종 결과 표시
         if (gameoverUI != null)
         {
-            Time.timeScale = 0f; // 게임 일시정지
             gameoverUI.GameoverGroup.SetActive(true);
             Debug.Log("[Player] 게임오버 UI 활성화");
+            Time.timeScale = 0f; // 게임 일시정지
             gameoverUI.waveCheeseTxt.text = $"치즈 획득: {totalCheeseEarned}개";
             gameoverUI.cardTxt.text = $"도달 레벨: {PlayerStats.Instance.level}";
             gameoverUI.statTxt.text = $"최종 스탯 - 이동속도: {stats.move_speed}, 행운: {stats.luck}, 통찰력: {stats.insight}, 공격속도: {stats.attack_speed}, 벽 공격력: {stats.power}, 오브젝트 공격력: {stats.attack_power}";
@@ -213,6 +215,17 @@ public class PlayerControl : PlayerStats
 
         if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
         {
+            PlayerSkill skill = GetComponent<PlayerSkill>();
+            if (skill != null && skill.TryUseJump())
+            {
+                Destroy(hit.collider.gameObject); // 벽 파괴
+                Debug.Log("[Player] 벽 넘기 스킬 사용 - 벽 파괴 및 이동");
+
+                // 벽을 파괴한 후 이동 시도
+                yield return StartCoroutine(SmoothMove(startPosition, targetPosition, moveTime));
+                yield break;
+            }
+            
             Wall wall = hit.collider.GetComponent<Wall>();
             if (wall != null)
             {

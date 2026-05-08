@@ -87,6 +87,12 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
             // (주의: 프로젝트 세팅에 맞춰 아래 주석 해제)
             // PlayerStats.Instance.ApplyCard(currentData); 
             // RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
+
+            // 카드 선택 보상
+            if (CardManager.Instance != null)
+            {
+                CardManager.Instance.OnCardClick(currentData);
+            }
         }
         else if (currentMode == CardMode.Inventory)
         {

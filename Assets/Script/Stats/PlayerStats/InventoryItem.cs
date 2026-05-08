@@ -8,7 +8,7 @@ public class InventoryItem
     public float dot;
     public float rapidStrike;
     public float luckySeven;
-    public bool magent;
+    public bool magnet;
     public bool adrenaline;
     public bool slowMotion;
     public bool dealWithDevil;
@@ -22,7 +22,7 @@ public class InventoryItem
         dot = 0f;
         rapidStrike = 0f;
         luckySeven = 0f;
-        magent = false;
+        magnet = false;
         adrenaline = false;
         slowMotion = false;
         dealWithDevil = false;

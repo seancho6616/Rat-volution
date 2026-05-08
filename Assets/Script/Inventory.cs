@@ -54,7 +54,7 @@ public class Inventory : MonoBehaviour
                 item.specialMove = true;
                 break;
             case "Magnet":
-                item.magent = true;
+                item.magnet = true;
                 break;
             case "AdrenalineRush":
                 item.adrenaline = true;
