@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 public class CameraFollow : MonoBehaviour
 {
     public Transform target; // 따라갈 대상 (플레이어)
-    public Vector3 offset = new Vector3(0, 25, -25); // 카메라와 대상 사이의 오프셋
+    public Vector3 offset; // 카메라와 대상 사이의 오프셋
     public float smoothSpeed = 0.125f; // 카메라 이동의 부드러움 정도
 
     [Header("Wall Transparency")]
