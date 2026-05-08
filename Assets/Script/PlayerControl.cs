@@ -39,6 +39,7 @@ public class PlayerControl : PlayerStats
 
     private void Start()
     {
+        Time.timeScale = 1f;
         currentHeart = maxHeart;
         UpdateHeartUI();
         centerX = transform.position.x;
@@ -68,6 +69,7 @@ public class PlayerControl : PlayerStats
 
         // 이번 판 누적 치즈 (클리어된 라운드 합계 + 현재 라운드 진행분)
         int totalCheeseEarned = (int)(PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese);
+        Time.timeScale = 0f; // 게임 일시정지 (UI 표시를 위해)
 
         // 현재 스탯 스냅샷 (PlayerStats → 서버 Stats 스키마 매핑)
         ApiManager.Stats stats = new ApiManager.Stats
