@@ -21,7 +21,9 @@ public class ApiManager : MonoBehaviour
         }
     }
 
-    // -------- 요청/응답 데이터 구조 --------
+    // ============================================================
+    // 요청/응답 데이터 구조
+    // ============================================================
 
     [System.Serializable]
     public class RegisterRequest
@@ -89,7 +91,35 @@ public class ApiManager : MonoBehaviour
         public string[] discovered_cards;
     }
 
-    // -------- API 메서드 --------
+    // 도감 응답 데이터
+    [System.Serializable]
+    public class DexCard
+    {
+        public string code;
+        public string name;
+        public string type;
+        public string item_type;
+        public string rarity;
+        public string description;
+        public float base_value;
+        public float scale_per_stack;
+        public int max_stack;
+        public bool discovered;
+    }
+
+    [System.Serializable]
+    public class DexResponse
+    {
+        public string message;
+        public string nickname;
+        public int total_cards;
+        public int discovered_count;
+        public DexCard[] cards;
+    }
+
+    // ============================================================
+    // 인증 API
+    // ============================================================
 
     // 회원가입
     public IEnumerator Register(string login_id, string nickname, string password,
@@ -122,8 +152,11 @@ public class ApiManager : MonoBehaviour
             onSuccess: (result) =>
             {
                 LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
-                GameManager.instance.userId = response.user_id;
-                GameManager.instance.nickname = response.nickname;
+                if (GameManager.instance != null)
+                {
+                    GameManager.instance.userId = response.user_id;
+                    GameManager.instance.nickname = response.nickname;
+                }
                 onSuccess?.Invoke();
             },
             onFail: (error) => onFail?.Invoke(error)
@@ -146,15 +179,22 @@ public class ApiManager : MonoBehaviour
             onSuccess: (result) =>
             {
                 LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
-                GameManager.instance.userId = response.user_id;
-                GameManager.instance.nickname = response.nickname;
+                if (GameManager.instance != null)
+                {
+                    GameManager.instance.userId = response.user_id;
+                    GameManager.instance.nickname = response.nickname;
+                }
                 onSuccess?.Invoke();
             },
             onFail: (error) => onFail?.Invoke(error)
         ));
     }
 
-    // 게임 시작
+    // ============================================================
+    // 게임 API
+    // ============================================================
+
+    // 게임 시작 - 인게임 씬 진입 시 호출
     public IEnumerator GameStart(System.Action onSuccess = null, System.Action<string> onFail = null)
     {
         GameStartRequest data = new GameStartRequest
@@ -179,7 +219,7 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // 게임 종료
+    // 게임 종료 - 사망 시 호출
     public IEnumerator GameEnd(string status, int final_wave, int total_cheese, int final_hp, Stats stats,
         System.Action onSuccess = null, System.Action<string> onFail = null)
     {
@@ -208,7 +248,39 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // -------- 공통 POST 메서드 --------
+    // ============================================================
+    // 도감 API
+    // ============================================================
+
+    // 도감 조회 GET /card/dex/:userId
+    public IEnumerator GetDex(System.Action<DexResponse> onSuccess, System.Action<string> onFail)
+    {
+        string userId = GameManager.instance.userId;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            onFail?.Invoke("로그인이 필요합니다");
+            yield break;
+        }
+
+        yield return StartCoroutine(Get("/card/dex/" + userId,
+            onSuccess: (result) =>
+            {
+                DexResponse response = JsonUtility.FromJson<DexResponse>(result);
+                onSuccess?.Invoke(response);
+            },
+            onFail: (error) =>
+            {
+                Debug.LogError("도감 조회 실패: " + error);
+                onFail?.Invoke(error);
+            }
+        ));
+    }
+
+    // ============================================================
+    // 공통 HTTP 메서드
+    // ============================================================
+
     private IEnumerator Post(string endpoint, string json,
         System.Action<string> onSuccess, System.Action<string> onFail)
     {
@@ -218,6 +290,23 @@ public class ApiManager : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
+
+        yield return request.SendWebRequest();
+
+        if (request.result == UnityWebRequest.Result.Success)
+        {
+            onSuccess?.Invoke(request.downloadHandler.text);
+        }
+        else
+        {
+            onFail?.Invoke(request.downloadHandler.text);
+        }
+    }
+
+    private IEnumerator Get(string endpoint,
+        System.Action<string> onSuccess, System.Action<string> onFail)
+    {
+        UnityWebRequest request = UnityWebRequest.Get(baseUrl + endpoint);
 
         yield return request.SendWebRequest();
 

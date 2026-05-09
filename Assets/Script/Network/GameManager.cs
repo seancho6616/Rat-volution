@@ -31,12 +31,13 @@ public class GameManager : MonoBehaviour
         discoveredCards.Clear();
     }
 
-    // 카드 획득 시 호출 - ItemManager 쪽에서 부를 예정
+    // 카드 획득 시 호출
     public void AddDiscoveredCard(string code)
     {
         if (!string.IsNullOrEmpty(code) && !discoveredCards.Contains(code))
         {
             discoveredCards.Add(code);
+            Debug.Log($"[Dex] 신규 카드 획득: {code} (총 {discoveredCards.Count}장)");
         }
     }
 }

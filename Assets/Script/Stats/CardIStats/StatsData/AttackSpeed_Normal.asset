@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 331d5c47d8408e54893eaa7fb08fc4d1, type: 3}
-  m_Name: AttackSpeed_Common
+  m_Name: AttackSpeed_Normal
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
   code: STAT_ATTACK_SPEED_NORMAL
   cardName: AttackSpeed
