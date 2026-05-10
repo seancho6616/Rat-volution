@@ -96,5 +96,28 @@ public class CardManager : MonoBehaviour
             Debug.LogWarning("PlayerSkill 컴포넌트가 할당되지 않았습니다.");
         }
         Debug.Log($"카드 효과 적용: {data.cardName} - {data.amount}");
+
+        HideCardSelection();
+    }
+
+    // 카드 선택창 숨기기
+    public void HideCardSelection()
+    {
+        if (cardUIs == null || cardUIs.Count == 0) return;
+
+        // 모든 카드 UI의 공통 부모(보상 패널)를 비활성화
+        Transform parent = cardUIs[0].transform.parent;
+        if (parent != null)
+        {
+            parent.gameObject.SetActive(false);
+        }
+        else
+        {
+            // 부모 없으면 카드 하나하나 끄기
+            foreach (var card in cardUIs)
+            {
+                card.SetActive(false);
+            }
+        }
     }
 }
