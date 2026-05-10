@@ -8,6 +8,9 @@ public class ApiManager : MonoBehaviour
 
     private string baseUrl = "http://localhost:3000";
 
+    // JWT 토큰 (로그인/회원가입/게스트 시 발급, 메모리에만 보관)
+    private string authToken = "";
+
     void Awake()
     {
         if (instance == null)
@@ -53,12 +56,7 @@ public class ApiManager : MonoBehaviour
         public string user_id;
         public string nickname;
         public bool is_guest;
-    }
-
-    [System.Serializable]
-    public class GameStartRequest
-    {
-        public string user_id;
+        public string token;
     }
 
     [System.Serializable]
@@ -133,7 +131,13 @@ public class ApiManager : MonoBehaviour
         };
 
         yield return StartCoroutine(Post("/auth/register", JsonUtility.ToJson(data),
-            onSuccess: (result) => onSuccess?.Invoke(),
+            useAuth: false,
+            onSuccess: (result) =>
+            {
+                LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
+                SaveAuth(response);
+                onSuccess?.Invoke();
+            },
             onFail: (error) => onFail?.Invoke(error)
         ));
     }
@@ -149,14 +153,11 @@ public class ApiManager : MonoBehaviour
         };
 
         yield return StartCoroutine(Post("/auth/login", JsonUtility.ToJson(data),
+            useAuth: false,
             onSuccess: (result) =>
             {
                 LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
-                if (GameManager.instance != null)
-                {
-                    GameManager.instance.userId = response.user_id;
-                    GameManager.instance.nickname = response.nickname;
-                }
+                SaveAuth(response);
                 onSuccess?.Invoke();
             },
             onFail: (error) => onFail?.Invoke(error)
@@ -176,38 +177,42 @@ public class ApiManager : MonoBehaviour
         GuestRequest data = new GuestRequest { uuid = uuid };
 
         yield return StartCoroutine(Post("/auth/guest", JsonUtility.ToJson(data),
+            useAuth: false,
             onSuccess: (result) =>
             {
                 LoginResponse response = JsonUtility.FromJson<LoginResponse>(result);
-                if (GameManager.instance != null)
-                {
-                    GameManager.instance.userId = response.user_id;
-                    GameManager.instance.nickname = response.nickname;
-                }
+                SaveAuth(response);
                 onSuccess?.Invoke();
             },
             onFail: (error) => onFail?.Invoke(error)
         ));
     }
 
+    // 인증 정보 저장 (로그인/회원가입/게스트 응답 처리)
+    private void SaveAuth(LoginResponse response)
+    {
+        authToken = response.token;
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.userId = response.user_id;
+            GameManager.instance.nickname = response.nickname;
+        }
+    }
+
     // ============================================================
-    // 게임 API
+    // 게임 API (인증 필요)
     // ============================================================
 
-    // 게임 시작 - 인게임 씬 진입 시 호출
+    // 게임 시작 - 인게임 씬 진입 시 호출 (user_id는 토큰에서 추출)
     public IEnumerator GameStart(System.Action onSuccess = null, System.Action<string> onFail = null)
     {
-        GameStartRequest data = new GameStartRequest
-        {
-            user_id = GameManager.instance.userId
-        };
-
-        yield return StartCoroutine(Post("/game/start", JsonUtility.ToJson(data),
+        yield return StartCoroutine(Post("/game/start", "{}",
+            useAuth: true,
             onSuccess: (result) =>
             {
                 GameStartResponse response = JsonUtility.FromJson<GameStartResponse>(result);
                 GameManager.instance.gameRunId = response.game_run_id;
-                GameManager.instance.ResetRunData();   // 새 판 시작 시 도감 배열 초기화
+                GameManager.instance.ResetRunData();
                 Debug.Log("게임 시작: " + response.game_run_id);
                 onSuccess?.Invoke();
             },
@@ -235,6 +240,7 @@ public class ApiManager : MonoBehaviour
         };
 
         yield return StartCoroutine(Post("/game/end", JsonUtility.ToJson(data),
+            useAuth: true,
             onSuccess: (result) =>
             {
                 Debug.Log("게임 종료 저장 완료");
@@ -249,21 +255,20 @@ public class ApiManager : MonoBehaviour
     }
 
     // ============================================================
-    // 도감 API
+    // 도감 API (인증 필요)
     // ============================================================
 
-    // 도감 조회 GET /card/dex/:userId
+    // 도감 조회 GET /card/dex (URL에 user_id 없음, 토큰에서 추출)
     public IEnumerator GetDex(System.Action<DexResponse> onSuccess, System.Action<string> onFail)
     {
-        string userId = GameManager.instance.userId;
-
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(authToken))
         {
             onFail?.Invoke("로그인이 필요합니다");
             yield break;
         }
 
-        yield return StartCoroutine(Get("/card/dex/" + userId,
+        yield return StartCoroutine(Get("/card/dex",
+            useAuth: true,
             onSuccess: (result) =>
             {
                 DexResponse response = JsonUtility.FromJson<DexResponse>(result);
@@ -281,7 +286,7 @@ public class ApiManager : MonoBehaviour
     // 공통 HTTP 메서드
     // ============================================================
 
-    private IEnumerator Post(string endpoint, string json,
+    private IEnumerator Post(string endpoint, string json, bool useAuth,
         System.Action<string> onSuccess, System.Action<string> onFail)
     {
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
@@ -290,6 +295,11 @@ public class ApiManager : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
+
+        if (useAuth && !string.IsNullOrEmpty(authToken))
+        {
+            request.SetRequestHeader("Authorization", "Bearer " + authToken);
+        }
 
         yield return request.SendWebRequest();
 
@@ -303,10 +313,15 @@ public class ApiManager : MonoBehaviour
         }
     }
 
-    private IEnumerator Get(string endpoint,
+    private IEnumerator Get(string endpoint, bool useAuth,
         System.Action<string> onSuccess, System.Action<string> onFail)
     {
         UnityWebRequest request = UnityWebRequest.Get(baseUrl + endpoint);
+
+        if (useAuth && !string.IsNullOrEmpty(authToken))
+        {
+            request.SetRequestHeader("Authorization", "Bearer " + authToken);
+        }
 
         yield return request.SendWebRequest();
 
