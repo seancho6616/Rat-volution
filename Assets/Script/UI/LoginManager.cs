@@ -20,25 +20,63 @@ public class LoginManager : MonoBehaviour
     public TMP_InputField signupPasswordInput;
 
     [Header("에러 메시지")]
-    public TextMeshProUGUI loginErrorText;      // 로그인 실패 메시지 표시
-    public TextMeshProUGUI signupErrorText;     // 회원가입 실패 메시지 표시
+    public TextMeshProUGUI loginErrorText;
+    public TextMeshProUGUI signupErrorText;
 
     [Header("계정 표시")]
     public TextMeshProUGUI accountButtonText;
 
     private void Start()
     {
-        ShowMainPanel();
+        // 시작 시 일단 모든 그룹 숨기기 (세션 복원 결과 따라 띄울 거)
+        accountGroup.SetActive(false);
+        loginGroup.SetActive(false);
+        signupGroup.SetActive(false);
         loginErrorText.text = "";
         signupErrorText.text = "";
+
+        // 저장된 토큰 있으면 자동 로그인 시도
+        StartCoroutine(TryAutoLogin());
+    }
+
+    // --- 자동 로그인 (세션 복원) ---
+    private IEnumerator TryAutoLogin()
+    {
+        if (ApiManager.instance == null || !ApiManager.instance.HasToken())
+        {
+            // 저장된 토큰 없음 → 메인 화면
+            ShowMainPanel();
+            yield break;
+        }
+
+        Debug.Log("[Login] 저장된 토큰 발견 - 세션 복원 시도");
+
+        yield return StartCoroutine(ApiManager.instance.RestoreSession(
+            onSuccess: () =>
+            {
+                Debug.Log("[Login] 자동 로그인 성공: " + GameManager.instance.nickname);
+
+                if (accountButtonText != null)
+                {
+                    accountButtonText.text = GameManager.instance.nickname;
+                }
+                ShowMainPanel();
+            },
+            onFail: (error) =>
+            {
+                // 토큰 만료/무효 → ApiManager가 자동으로 토큰 지움
+                Debug.LogWarning("[Login] 자동 로그인 실패 - 로그인 화면 표시");
+                ShowMainPanel();
+            }
+        ));
     }
 
     // --- 에러 메시지 3초 표시 코루틴 ---
     private IEnumerator ShowErrorRoutine(TextMeshProUGUI errorTextUI, string message)
     {
-        errorTextUI.text = message;              // 메시지 띄우기
-        yield return new WaitForSeconds(2f);     // 3초 대기
-        errorTextUI.text = "";                   // 텍스트 비우기
+        errorTextUI.text = message;
+        yield return new WaitForSeconds(2f);
+        errorTextUI.text = "";
     }
 
     // --- 패널 전환 ---
@@ -55,7 +93,7 @@ public class LoginManager : MonoBehaviour
         accountGroup.SetActive(false);
         loginGroup.SetActive(true);
         signupGroup.SetActive(false);
-        loginErrorText.text = "";   // 이전 에러 메시지 초기화
+        loginErrorText.text = "";
     }
 
     public void ShowSignupPanel()
@@ -63,7 +101,7 @@ public class LoginManager : MonoBehaviour
         accountGroup.SetActive(false);
         loginGroup.SetActive(false);
         signupGroup.SetActive(true);
-        signupErrorText.text = "";  // 이전 에러 메시지 초기화
+        signupErrorText.text = "";
     }
 
     // --- 로그인 버튼 ---
@@ -89,11 +127,10 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("로그인 성공");
-                // Account 버튼 텍스트를 로그인 아이디로 변경
-                if(accountButtonText != null)
+                if (accountButtonText != null)
                 {
                     accountButtonText.text = login_id;
-                    StartCoroutine(ShowErrorRoutine(loginErrorText, "로그인 성공!")); 
+                    StartCoroutine(ShowErrorRoutine(loginErrorText, "로그인 성공!"));
                     ShowMainPanel();
                 }
             },
@@ -135,7 +172,7 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("회원가입 성공");
-                StartCoroutine(ShowErrorRoutine(signupErrorText, "회원가입 성공! 로그인 해주세요")); 
+                StartCoroutine(ShowErrorRoutine(signupErrorText, "회원가입 성공! 로그인 해주세요"));
                 ShowLoginPanel();
             },
             onFail: (error) =>
@@ -157,8 +194,7 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("게스트 로그인 성공");
-                // 게스트 로그인 시 텍스트 변경
-                if(accountButtonText != null)
+                if (accountButtonText != null)
                 {
                     accountButtonText.text = "Guest";
                 }
@@ -168,5 +204,26 @@ public class LoginManager : MonoBehaviour
                 loginErrorText.text = error;
             }
         ));
+    }
+
+    // --- 로그아웃 (선택) ---
+    // 나중에 옵션 F (logout) 작업할 때 사용
+    public void OnLogoutButtonClicked()
+    {
+        if (ApiManager.instance != null)
+        {
+            ApiManager.instance.ClearToken();
+        }
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.userId = "";
+            GameManager.instance.nickname = "";
+        }
+        if (accountButtonText != null)
+        {
+            accountButtonText.text = "Login";
+        }
+        ShowLoginPanel();
+        Debug.Log("[Login] 로그아웃 완료");
     }
 }

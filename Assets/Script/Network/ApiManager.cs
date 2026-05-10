@@ -8,8 +8,11 @@ public class ApiManager : MonoBehaviour
 
     private string baseUrl = "http://localhost:3000";
 
-    // JWT 토큰 (로그인/회원가입/게스트 시 발급, 메모리에만 보관)
+    // JWT 토큰 (메모리 + PlayerPrefs 양쪽에 보관)
     private string authToken = "";
+
+    // PlayerPrefs 키
+    private const string PREF_TOKEN = "auth_token";
 
     void Awake()
     {
@@ -17,6 +20,9 @@ public class ApiManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+
+            // 시작 시 저장된 토큰 로드
+            authToken = PlayerPrefs.GetString(PREF_TOKEN, "");
         }
         else
         {
@@ -24,9 +30,7 @@ public class ApiManager : MonoBehaviour
         }
     }
 
-    // ============================================================
     // 요청/응답 데이터 구조
-    // ============================================================
 
     [System.Serializable]
     public class RegisterRequest
@@ -57,6 +61,15 @@ public class ApiManager : MonoBehaviour
         public string nickname;
         public bool is_guest;
         public string token;
+    }
+
+    [System.Serializable]
+    public class SessionResponse
+    {
+        public string message;
+        public string user_id;
+        public string nickname;
+        public bool is_guest;
     }
 
     [System.Serializable]
@@ -115,9 +128,39 @@ public class ApiManager : MonoBehaviour
         public DexCard[] cards;
     }
 
-    // ============================================================
+    // 토큰 관리
+
+    public bool HasToken()
+    {
+        return !string.IsNullOrEmpty(authToken);
+    }
+
+    private void SaveToken(string token)
+    {
+        authToken = token;
+        PlayerPrefs.SetString(PREF_TOKEN, token);
+        PlayerPrefs.Save();
+    }
+
+    public void ClearToken()
+    {
+        authToken = "";
+        PlayerPrefs.DeleteKey(PREF_TOKEN);
+        PlayerPrefs.Save();
+    }
+
+    // 인증 정보 저장 (로그인/회원가입/게스트 응답 처리)
+    private void SaveAuth(LoginResponse response)
+    {
+        SaveToken(response.token);
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.userId = response.user_id;
+            GameManager.instance.nickname = response.nickname;
+        }
+    }
+
     // 인증 API
-    // ============================================================
 
     // 회원가입
     public IEnumerator Register(string login_id, string nickname, string password,
@@ -188,22 +231,40 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // 인증 정보 저장 (로그인/회원가입/게스트 응답 처리)
-    private void SaveAuth(LoginResponse response)
+    // 세션 복원 GET /auth/session
+    // 저장된 토큰이 유효한지 확인하고 유저 정보 갱신
+    public IEnumerator RestoreSession(System.Action onSuccess, System.Action<string> onFail)
     {
-        authToken = response.token;
-        if (GameManager.instance != null)
+        if (!HasToken())
         {
-            GameManager.instance.userId = response.user_id;
-            GameManager.instance.nickname = response.nickname;
+            onFail?.Invoke("저장된 토큰 없음");
+            yield break;
         }
+
+        yield return StartCoroutine(Get("/auth/session",
+            useAuth: true,
+            onSuccess: (result) =>
+            {
+                SessionResponse response = JsonUtility.FromJson<SessionResponse>(result);
+                if (GameManager.instance != null)
+                {
+                    GameManager.instance.userId = response.user_id;
+                    GameManager.instance.nickname = response.nickname;
+                }
+                Debug.Log("[Auth] 세션 복원 성공: " + response.nickname);
+                onSuccess?.Invoke();
+            },
+            onFail: (error) =>
+            {
+                Debug.LogWarning("[Auth] 세션 복원 실패 - 토큰 만료 또는 무효: " + error);
+                ClearToken();   // 무효한 토큰 삭제
+                onFail?.Invoke(error);
+            }
+        ));
     }
 
-    // ============================================================
     // 게임 API (인증 필요)
-    // ============================================================
 
-    // 게임 시작 - 인게임 씬 진입 시 호출 (user_id는 토큰에서 추출)
     public IEnumerator GameStart(System.Action onSuccess = null, System.Action<string> onFail = null)
     {
         yield return StartCoroutine(Post("/game/start", "{}",
@@ -224,7 +285,6 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // 게임 종료 - 사망 시 호출
     public IEnumerator GameEnd(string status, int final_wave, int total_cheese, int final_hp, Stats stats,
         System.Action onSuccess = null, System.Action<string> onFail = null)
     {
@@ -254,14 +314,11 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // ============================================================
     // 도감 API (인증 필요)
-    // ============================================================
 
-    // 도감 조회 GET /card/dex (URL에 user_id 없음, 토큰에서 추출)
     public IEnumerator GetDex(System.Action<DexResponse> onSuccess, System.Action<string> onFail)
     {
-        if (string.IsNullOrEmpty(authToken))
+        if (!HasToken())
         {
             onFail?.Invoke("로그인이 필요합니다");
             yield break;
@@ -282,9 +339,7 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
-    // ============================================================
     // 공통 HTTP 메서드
-    // ============================================================
 
     private IEnumerator Post(string endpoint, string json, bool useAuth,
         System.Action<string> onSuccess, System.Action<string> onFail)
