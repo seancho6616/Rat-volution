@@ -13,6 +13,7 @@ public class Main2Manager : MonoBehaviour
 
     [Header("Hide")]
     public GameObject inventory;
+    public GameObject ranking;
 
     [Header("Setting")]
     public GameObject settingWindow;
@@ -64,6 +65,7 @@ public class Main2Manager : MonoBehaviour
     public void OnSettingBtn()
     {
         inventory.SetActive(false);
+        ranking.SetActive(false);
         settingWindow.SetActive(true);
     }
 
@@ -71,6 +73,7 @@ public class Main2Manager : MonoBehaviour
     public void OnSettingExitBtn()
     {
         settingWindow.SetActive(false);
+        ranking.SetActive(true);
         inventory.SetActive(true);
     }
 
@@ -83,15 +86,19 @@ public class Main2Manager : MonoBehaviour
     // 훈련장 선택 버튼 눌렀을 때 
     public void OnTrainingSelectBtn()
     {
-        inventory.SetActive(false);
-        settingGroup.SetActive(false);
         selectWindow.SetActive(true);
+        inventory.SetActive(false);
+        ranking.SetActive(false);
+        settingGroup.SetActive(false);
     }
 
     // 훈련장에서 뒤로가기 버튼 눌렀을 때
     public void OnTrainingBackBtn()
     {
         selectWindow.SetActive(false);
+        inventory.SetActive(true);
+        ranking.SetActive(true);
+        settingGroup.SetActive(true);
     }
 
     // 훈련 시작하기 버튼 눌렀을 때
