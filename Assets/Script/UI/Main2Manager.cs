@@ -11,8 +11,9 @@ public class Main2Manager : MonoBehaviour
     public string homeSceneName = "FirstScene";
     public string inGameScene = "SampleScene";
 
-    [Header("Hide")]
+    [Header("Hide Panel")]
     public GameObject inventory;
+    public GameObject ranking;
 
     [Header("Setting")]
     public GameObject settingWindow;
@@ -64,6 +65,7 @@ public class Main2Manager : MonoBehaviour
     public void OnSettingBtn()
     {
         inventory.SetActive(false);
+        ranking.SetActive(false);
         settingWindow.SetActive(true);
     }
 
@@ -71,6 +73,7 @@ public class Main2Manager : MonoBehaviour
     public void OnSettingExitBtn()
     {
         settingWindow.SetActive(false);
+        ranking.SetActive(true);
         inventory.SetActive(true);
     }
 
@@ -84,6 +87,7 @@ public class Main2Manager : MonoBehaviour
     public void OnTrainingSelectBtn()
     {
         inventory.SetActive(false);
+        ranking.SetActive(false);
         settingGroup.SetActive(false);
         selectWindow.SetActive(true);
     }
