@@ -29,6 +29,10 @@ public class Main2Manager : MonoBehaviour
     public GameObject selectWindow;
     public GameObject trainingSelectGroup;
 
+    [Header("Character Info")]
+    public TMP_Text nameTxt;
+    public TMP_Text infoTxt;
+
     // 해상도 옵션
     private List<string> resOptions = new List<string> { "1920 x 1080", "1600 x 900", "1280 x 720" };
 
