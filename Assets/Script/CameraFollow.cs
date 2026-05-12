@@ -65,7 +65,7 @@ public class CameraFollow : MonoBehaviour
         }
         else
         {
-            renderer.material.SetInt("_ZWrite", 0);
+            renderer.material.SetInt("_ZWrite", 1);
             renderer.material.renderQueue = -1; // 기본 렌더링 큐
         }
     }
