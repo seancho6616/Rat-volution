@@ -1,44 +1,80 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; 
+using TMPro; 
 
-public class UIManager : MonoBehaviour
+public class StopManager : MonoBehaviour
 {
-    public GameObject exitWindow;
+    [Header("UI")]
+    public GameObject stopGroup;
+    public TMP_Text mainTxt;
+    public TMP_Text warningTxt; 
+
+    [Header("Scene")]
+    public string lobbySceneName = "SecondScene";
+
+    // 현재 어떤 목적으로 창이 열렸는지 확인하기 위한 상태값
+    private bool isLobbyMode = false;
 
     void Start()
     {
         // 게임이 처음 시작될 때는 종료 창이 보이지 않도록 비활성화
-        if (exitWindow != null)
+        if (stopGroup != null)
         {
-            exitWindow.SetActive(false);
+            stopGroup.SetActive(false);
         }
     }
 
     // 우측 상단 'Stop BT'를 눌렀을 때 실행될 함수
-    public void OpenExitWindow()
+    public void OpenLobbyPopup()
     {
-        exitWindow.SetActive(true);  // 창 띄우기
-        Time.timeScale = 0f;         // 게임 진행 멈추기 (선택 사항: 배경 게임을 멈추고 싶을 때)
+        isLobbyMode = true;
+        if (mainTxt != null)
+            mainTxt.text = "로비로 돌아가시겠습니까?";
+        if (warningTxt != null)
+            warningTxt.text = "※ 플레이 내용이 저장되지 않습니다.";
+
+        stopGroup.SetActive(true);
+        Time.timeScale = 0f; // 게임 일시정지
     }
 
-    // 'NO' 버튼을 눌렀을 때 실행될 함수
-    public void ContinueGame()
+    
+    // 게임오버 창에서 종료 클릭 시 (완전 종료용)
+    public void ShowExitPopup()
     {
-        exitWindow.SetActive(false); // 창 숨기기
-        Time.timeScale = 1f;         // 게임 다시 진행하기
+        isLobbyMode = false;
+        if (mainTxt != null)
+            mainTxt.text = "게임을 종료하시겠습니까?";
+        if (warningTxt != null)
+            warningTxt.text = " ";
+        
+        stopGroup.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     // 'YES' 버튼을 눌렀을 때 실행될 함수
-    public void QuitGame()
+    public void OnClickYes()
     {
-        // Unity 에디터 내에서는 Application.Quit()이 작동하지 않으므로 확인용 로그를 띄웁니다.
-        Debug.Log("게임이 종료되었습니다!"); 
-        
-        // 실제 빌드된 게임(exe, apk 등)을 종료하는 코드
-        Application.Quit(); 
+        Time.timeScale = 1f;
 
-        // 에디터 내에서 플레이 종료
-        #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+        if (isLobbyMode)
+        {
+            SceneManager.LoadScene(lobbySceneName);
+        }
+        else
+        {
+            Debug.Log("게임 종료");
+            Application.Quit();
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+        }
     }
+
+    // 'NO' 버튼을 눌렀을 때 실행될 함수
+    public void OnClickNo()
+    {
+        stopGroup.SetActive(false); // 창 숨기기
+        Time.timeScale = 1f;         // 게임 다시 진행하기
+    }
+
 }
