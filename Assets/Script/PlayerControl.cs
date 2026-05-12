@@ -19,8 +19,8 @@ public class PlayerControl : PlayerStats
     // 이동 제한 범위 설정 (중앙 기준으로 ±20 범위)
     [Header("Boundary Settings")]
     public float moveLimit = 32f;
-    public float centerX = 8.70429f;
-    public float centerZ = 0.70631f;
+    public float centerX;
+    public float centerZ;
 
     [Header("Attack Settings")]
     public float attackDamage => FinalObjectAttack;
@@ -286,6 +286,7 @@ public class PlayerControl : PlayerStats
         }
 
         transform.position = startPosition; // 정확히 원위치 스냅
+        SnapToGrid();
     }
 
     private IEnumerator SmoothMove(Vector3 from, Vector3 to, float moveTime)
@@ -301,6 +302,15 @@ public class PlayerControl : PlayerStats
         }
 
         transform.position = to;
+        SnapToGrid();
+    }
+
+    private void SnapToGrid()
+    {
+        float snappedX = Mathf.Round((transform.position.x - centerX) / gridSize) * gridSize + centerX;
+        float snappedZ = Mathf.Round((transform.position.z - centerZ) / gridSize) * gridSize + centerZ;
+
+        transform.position = new Vector3(snappedX, transform.position.y, snappedZ);
     }
 
     // private void PerformAutoAttack()

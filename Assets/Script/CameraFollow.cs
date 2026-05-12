@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -30,9 +29,7 @@ public class CameraFollow : MonoBehaviour
         {
             if (renderer != null)
             {
-                Color color = renderer.material.color;
-                color.a = 1f; // 원래 투명도로 복원
-                renderer.material.color = color;
+                SetWallAlpha(renderer, 1f); // 원래 투명도로 복원
             }
         }
         obscuredRenderers.Clear();
@@ -49,11 +46,27 @@ public class CameraFollow : MonoBehaviour
             Renderer renderer = hit.collider.GetComponent<Renderer>();
             if (renderer != null)
             {
-                Color color = renderer.material.color;
-                color.a = 0.5f; // 투명도 설정
-                renderer.material.color = color;
+                SetWallAlpha(renderer, 0.3f); // 투명도 설정
                 obscuredRenderers.Add(renderer);
             }
+        }
+    }
+
+    void SetWallAlpha(Renderer renderer, float alpha)
+    {
+        Color color = renderer.material.GetColor("_BaseColor");
+        color.a = alpha;
+        renderer.material.SetColor("_BaseColor", color);
+
+        if (alpha < 1f)
+        {
+            renderer.material.SetInt("_ZWrite", 1);
+            renderer.material.renderQueue = 3000; // 투명 렌더링 큐
+        }
+        else
+        {
+            renderer.material.SetInt("_ZWrite", 0);
+            renderer.material.renderQueue = -1; // 기본 렌더링 큐
         }
     }
 }
