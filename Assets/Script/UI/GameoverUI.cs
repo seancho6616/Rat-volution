@@ -22,9 +22,6 @@ public class GameoverUI : MonoBehaviour
     public TMP_Text waveTxt;
     public TMP_Text cheeseTxt;
 
-    [Header("Management")]
-    public StopManager stopManager;
-
     //정보 데이터 연결 필요
 
     //정보 데이터 설정 필요
@@ -66,10 +63,6 @@ public class GameoverUI : MonoBehaviour
     // 게임 종료 버튼 클릭 시
     public void OnExitButtonClicked()
     {
-        if (stopManager != null)
-        {
-            // StopManager에게 종료 팝업을 띄워달라고 요청
-            stopManager.ShowExitPopup();
-        }
+        stopWindow.SetActive(true);
     }
 }
