@@ -162,9 +162,7 @@ public class FallingObject : MonoBehaviour, IDamageable
     {
         if (objectColor != null && objectColor.material != null)
         {
-            Color color = objectColor.material.color;
-            color.a = alpha;
-            objectColor.material.color = color;
+            objectColor.material.SetFloat("_Alpha", alpha);
         }
     }
 }

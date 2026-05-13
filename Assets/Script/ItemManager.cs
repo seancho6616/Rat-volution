@@ -29,7 +29,8 @@ public class ItemManager : MonoBehaviour
         foreach (Vector3 pos in point)
         {
             itemDictionary[pos] = true;
-            GameObject obj = Instantiate(itemPrefab, pos, Quaternion.identity);
+            Vector3 pos2 = new Vector3(pos.x, 1.5f, pos.z);
+            GameObject obj = Instantiate(itemPrefab, pos2, Quaternion.identity);
             itemSpawnCount++;
         }
         StartCoroutine(ItemSpawn());
@@ -59,8 +60,9 @@ public class ItemManager : MonoBehaviour
             }
             if(emptyPoint.Count ==0) return;
             Vector3 vector3 = emptyPoint[Random.Range(0, emptyPoint.Count)];
+            Vector3 pos2 = new Vector3(vector3.x, 1.5f, vector3.z);
             itemDictionary[vector3] = true;
-            GameObject obj = Instantiate(itemPrefab, vector3, Quaternion.identity);
+            GameObject obj = Instantiate(itemPrefab, pos2, Quaternion.identity);
             itemSpawnCount++;
         }
     }
