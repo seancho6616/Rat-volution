@@ -3,6 +3,13 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public int count = 1;
+    [SerializeField] private Vector3 pos;
+    
+    void Update()
+    {
+        transform.Rotate(pos * Time.deltaTime, Space.World );
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Player"))
