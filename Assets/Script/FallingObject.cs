@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq.Expressions;
+using UnityEngine.Rendering;
 
 public class FallingObject : MonoBehaviour, IDamageable
 {
     private Renderer objectColor;
+    public ParticleSystem groundParticle;
     public enum ObjectState { Warning, Falling, Grounded }
     public ObjectState CurrentState { get; private set; }
 
@@ -104,6 +106,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             Wall wall = other.GetComponent<Wall>();
             if (wall != null)
             {
+                Bomb.Instance.ParticlePlay(transform.position);
                 Debug.Log("벽과 직접 충돌 - 둘 다 파괴");
                 wall.InstantDestroy(); // 벽 즉시 파괴
                 DestroyObject(false); // 자신도 파괴
@@ -125,7 +128,15 @@ public class FallingObject : MonoBehaviour, IDamageable
             }
             CurrentState = ObjectState.Grounded;
             Debug.Log("플레이어 공격, 데미지 -1");
+            groundParticle.Clear();
+            groundParticle.Play();
         }
+        if (other.CompareTag("Ground"))
+        {
+            groundParticle.Clear();
+            groundParticle.Play();
+        }
+        
     }
 
     private void CheckWallCollision()
@@ -165,4 +176,6 @@ public class FallingObject : MonoBehaviour, IDamageable
             objectColor.material.SetFloat("_Alpha", alpha);
         }
     }
+
+    
 }

@@ -30,7 +30,7 @@ public class ItemManager : MonoBehaviour
         {
             itemDictionary[pos] = true;
             Vector3 pos2 = new Vector3(pos.x, 1.5f, pos.z);
-            GameObject obj = Instantiate(itemPrefab, pos2, Quaternion.identity);
+            GameObject obj = Instantiate(itemPrefab, pos2, itemPrefab.transform.rotation);
             itemSpawnCount++;
         }
         StartCoroutine(ItemSpawn());
