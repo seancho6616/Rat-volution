@@ -135,7 +135,8 @@ public class ObjectManager : ObjectData
         // 유닛 사이즈 10을 곱해 실제 좌표 계산 (중심점 보정 +5)
         Vector3 spawnPos = validCandidates[Random.Range(0, validCandidates.Count)];
         objectDictionary[spawnPos] = true;
-        GameObject obj = Instantiate(objectPrefab, spawnPos, Quaternion.identity);
+        Vector3 pos = new Vector3(0f, 90f, 0f) * (int)Random.Range(0, 3);
+        GameObject obj = Instantiate(objectPrefab, spawnPos, Quaternion.Euler(pos));
         obj.GetComponent<FallingObject>().Init(10f, unitSize); // HP 10 전달
         activeObjects.Add(obj);
     }
