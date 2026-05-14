@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 7089471716344728078}
   - component: {fileID: 5526087251229042110}
   - component: {fileID: 3922954016929597832}
+  - component: {fileID: 1556070123568958130}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -173,7 +174,7 @@ MonoBehaviour:
     luck: 0
     insight: 0
   totalCheese: 0
-  maxCheese: 49
+  maxCheese: 5
   currentCheese: 0
   level: 1
   totalCardCount: 0
@@ -266,7 +267,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHitEffect
   duration: 1.5
   flickerSpeed: 0.1
-  alphaValue: 0.3
+  hitColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &3922954016929597832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,3 +294,17 @@ MonoBehaviour:
   hasRapidStrike: 0
   hasLuckySeven: 0
   hasDealWithDevil: 0
+--- !u!114 &1556070123568958130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7058411208144566400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09dcd80158b097b4ebbcbc5eda704e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
+  attackBoxSize: {x: 10, y: 5, z: 10}
+  attackOffset: 7

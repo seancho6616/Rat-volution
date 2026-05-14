@@ -5,64 +5,72 @@ using System.Collections.Generic;
 public class PlayerHitEffect : MonoBehaviour
 {
     [Header("효과 설정")]
-    // 효과 지속 시간
-    [SerializeField] private float duration = 1.5f;
-    // 깜빡이는 속도
-    [SerializeField] private float flickerSpeed = 0.1f;
-    [Range(0f, 1f)]
-    // 흐려졌을 때의 투명도
-    [SerializeField] private float alphaValue = 0.3f;
+    [SerializeField] private float duration = 1.5f; // 총 지속 시간
+    [SerializeField] private float flickerSpeed = 0.1f; // 깜빡임 속도
+    
+    // 맞았을 때 반짝일 색상 (인스펙터에서 하얀색이나 빨간색으로 설정해 보세요!)
+    [SerializeField] private Color hitColor = Color.white; 
 
     private List<Renderer> renderers = new List<Renderer>(); 
-    
-    // 효과 중복 실행 방지
+    private List<Color> originalColors = new List<Color>(); 
     private bool isEffectRunning = false;
 
     private void Start()
     {
+        // 모든 자식의 렌더러와 원래 색상을 미리 저장해둡니다.
         renderers.AddRange(GetComponentsInChildren<Renderer>());
+        foreach (var r in renderers)
+        {
+            // URP Lit 셰이더는 기본 색상 변수명이 "_BaseColor"입니다.
+            originalColors.Add(r.material.GetColor("_BaseColor"));
+        }
     }
 
     public void PlayHitEffect()
     {
         if (isEffectRunning) return;
-        StartCoroutine(HitRoutine());
+        StartCoroutine(HitColorRoutine());
     }
 
-    // 코루틴: 시간 차를 두고 투명도를 조절하는 핵심 로직
-    private IEnumerator HitRoutine()
+    private IEnumerator HitColorRoutine()
     {
         isEffectRunning = true;
-        Debug.Log("[Player] 한 대 맞음");
+        Debug.Log("<color=red>[Player] 피격! 색상 깜빡임 시작</color>");
 
         float timer = 0f;
-
         while (timer < duration)
         {
-            SetAlpha(alphaValue);
+            // 1. 모든 부위를 '피격 색상'으로 바꿉니다. (Opaque여도 아주 잘 보임!)
+            SetColor(hitColor);
             yield return new WaitForSeconds(flickerSpeed);
             timer += flickerSpeed;
 
-            // B. 캐릭터를 다시 선명하게 만듭니다 (Alpha 값 1로 복구)
-            SetAlpha(1.0f);
+            // 2. 다시 '원래 색상'으로 돌립니다.
+            SetColor(originalColors);
             yield return new WaitForSeconds(flickerSpeed);
             timer += flickerSpeed;
         }
 
-        SetAlpha(1.0f);
+        // 마지막에는 무조건 원래 색상으로 복구
+        SetColor(originalColors);
         isEffectRunning = false;
     }
 
-    // 캐릭터의 모든 부분의 투명도를 한 번에 바꾸는 헬퍼 함수
-    private void SetAlpha(float alpha)
+    // 전체 색상 변경 함수
+    private void SetColor(Color color)
     {
-        foreach (var renderer in renderers)
+        foreach (var r in renderers)
         {
-            if (renderer.material == null) continue;
+            if (r != null) r.material.SetColor("_BaseColor", color);
+        }
+    }
 
-            Color color = renderer.material.color;
-            color.a = alpha; // 투명도(a) 값 변경
-            renderer.material.color = color;
+    // 리스트에 저장된 개별 원본 색상으로 복구하는 함수
+    private void SetColor(List<Color> colors)
+    {
+        for (int i = 0; i < renderers.Count; i++)
+        {
+            if (renderers[i] != null) renderers[i].material.SetColor("_BaseColor", colors[i]);
         }
     }
 }
