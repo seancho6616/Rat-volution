@@ -33,10 +33,11 @@ public class CardManager : MonoBehaviour
         List<BaseCardData> pickCard = DrawCards(cardUIs.Count);
         for(int i=0; i<pickCard.Count; i++)
         {
+            cardUIs[i].SetActive(true);
             CardUI cardUI = cardUIs[i].GetComponent<CardUI>();
             cardUI.SetCardData(pickCard[i]);
-            cardUI.frontView.SetActive(true);
-            cardUI.backView.SetActive(false);
+            // cardUI.frontView.SetActive(true);
+            // cardUI.backView.SetActive(false);
         }
         pickCard.Clear();
     }
@@ -97,27 +98,30 @@ public class CardManager : MonoBehaviour
         }
         Debug.Log($"카드 효과 적용: {data.cardName} - {data.amount}");
 
-        HideCardSelection();
+        if (RewardUIManager.Instance != null)
+        {
+            RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
+        }
     }
 
     // 카드 선택창 숨기기
-    public void HideCardSelection()
-    {
-        if (cardUIs == null || cardUIs.Count == 0) return;
+    // public void HideCardSelection()
+    // {
+    //     if (cardUIs == null || cardUIs.Count == 0) return;
 
-        // 모든 카드 UI의 공통 부모(보상 패널)를 비활성화
-        Transform parent = cardUIs[0].transform.parent;
-        if (parent != null)
-        {
-            parent.gameObject.SetActive(false);
-        }
-        else
-        {
-            // 부모 없으면 카드 하나하나 끄기
-            foreach (var card in cardUIs)
-            {
-                card.SetActive(false);
-            }
-        }
-    }
+    //     // 모든 카드 UI의 공통 부모(보상 패널)를 비활성화
+    //     Transform parent = cardUIs[0].transform.parent;
+    //     if (parent != null)
+    //     {
+    //         parent.gameObject.SetActive(false);
+    //     }
+    //     else
+    //     {
+    //         // 부모 없으면 카드 하나하나 끄기
+    //         foreach (var card in cardUIs)
+    //         {
+    //             card.SetActive(false);
+    //         }
+    //     }
+    // }
 }
