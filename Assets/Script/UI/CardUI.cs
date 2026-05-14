@@ -85,7 +85,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
             // [보상 모드] 카드 선택
             Debug.Log(gameObject.name + " 선택됨!");
             PlayerStats.Instance.ApplyCard(currentData); 
-            // RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
+            //RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
 
             // 카드 선택 보상
             if (CardManager.Instance != null)

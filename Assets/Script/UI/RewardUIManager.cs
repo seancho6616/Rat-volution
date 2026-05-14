@@ -146,9 +146,16 @@ public class RewardUIManager : MonoBehaviour
     public void ShowPickCardUI()
     {
         HideRewardUI();
-        pickCardGroup.SetActive(true);
-
-        Time.timeScale = 0f;
+        if(pickCardGroup != null)
+        {
+            pickCardGroup.SetActive(true);
+            if (CardManager.Instance != null)
+            {
+                CardManager.Instance.LevelUP(); 
+            }
+        }
+        
+    
     }
 
     public void ButtonCard1()
@@ -172,11 +179,12 @@ public class RewardUIManager : MonoBehaviour
     public void ShowPickStatUI()
     {
         isViewMode = false; // 레벨업으로 들어온 경우 '강화 모드'
+        Time.timeScale = 0f;
         UpdateStatTexts();
         HideRewardUI();
         pickStatGroup.SetActive(true);
 
-        //Time.timeScale = 0f;
+        
     }
 
     // 보상 창을 닫는 함수 (나중에 Card Button이나 Stat Button을 눌렀을 때 호출되도록 연결)
