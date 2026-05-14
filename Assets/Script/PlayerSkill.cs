@@ -196,5 +196,6 @@ public class PlayerSkill : MonoBehaviour
             case "LuckySeven": hasLuckySeven = true; break;
             case "DealWithDevil": hasDealWithDevil = true; break;
         }
+        Time.timeScale = 1f;
     }
 }

@@ -216,11 +216,11 @@ public class PlayerControl : PlayerStats
             PlayerSkill skill = GetComponent<PlayerSkill>();
             if (skill != null && skill.TryUseJump())
             {
-                Destroy(hit.collider.gameObject); // 벽 파괴
-                Debug.Log("[Player] 벽 넘기 스킬 사용 - 벽 파괴 및 이동");
+                // Destroy(hit.collider.gameObject); // 벽 파괴
+                Debug.Log("[Player] 벽 넘기 스킬 사용");
 
-                // 벽을 파괴한 후 이동 시도
-                yield return StartCoroutine(SmoothMove(startPosition, targetPosition, moveTime));
+                // 점프 이동 루틴으로 전환 (벽을 뛰어넘어 목표 지점으로 이동)
+                yield return StartCoroutine(JumpRoutine(startPosition, targetPosition, moveTime));
                 yield break;
             }
             
@@ -257,6 +257,29 @@ public class PlayerControl : PlayerStats
         // 정상 이동
         yield return StartCoroutine(SmoothMove(startPosition, targetPosition, moveTime));
         // isMoving = false;
+    }
+
+    private IEnumerator JumpRoutine(Vector3 from, Vector3 to, float moveTime)
+    {
+        float elapsed = 0f;
+        float jumpHeight = 8f;
+        float duration = moveTime;
+
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+
+            Vector3 currentPos = Vector3.Lerp(from, to, t);
+
+            float yOffset = jumpHeight * 4f * t * (1f - t);
+            currentPos.y = from.y + yOffset;
+
+            transform.position = currentPos;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = to;
+        SnapToGrid();
     }
 
     private IEnumerator BumpAndReturn(Vector3 startPosition, Vector3 direction, float moveTime)
@@ -312,21 +335,6 @@ public class PlayerControl : PlayerStats
 
         transform.position = new Vector3(snappedX, transform.position.y, snappedZ);
     }
-
-    // private void PerformAutoAttack()
-    // {
-    //     // 3x3 범위 탐색 (그리드가 10이므로 주변 10씩 총 30x30 범위를 체크)
-    //     Collider[] hitObjects = Physics.OverlapBox(transform.position, new Vector3(15f, 1f, 15f), Quaternion.identity, objectLayer);
-
-    //     foreach (var col in hitObjects)
-    //     {
-    //         IDamageable target = col.GetComponent<IDamageable>();
-    //         if (target != null)
-    //         {
-    //             target.TakeDamage(attackDamage);
-    //         }
-    //     }
-    // }
 
     private void OnDrawGizmos()
     {

@@ -157,7 +157,12 @@ public class FallingObject : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        if (currentHealth <= 0) DestroyObject(true);
+        Debug.Log($"<color=red>[오브젝트 피격]</color> {gameObject.name} 남은 체력: {currentHealth} / {maxHealth}");
+        if (currentHealth <= 0)
+        {
+            Debug.Log($"<color=green>[오브젝트 파괴]</color> {gameObject.name}이(가) 파괴되었습니다.");
+            DestroyObject(true);
+        }
     }
 
     public void DestroyObject() => DestroyObject(true);
