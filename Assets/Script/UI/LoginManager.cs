@@ -24,7 +24,8 @@ public class LoginManager : MonoBehaviour
     public TextMeshProUGUI signupErrorText;
 
     [Header("계정 표시")]
-    public TextMeshProUGUI accountButtonText;
+    //public TextMeshProUGUI accountButtonText;
+    public TMP_Text hiUserTxt;
 
     private void Start()
     {
@@ -44,7 +45,6 @@ public class LoginManager : MonoBehaviour
     {
         if (ApiManager.instance == null || !ApiManager.instance.HasToken())
         {
-            // 저장된 토큰 없음 → 메인 화면
             ShowMainPanel();
             yield break;
         }
@@ -56,9 +56,9 @@ public class LoginManager : MonoBehaviour
             {
                 Debug.Log("[Login] 자동 로그인 성공: " + GameManager.instance.nickname);
 
-                if (accountButtonText != null)
+                if (hiUserTxt != null)
                 {
-                    accountButtonText.text = GameManager.instance.nickname;
+                    hiUserTxt.text = $"Hi, {GameManager.instance.nickname}";
                 }
                 ShowMainPanel();
             },
@@ -70,6 +70,7 @@ public class LoginManager : MonoBehaviour
             }
         ));
     }
+    
 
     // --- 에러 메시지 3초 표시 코루틴 ---
     private IEnumerator ShowErrorRoutine(TextMeshProUGUI errorTextUI, string message)
@@ -116,6 +117,7 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
+        loginErrorText.text = "로그인 중...";
         StartCoroutine(LoginCoroutine(login_id, password));
     }
 
@@ -127,9 +129,9 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("로그인 성공");
-                if (accountButtonText != null)
+                if (hiUserTxt != null)
                 {
-                    accountButtonText.text = login_id;
+                    hiUserTxt.text = $"Hi, {login_id}";
                     StartCoroutine(ShowErrorRoutine(loginErrorText, "로그인 성공!"));
                     ShowMainPanel();
                 }
@@ -160,6 +162,7 @@ public class LoginManager : MonoBehaviour
             return;
         }
 
+        signupErrorText.text = "가입 처리 중...";
         StartCoroutine(SignupCoroutine(login_id, nickname, password));
     }
 
@@ -194,10 +197,11 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("게스트 로그인 성공");
-                if (accountButtonText != null)
+                if (hiUserTxt != null)
                 {
-                    accountButtonText.text = "Guest";
+                    hiUserTxt.text = "Hi, Guest!";
                 }
+                
             },
             onFail: (error) =>
             {
@@ -219,10 +223,10 @@ public class LoginManager : MonoBehaviour
             GameManager.instance.userId = "";
             GameManager.instance.nickname = "";
         }
-        if (accountButtonText != null)
-        {
-            accountButtonText.text = "Login";
-        }
+        // if (accountButtonText != null)
+        // {
+        //     accountButtonText.text = "Login";
+        // }
         ShowLoginPanel();
         Debug.Log("[Login] 로그아웃 완료");
     }
