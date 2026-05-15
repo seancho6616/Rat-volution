@@ -51,7 +51,7 @@ public class Inventory : MonoBehaviour
                 item.luckySeven += amount;
                 break;
             case "SpecialMove":
-                item.specialMove = true;
+                item.specialMove += amount;
                 break;
             case "Magnet":
                 item.magnet = true;

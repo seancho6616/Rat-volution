@@ -21,5 +21,5 @@ MonoBehaviour:
   amount: 60
   icon: {fileID: 21300000, guid: 6103a9b9f0cca8145ad0b12c9138fd6d, type: 3}
   itemType: 0
-  scalePerStack: 0.6
+  scalePerStack: -10
   maxStack: 3
