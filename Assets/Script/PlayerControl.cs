@@ -49,8 +49,11 @@ public class PlayerControl : PlayerStats
 
     public void TakeDamage(int damage)
     {
-        if (GetComponent<PlayerSkill>().CheckShield()) return; // 보호막이 있으면 데미지 무효화
-
+        if (item.shield > 0)
+        {
+            Inventory.Instance.item.shield--;
+            return;
+        } // 보호막이 있으면 데미지 무효화
         currentHeart -= damage;
         Debug.Log($"[Player] 목숨 -1, 남은 목숨: {currentHeart}");
 
