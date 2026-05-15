@@ -84,6 +84,12 @@ public class CardManager : MonoBehaviour
         {
             RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
         }
+
+        //슬롯 메니저에게 카드 데이터 전달
+        if (ItemSlotManager.Instance != null)
+        {
+            ItemSlotManager.Instance.AddCardSlot(data);
+        }
     }
 
     // 카드 선택창 숨기기
