@@ -80,18 +80,10 @@ public class CardManager : MonoBehaviour
     // 카드 효과 적용
     public void OnCardClick(BaseCardData data)
     {
-        //보상창 닫기
         if (RewardUIManager.Instance != null)
         {
             RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);
         }
-
-        //슬롯 메니저에게 카드 데이터 전달
-        if (ItemSlotManager.Instance != null)
-        {
-            ItemSlotManager.Instance.AddCardSlot(data);
-        }
-        
     }
 
     // 카드 선택창 숨기기
