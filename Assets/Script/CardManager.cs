@@ -80,24 +80,6 @@ public class CardManager : MonoBehaviour
     // 카드 효과 적용
     public void OnCardClick(BaseCardData data)
     {
-        if (data == null) return;
-
-        if (playerSkill!= null && playerSkill.playerStats != null)
-        {
-            playerSkill.playerStats.ApplyCard(data);
-            Debug.Log($"카드 효과 적용: {data.cardName}");
-        }
-
-        if (playerSkill != null)
-        {
-            playerSkill.ApplyCard(data.cardName, data.amount);
-        }
-        else
-        {
-            Debug.LogWarning("PlayerSkill 컴포넌트가 할당되지 않았습니다.");
-        }
-        Debug.Log($"카드 효과 적용: {data.cardName} - {data.amount}");
-
         if (RewardUIManager.Instance != null)
         {
             RewardUIManager.Instance.HideUIGameObj(RewardUIManager.Instance.pickCardGroup);

@@ -1,17 +1,12 @@
 using UnityEngine;
 using System.Collections;
-using NUnit.Framework;
 
 public class PlayerSkill : MonoBehaviour
 {
-    public PlayerControl playerControl;
-    public PlayerStats playerStats;
 
     [Header("Skills States")]
     public bool canJumpOverWall = false; // 특수 이동
-    public bool isLegendaryJump = false; // 레전드 등급 여부
-    public int jumpCount = 0; // 점프 횟수 (레전드 점프용)
-    public int shieldCount = 0; // 일회성 보호막
+    public float lastUsedTime = -999f; // 마지막 점프 사용 시간
     public bool isSharpFangsActive = false; // 날카로운 앞니 활성화 여부
     public bool isSlowMotionActive = false; // 슬로우 모션 활성화 여부
     public bool hasAdrenalineRush = false; // 아드레날린 러시 활성화 여부
@@ -23,11 +18,6 @@ public class PlayerSkill : MonoBehaviour
     private Coroutine adrenalineCoroutine;
     private Coroutine slowMotionCoroutine;
 
-    void Awake()
-    {
-        playerControl = GetComponent<PlayerControl>();
-        playerStats = GetComponent<PlayerStats>();
-    }
 
     public void UseMagnet(float range = 10f)
     {
@@ -49,58 +39,20 @@ public class PlayerSkill : MonoBehaviour
         }
     } 
     // 벽 넘기 스킬 사용 여부 - 특수 이동
-    public void SetSpecialMove(bool legendary, int count)
-    {
-        canJumpOverWall = true;
-        isLegendaryJump = legendary;
-        
-        if (!isLegendaryJump)
-        {
-            jumpCount = count; // 일반 점프 횟수 설정
-            Debug.Log("특수 이동이 활성화되었습니다. 점프 횟수: " + count);
-        }
-        else
-        {
-            Debug.Log("레전드 점프가 활성화되었습니다. 점프 횟수: 무제한");
-        }
-    }
-
     public bool TryUseJump()
     {
-        if (!canJumpOverWall) return false; // 스킬이 활성화되지 않음
-        if (isLegendaryJump) return true; // 레전드 점프는 무제한 사용 가능
+        float coolTime = PlayerStats.Instance.item.specialMove; // 특수 이동 스킬 사용 시 활성화
+        if (coolTime == 0) return false; // 스킬이 없는 경우
 
-        // 일반 점프는 횟수 제한
-        if (jumpCount > 0)
+        if (Time.time < lastUsedTime + coolTime)
         {
-            jumpCount--;
-            Debug.Log("벽 넘기 점프 사용! 남은 점프 횟수: " + jumpCount);
-            if (jumpCount <= 0)
-            {
-                canJumpOverWall = false; // 점프 횟수 소진 시 스킬 비활성화
-                Debug.Log("점프 횟수가 모두 소진되었습니다. 특수 이동이 비활성화됩니다.");
-            }
-            return true; // 점프 사용 성공
+            float remain = (lastUsedTime + coolTime) - Time.time;
+            Debug.Log($"쿨타임 중: {remain:F1}초");
+            return false; // 아직 쿨타임이 끝나지 않음
         }
-        return false; // 점프 사용 실패
-    }
-
-    // 일회성 보호막 획득
-    public void AddShield(int count)
-    {
-        shieldCount += count;
-        Debug.Log("보호막이 " + count + "개 추가되었습니다. 현재 보호막 수: " + shieldCount);
-    }
-
-    public bool CheckShield()
-    {
-        if (shieldCount > 0)
-        {
-            shieldCount--;
-            Debug.Log("보호막이 발동되었습니다. 남은 보호막 수: " + shieldCount);
-            return true; // 보호막이 발동됨
-        }
-        return false; // 보호막이 없음
+        lastUsedTime = Time.time; // 사용 시간 기록
+        Debug.Log("벽 넘기 스킬 사용");
+        return true; // 스킬 사용 가능
     }
 
     // [날카로운 앞니] 확률 계산
@@ -146,56 +98,39 @@ public class PlayerSkill : MonoBehaviour
         Debug.Log("슬로우 모션 비활성화");
     }
 
-    public void TriggerAdrenalineRush()
-    {
-        if (!hasAdrenalineRush) return;
+    // public void TriggerAdrenalineRush()
+    // {
+    //     if (!hasAdrenalineRush) return;
 
-        if (adrenalineCoroutine != null)
-            StopCoroutine(adrenalineCoroutine);
-        adrenalineCoroutine = StartCoroutine(AdrenalineRushRoutine()); // 아드레날린 러시 지속 시간 동안 효과 적용
-    }
+    //     if (adrenalineCoroutine != null)
+    //         StopCoroutine(adrenalineCoroutine);
+    //     adrenalineCoroutine = StartCoroutine(AdrenalineRushRoutine()); // 아드레날린 러시 지속 시간 동안 효과 적용
+    // }
 
-    IEnumerator AdrenalineRushRoutine()
-    {
-        Debug.Log("아드레날린 러시 활성화");
-        // 임시 이동속도 보너스 적용
-        float originalBonus = playerStats.runBonus.moveSpeed;
-        float boostAmount = playerStats.baseData.moveSpeed * 0.5f; // 기본 이동속도의 50% 추가
+    // IEnumerator AdrenalineRushRoutine()
+    // {
+    //     Debug.Log("아드레날린 러시 활성화");
+    //     // 임시 이동속도 보너스 적용
+    //     float originalBonus = playerStats.runBonus.moveSpeed;
+    //     float boostAmount = playerStats.baseData.moveSpeed * 0.5f; // 기본 이동속도의 50% 추가
 
-        playerStats.runBonus.moveSpeed += boostAmount;
+    //     playerStats.runBonus.moveSpeed += boostAmount;
 
-        yield return new WaitForSeconds(2f); // 2초 동안 지속
-        playerStats.runBonus.moveSpeed -= boostAmount; // 보너스 제거
-        Debug.Log("아드레날린 러시 비활성화");
-    }
+    //     yield return new WaitForSeconds(2f); // 2초 동안 지속
+    //     playerStats.runBonus.moveSpeed -= boostAmount; // 보너스 제거
+    //     Debug.Log("아드레날린 러시 비활성화");
+    // }
 
-    public bool CheckLuckySeven()
-    {
-        if (!hasLuckySeven) return false;
+    // public bool CheckLuckySeven()
+    // {
+    //     if (!hasLuckySeven) return false;
 
-        float luckBonus =0.07f + (0.1f * playerStats.FinalLuck);
-        if (Random.value < luckBonus)
-        {
-            Debug.Log("777 효과 발동! 치즈 3개 추가 획득!");
-            return true;
-        }
-        return false;
-    }
-    public void ApplyCard(string cardName, float value)
-    {
-        switch (cardName)
-        {
-            case "Magnet": UseMagnet(value); break;
-            case "SpecialMove": if (value >= 999f) SetSpecialMove(true, 0); else SetSpecialMove(false, (int)value); break;
-            case "DisposableShield": AddShield((int)value); break;
-            case "SharpFangs": ActivateSharpFangs(); break;
-            case "SlowMotion": ActivateSlowMotion(value); break;
-            case "AdrenalineRush": hasAdrenalineRush = true; break;
-            case "DoT": hasDoT = true; break;
-            case "RapidStrike": hasRapidStrike = true; break;
-            case "LuckySeven": hasLuckySeven = true; break;
-            case "DealWithDevil": hasDealWithDevil = true; break;
-        }
-        Time.timeScale = 1f;
-    }
+    //     float luckBonus =0.07f + (0.1f * playerStats.FinalLuck);
+    //     if (Random.value < luckBonus)
+    //     {
+    //         Debug.Log("777 효과 발동! 치즈 3개 추가 획득!");
+    //         return true;
+    //     }
+    //     return false;
+    // }
 }
