@@ -8,11 +8,11 @@ public class InventoryItem
     public float dot;
     public float rapidStrike;
     public float luckySeven;
+    public float specialMove;
     public bool magnet;
     public bool adrenaline;
     public bool slowMotion;
     public bool dealWithDevil;
-    public bool specialMove;
     public Dictionary<BaseCardData, bool> invetory = new Dictionary<BaseCardData, bool>();
 
     public void Reset()
@@ -22,11 +22,11 @@ public class InventoryItem
         dot = 0f;
         rapidStrike = 0f;
         luckySeven = 0f;
+        specialMove = 0f;
         magnet = false;
         adrenaline = false;
         slowMotion = false;
         dealWithDevil = false;
-        specialMove = false;
         invetory.Clear();
     }
 }
