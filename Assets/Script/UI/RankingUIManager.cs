@@ -19,6 +19,11 @@ public class RankingUIManager : MonoBehaviour
     public Button rankingBtn;
     public GameObject ranking;
 
+    [Header("TOP3 프리팹 설정")]
+    public GameObject topRankPrefab;   // Top 3 전용 프리팹
+    public Transform[] top3Positions;       // 프리팹이 생성될 부모
+    public Sprite[] medalSprites;      // 1, 2, 3등 메달 이미지 배열
+
     [Header("랭킹 리스트 연결")]
     public GameObject rankingInfoBarPrefab;
     public Transform rankingContent;
@@ -62,10 +67,37 @@ public class RankingUIManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+        for (int i = 0; i < top3Positions.Length; i++)
+        {
+            if (top3Positions[i] != null)
+            {
+                foreach (Transform child in top3Positions[i]) 
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
 
         // 2. 서버에서 랭킹 데이터 받아오기 (현재는 더미 데이터)
         // 추후 ApiManager.instance.GetRanking(...) 같은 형태로 바뀔 부분입니다.
         List<RankingData> rankList = GetDummyRankingData();
+
+        int topCount = Mathf.Min(rankList.Count, 3);
+        for (int i = 0; i < topCount; i++)
+        {
+            // i=0(1등)은 top3Positions[0]에, i=1(2등)은 top3Positions[1]에 생성
+            GameObject go = Instantiate(topRankPrefab, top3Positions[i]);
+            
+            // ★ 중요: 지정석의 한가운데(0, 0)에 정확히 위치하도록 초기화
+            RectTransform rect = go.GetComponent<RectTransform>();
+            if (rect != null) rect.anchoredPosition = Vector2.zero;
+
+            Top3Content script = go.GetComponent<Top3Content>();
+            if (script != null)
+            {
+                script.SetAlphaData(medalSprites[i], rankList[i].userName, rankList[i].score);
+            }
+        }
 
         // ★ 3. 리스트 생성 및 데이터 주입 (최대 100명 제한)
         // 데이터가 100개 미만일 때는 데이터 개수만큼만, 100개가 넘으면 100까지만 반복
