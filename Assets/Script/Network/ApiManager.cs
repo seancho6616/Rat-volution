@@ -30,7 +30,9 @@ public class ApiManager : MonoBehaviour
         }
     }
 
+    // ============================================================
     // 요청/응답 데이터 구조
+    // ============================================================
 
     [System.Serializable]
     public class RegisterRequest
@@ -128,7 +130,39 @@ public class ApiManager : MonoBehaviour
         public DexCard[] cards;
     }
 
+    // 랭킹 응답 데이터
+    [System.Serializable]
+    public class RankingEntry
+    {
+        public int rank;
+        public string user_id;
+        public string nickname;
+        public int max_wave_reached;
+        public int total_cheese;
+        public string achieved_at;
+    }
+
+    [System.Serializable]
+    public class RankingResponse
+    {
+        public string message;
+        public RankingEntry[] leaderboard;
+    }
+
+    [System.Serializable]
+    public class MyRankingResponse
+    {
+        public string message;
+        public int rank;
+        public string nickname;
+        public int max_wave_reached;
+        public int total_cheese;
+        public string achieved_at;
+    }
+
+    // ============================================================
     // 토큰 관리
+    // ============================================================
 
     public bool HasToken()
     {
@@ -160,7 +194,9 @@ public class ApiManager : MonoBehaviour
         }
     }
 
+    // ============================================================
     // 인증 API
+    // ============================================================
 
     // 회원가입
     public IEnumerator Register(string login_id, string nickname, string password,
@@ -232,7 +268,6 @@ public class ApiManager : MonoBehaviour
     }
 
     // 세션 복원 GET /auth/session
-    // 저장된 토큰이 유효한지 확인하고 유저 정보 갱신
     public IEnumerator RestoreSession(System.Action onSuccess, System.Action<string> onFail)
     {
         if (!HasToken())
@@ -257,13 +292,15 @@ public class ApiManager : MonoBehaviour
             onFail: (error) =>
             {
                 Debug.LogWarning("[Auth] 세션 복원 실패 - 토큰 만료 또는 무효: " + error);
-                ClearToken();   // 무효한 토큰 삭제
+                ClearToken();
                 onFail?.Invoke(error);
             }
         ));
     }
 
+    // ============================================================
     // 게임 API (인증 필요)
+    // ============================================================
 
     public IEnumerator GameStart(System.Action onSuccess = null, System.Action<string> onFail = null)
     {
@@ -314,7 +351,9 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
+    // ============================================================
     // 도감 API (인증 필요)
+    // ============================================================
 
     public IEnumerator GetDex(System.Action<DexResponse> onSuccess, System.Action<string> onFail)
     {
@@ -339,7 +378,56 @@ public class ApiManager : MonoBehaviour
         ));
     }
 
+    // ============================================================
+    // 랭킹 API
+    // ============================================================
+
+    // TOP 100 랭킹 GET /leaderboard (인증 불필요)
+    public IEnumerator GetRanking(System.Action<RankingResponse> onSuccess, System.Action<string> onFail)
+    {
+        yield return StartCoroutine(Get("/leaderboard",
+            useAuth: false,
+            onSuccess: (result) =>
+            {
+                RankingResponse response = JsonUtility.FromJson<RankingResponse>(result);
+                onSuccess?.Invoke(response);
+            },
+            onFail: (error) =>
+            {
+                Debug.LogError("랭킹 조회 실패: " + error);
+                onFail?.Invoke(error);
+            }
+        ));
+    }
+
+    // 내 랭킹 GET /leaderboard/me (인증 필요)
+    public IEnumerator GetMyRanking(System.Action<MyRankingResponse> onSuccess, System.Action<string> onFail)
+    {
+        if (!HasToken())
+        {
+            onFail?.Invoke("로그인이 필요합니다");
+            yield break;
+        }
+
+        yield return StartCoroutine(Get("/leaderboard/me",
+            useAuth: true,
+            onSuccess: (result) =>
+            {
+                MyRankingResponse response = JsonUtility.FromJson<MyRankingResponse>(result);
+                onSuccess?.Invoke(response);
+            },
+            onFail: (error) =>
+            {
+                // 404일 수 있음 (랭킹 기록 없는 신규 유저). 정상 케이스라 LogWarning만.
+                Debug.LogWarning("내 랭킹 조회 실패: " + error);
+                onFail?.Invoke(error);
+            }
+        ));
+    }
+
+    // ============================================================
     // 공통 HTTP 메서드
+    // ============================================================
 
     private IEnumerator Post(string endpoint, string json, bool useAuth,
         System.Action<string> onSuccess, System.Action<string> onFail)

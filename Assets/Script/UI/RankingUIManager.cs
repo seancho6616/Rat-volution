@@ -1,15 +1,17 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// 서버에서 받아올 랭킹 데이터 구조
+// 서버에서 받아올 랭킹 데이터 구조 (UI 표시용)
 [System.Serializable]
 public struct RankingData
 {
     public int rank;
     public string userName;
     public int score;
+    public int totalCheese;
 }
 
 public class RankingUIManager : MonoBehaviour
@@ -20,9 +22,9 @@ public class RankingUIManager : MonoBehaviour
     public GameObject ranking;
 
     [Header("TOP3 프리팹 설정")]
-    public GameObject topRankPrefab;   // Top 3 전용 프리팹
-    public Transform[] top3Positions;       // 프리팹이 생성될 부모
-    public Sprite[] medalSprites;      // 1, 2, 3등 메달 이미지 배열
+    public GameObject topRankPrefab;
+    public Transform[] top3Positions;
+    public Sprite[] medalSprites;
 
     [Header("랭킹 리스트 연결")]
     public GameObject rankingInfoBarPrefab;
@@ -38,11 +40,10 @@ public class RankingUIManager : MonoBehaviour
 
     void Start()
     {
-        if(rankingBtn != null) rankingBtn.onClick.AddListener(OnRankingBtnClick);
-        if(backBtn != null) backBtn.onClick.AddListener(OnBackBtnClick);
-        
+        if (rankingBtn != null) rankingBtn.onClick.AddListener(OnRankingBtnClick);
+        if (backBtn != null) backBtn.onClick.AddListener(OnBackBtnClick);
 
-        if(ranking != null) ranking.SetActive(false);
+        if (ranking != null) ranking.SetActive(false);
     }
 
     public void OnRankingBtnClick()
@@ -50,8 +51,8 @@ public class RankingUIManager : MonoBehaviour
         ranking.SetActive(true);
         inventory.SetActive(false);
 
-        // 랭킹 창이 열릴 때 리스트를 생성/갱신
-        RefreshRankingList();
+        // 랭킹 창이 열릴 때 서버에서 데이터 받아오기
+        StartCoroutine(LoadRankingFromServer());
     }
 
     public void OnBackBtnClick()
@@ -60,35 +61,74 @@ public class RankingUIManager : MonoBehaviour
         inventory.SetActive(true);
     }
 
-    public void RefreshRankingList()
+    // 서버에서 랭킹 데이터 받아오는 메인 흐름
+    private IEnumerator LoadRankingFromServer()
     {
-        // 1. 기존 리스트 청소
+        // 기존 리스트 청소
+        ClearRankingUI();
+
+        // 1. TOP 100 받아오기
+        List<RankingData> rankList = new List<RankingData>();
+
+        yield return StartCoroutine(ApiManager.instance.GetRanking(
+            onSuccess: (response) =>
+            {
+                if (response.leaderboard != null)
+                {
+                    foreach (var entry in response.leaderboard)
+                    {
+                        rankList.Add(new RankingData
+                        {
+                            rank = entry.rank,
+                            userName = entry.nickname,
+                            score = entry.max_wave_reached,
+                            totalCheese = entry.total_cheese
+                        });
+                    }
+                }
+                Debug.Log($"[Ranking] TOP {rankList.Count}명 로드 완료");
+            },
+            onFail: (error) =>
+            {
+                Debug.LogError("[Ranking] 랭킹 조회 실패: " + error);
+            }
+        ));
+
+        // 2. UI 렌더링
+        RenderRankingList(rankList);
+
+        // 3. 내 랭킹 받아오기
+        yield return StartCoroutine(LoadMyRanking());
+    }
+
+    private void ClearRankingUI()
+    {
+        // 리스트 청소
         foreach (Transform child in rankingContent)
         {
             Destroy(child.gameObject);
         }
+        // TOP3 청소
         for (int i = 0; i < top3Positions.Length; i++)
         {
             if (top3Positions[i] != null)
             {
-                foreach (Transform child in top3Positions[i]) 
+                foreach (Transform child in top3Positions[i])
                 {
                     Destroy(child.gameObject);
                 }
             }
         }
+    }
 
-        // 2. 서버에서 랭킹 데이터 받아오기 (현재는 더미 데이터)
-        // 추후 ApiManager.instance.GetRanking(...) 같은 형태로 바뀔 부분입니다.
-        List<RankingData> rankList = GetDummyRankingData();
-
+    private void RenderRankingList(List<RankingData> rankList)
+    {
+        // TOP 3 표시
         int topCount = Mathf.Min(rankList.Count, 3);
         for (int i = 0; i < topCount; i++)
         {
-            // i=0(1등)은 top3Positions[0]에, i=1(2등)은 top3Positions[1]에 생성
             GameObject go = Instantiate(topRankPrefab, top3Positions[i]);
-            
-            // ★ 중요: 지정석의 한가운데(0, 0)에 정확히 위치하도록 초기화
+
             RectTransform rect = go.GetComponent<RectTransform>();
             if (rect != null) rect.anchoredPosition = Vector2.zero;
 
@@ -99,45 +139,58 @@ public class RankingUIManager : MonoBehaviour
             }
         }
 
-        // ★ 3. 리스트 생성 및 데이터 주입 (최대 100명 제한)
-        // 데이터가 100개 미만일 때는 데이터 개수만큼만, 100개가 넘으면 100까지만 반복
-        int displayCount = Mathf.Min(rankList.Count, 100); 
+        // 전체 리스트 표시 (최대 100명)
+        int displayCount = Mathf.Min(rankList.Count, 100);
 
         for (int i = 0; i < displayCount; i++)
         {
-            var data = rankList[i]; // 순서대로 데이터 꺼내오기
-            
+            var data = rankList[i];
+
             GameObject newRow = Instantiate(rankingInfoBarPrefab, rankingContent);
-            
-            // 프리팹 전용 스크립트를 가져와서 데이터 세팅
+
             RankContent rowScript = newRow.GetComponent<RankContent>();
             if (rowScript != null)
             {
                 rowScript.SetData(data.rank, data.userName, data.score);
             }
         }
-
-        // 4. 내 기록 세팅
-        if (myRank != null) myRank.text = "-"; // 임시 순위
-        if (myNickname != null) 
-        {
-            // GameManager에 닉네임이 있으면 띄우고, 없으면 "게스트"로 표기
-            myNickname.text = !string.IsNullOrEmpty(GameManager.instance?.nickname) 
-                                 ? GameManager.instance.nickname 
-                                 : "게스트";
-        }
-        if (myRecord != null) myRecord.text = "0"; // 임시 점수
     }
 
-    // 서버 통신 전 테스트용 데이터
-    private List<RankingData> GetDummyRankingData()
+    // 내 랭킹 조회 및 표시
+    private IEnumerator LoadMyRanking()
     {
-        List<RankingData> list = new List<RankingData>();
-        for (int i = 1; i <= 20; i++) 
+        // 로그인 안 한 게스트 등은 스킵
+        if (ApiManager.instance == null || !ApiManager.instance.HasToken())
         {
-            list.Add(new RankingData { rank = i, userName = "Player_" + i, score = 5000 - (i * 100) });
+            SetMyRankingUI("-", "게스트", "0");
+            yield break;
         }
-        return list;
+
+        yield return StartCoroutine(ApiManager.instance.GetMyRanking(
+            onSuccess: (response) =>
+            {
+                SetMyRankingUI(
+                    response.rank.ToString(),
+                    response.nickname,
+                    response.max_wave_reached.ToString()
+                );
+                Debug.Log($"[Ranking] 내 랭킹: {response.rank}위");
+            },
+            onFail: (error) =>
+            {
+                // 404: 아직 게임 기록 없음 (신규 유저)
+                string nickname = !string.IsNullOrEmpty(GameManager.instance?.nickname)
+                    ? GameManager.instance.nickname
+                    : "게스트";
+                SetMyRankingUI("-", nickname, "0");
+            }
+        ));
     }
 
+    private void SetMyRankingUI(string rank, string nickname, string record)
+    {
+        if (myRank != null) myRank.text = rank;
+        if (myNickname != null) myNickname.text = nickname;
+        if (myRecord != null) myRecord.text = record;
+    }
 }
