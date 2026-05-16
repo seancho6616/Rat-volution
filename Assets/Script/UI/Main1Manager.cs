@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
+using TMPro;
 
 public class Main1Manager : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class Main1Manager : MonoBehaviour
     public Image fadeImage;             // 화면 전체를 덮을 검은색 이미지
     public RectTransform uiContainer;   // 다가오면서 커질 UI 전체 그룹 (Main Group 등)
     public float fadeDuration = 1.2f;   // 연출에 걸리는 시간
-    public float zoomTargetScale = 20f; // 얼마나 크게 줌인할 것인지 (수치가 클수록 확 다가옵니다)
+    public float zoomTargetScale = 20f; // 얼마나 크게 줌인할 것인지
 
     [Header("Hide Group")]
     public GameObject accountGroup;
@@ -23,27 +24,74 @@ public class Main1Manager : MonoBehaviour
     public GameObject popupGroup;
     public GameObject exitGroup;
 
-    // [Header("Exit Popup")]
-    // public GameObject exitPopup;     // 게임 종료 확인 팝업창
+    [Header("계정 표시 (선택)")]
+    public TextMeshProUGUI hiUserTxt;   // 게스트 로그인 시 닉네임 표시용
 
-    
+    private bool isEntering = false;   // 중복 클릭 방지
 
     private void Start()
     {
         // 시작할 때 페이드 이미지, 팝업 off
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
         if (popupGroup != null) popupGroup.SetActive(false);
-        
     }
 
     // --- 씬 전환 및 페이드 효과 ---
 
-    // Entry BT을 눌렀을 때 호출될 함수
+    // Entry BT을 눌렀을 때 호출될 함수 (REQ-002, REQ-006)
     public void OnEntryButtonClicked()
     {
-        accountGroup.SetActive(false);
-        languageGroup.SetActive(false);
-        titleGroup.SetActive(false);
+        // 중복 클릭 방지
+        if (isEntering) return;
+
+        // 이미 로그인됨 (일반 로그인 or 자동 로그인 토큰 살아있음)
+        if (ApiManager.instance != null && ApiManager.instance.HasToken())
+        {
+            Debug.Log("[Main1] 로그인 상태 - 바로 진입");
+            StartEntryFlow();
+            return;
+        }
+
+        // 미로그인 → 게스트 자동 로그인
+        Debug.Log("[Main1] 미로그인 상태 - 게스트 자동 로그인");
+        StartCoroutine(GuestLoginAndEnter());
+    }
+
+    private IEnumerator GuestLoginAndEnter()
+    {
+        isEntering = true;
+
+        yield return StartCoroutine(ApiManager.instance.GuestLogin(
+            onSuccess: () =>
+            {
+                Debug.Log("[Main1] 게스트 로그인 성공: " + GameManager.instance.nickname);
+
+                // 닉네임 표시(있으면)
+                if (hiUserTxt != null)
+                {
+                    hiUserTxt.text = GameManager.instance.nickname;
+                }
+
+                StartEntryFlow();
+            },
+            onFail: (error) =>
+            {
+                Debug.LogError("[Main1] 게스트 로그인 실패: " + error);
+                isEntering = false;
+                // 서버 연결 실패 시 진입 차단 (사용자 알림은 추후 추가)
+            }
+        ));
+    }
+
+    // 페이드 + 씬 전환 시작
+    private void StartEntryFlow()
+    {
+        isEntering = true;
+
+        if (accountGroup != null) accountGroup.SetActive(false);
+        if (languageGroup != null) languageGroup.SetActive(false);
+        if (titleGroup != null) titleGroup.SetActive(false);
+
         StartCoroutine(FadeAndLoadScene());
     }
 
@@ -73,21 +121,16 @@ public class Main1Manager : MonoBehaviour
         while (timer < fadeDuration)
         {
             timer += Time.deltaTime;
-            
-            // 진행도 (0.0 ~ 1.0)
+
             float progress = timer / fadeDuration;
+            float easeIn = progress * progress * progress;
 
-            // 점점 가속도가 붙으며 쑥 빨려 들어가는 느낌을 위해 세제곱 (Ease-In)
-            float easeIn = progress * progress * progress; 
-
-            // 화면을 점점 검게 (마지막에 확 까매지도록)
             if (fadeImage != null)
             {
                 fadeColor.a = easeIn;
                 fadeImage.color = fadeColor;
             }
 
-            // UI를 카메라 쪽으로 크게 줌인 (블랙홀 안으로 들어가는 듯한 효과)
             if (uiContainer != null)
             {
                 uiContainer.localScale = Vector3.Lerp(originalScale, originalScale * zoomTargetScale, easeIn);
@@ -102,33 +145,23 @@ public class Main1Manager : MonoBehaviour
 
     // --- 게임 종료 안내 팝업 ---
 
-    // 화면의 빈 배경을 클릭했을 때 호출될 함수
     public void OnBackgroundClicked()
     {
-        // accountGroup이나 languageGroup이 활성화되어 있다면 배경 클릭 무시
-        // if (accountGroup.activeSelf || languageGroup.activeSelf) 
-        // {
-        //     return;
-        // }
-
         popupGroup.SetActive(true);
     }
 
-    // 종료 팝업에서 [취소] 버튼을 눌렀을 때
     public void OnNoButtonClicked()
     {
         popupGroup.SetActive(false);
     }
 
-    // 종료 팝업에서 [확인/종료] 버튼을 눌렀을 때
     public void OnYesButtonClicked()
     {
         Debug.Log("게임을 종료합니다.");
-        Application.Quit(); // 실제 빌드된 게임에서 종료됨
+        Application.Quit();
 
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // 에디터에서 플레이 중지
+        UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
 }
-
