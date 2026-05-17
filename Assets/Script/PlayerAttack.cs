@@ -22,6 +22,11 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f) return; // 게임이 일시정지 상태면 공격 불가
+
+        // 플레이어 컨트롤이 없거나 비활성화 상태면 공격 불가
+        if (playerControl == null || !playerControl.enabled) return;
+        
         // 1. 마우스 왼쪽 버튼 클릭 시 공격 시도
         if (Input.GetMouseButtonDown(0))
         {
@@ -64,12 +69,33 @@ public class PlayerAttack : MonoBehaviour
             Debug.Log("공격 범위 내에 대상이 없습니다.");
         }
 
+        PlayerSkill skill = GetComponent<PlayerSkill>();
+
         foreach (var col in hitObjects)
         {
             FallingObject target = col.GetComponent<FallingObject>();
             if (target != null)
             {
-                target.TakeDamage(PlayerStats.Instance.FinalObjectAttack);
+                float finalDamage = PlayerStats.Instance.FinalObjectAttack;
+                target.TakeDamage(finalDamage);
+
+                if (skill != null)
+                {
+                    if (skill != null)
+                    {
+                        // DoT 효과 적용 시도
+                        skill.TryApplyDoT(target);
+                        // 연속 공격 시도
+                        if (skill.CheckRapidStrike())
+                        {
+                            float rapidDamagePercent = Random.Range(0.2f, 0.5f);
+                            float rapidDamage = finalDamage * rapidDamagePercent;
+                            
+                            target.TakeDamage(rapidDamage);
+                            Debug.Log($"연속 공격! 추가 데미지: {rapidDamage:F1}");
+                        }
+                    }
+                }
             }
         }
     }
