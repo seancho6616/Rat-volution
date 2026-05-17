@@ -60,6 +60,13 @@ public class PlayerControl : PlayerStats
         UpdateHeartUI();
         if (currentHeart <= 0)
         {
+            if (GetComponent<PlayerSkill>().TryResurrect())
+            {
+                currentHeart = maxHeart;
+                UpdateHeartUI();
+                Debug.Log("[Player] 악마와의 계약으로 부활 성공!");
+                return;
+            }
             this.enabled = false; // 플레이어 컨트롤 비활성화
             StartCoroutine(HandleGameOver());
         }
@@ -195,6 +202,31 @@ public class PlayerControl : PlayerStats
         }
     }
 
+    // 아드레날린 러시 활성화 여부 - 이동 속도 증가
+    private void ActiveAdrenalineRush(Vector3 checkPos)
+    {
+        if (!item.adrenaline) return;
+
+        // 현재 위치 주변에 있는 오브젝트 탐색
+        Collider[] hitObjects = Physics.OverlapBox(checkPos, new Vector3(4.5f, 2f, 4.5f), Quaternion.identity, objectLayer);
+        foreach (var obj in hitObjects)
+        {
+            FallingObject fallingObject = obj.GetComponent<FallingObject>();
+
+            // 오브젝트 예고 상태일 때만 아드레날린 러시 효과 발동
+            if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Warning)
+            {
+                PlayerSkill skill = GetComponent<PlayerSkill>();
+                if (skill != null)
+                {
+                    skill.TriggerAdrenalineRush();
+                    Debug.Log("<color=cyan>[Player] 아드레날린 러시 발동! - 이동 속도 증가!");
+                    break;
+                }
+            }
+        }
+    }
+
     private IEnumerator TryMove(Vector3 direction, float moveTime)
     {
         Debug.Log($"FinalMoveSpeed: {FinalMoveSpeed}, MoveTime: {MoveTime}, RunBonus: {runBonus.moveSpeed}");
@@ -214,9 +246,10 @@ public class PlayerControl : PlayerStats
             yield break;
         }
 
+        PlayerSkill skill = GetComponent<PlayerSkill>();
+
         if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
         {
-            PlayerSkill skill = GetComponent<PlayerSkill>();
             if (skill != null && skill.TryUseJump())
             {
                 // Destroy(hit.collider.gameObject); // 벽 파괴
@@ -224,13 +257,27 @@ public class PlayerControl : PlayerStats
 
                 // 점프 이동 루틴으로 전환 (벽을 뛰어넘어 목표 지점으로 이동)
                 yield return StartCoroutine(JumpRoutine(startPosition, targetPosition, moveTime));
+                // 벽을 뛰어넘어 착지 시 자석 스킬 및 아드레날린 러시 효과 발동
+                if (skill != null)
+                {
+                    skill.UseMagnet();
+                    ActiveAdrenalineRush(targetPosition);
+                }
                 yield break;
             }
             
             Wall wall = hit.collider.GetComponent<Wall>();
             if (wall != null)
             {
-                wall.TakeDamage(1); // 1 데미지
+                if (skill != null && skill.CheckSharpFangs())
+                {
+                    wall.TakeDamage(3);
+                    Debug.Log("[Player] 날카로운 앞니 효과로 벽 한번에 파괴");
+                }
+                else
+                {
+                    wall.TakeDamage((int)FinalWallAttack);
+                }
             }
 
             yield return StartCoroutine(BumpAndReturn(startPosition, direction, MoveTime));
@@ -260,6 +307,11 @@ public class PlayerControl : PlayerStats
         // 정상 이동
         yield return StartCoroutine(SmoothMove(startPosition, targetPosition, moveTime));
         // isMoving = false;
+        if (skill != null)
+        {
+            skill.UseMagnet();
+            ActiveAdrenalineRush(targetPosition);
+        }
     }
 
     private IEnumerator JumpRoutine(Vector3 from, Vector3 to, float moveTime)
