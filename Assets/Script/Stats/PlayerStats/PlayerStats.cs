@@ -69,6 +69,7 @@ public class PlayerStats : MonoBehaviour
         CardManager.Instance.LevelUP();
         ObjectManager.Instance.runBonus.LevelUP(level);
         WallManager.Instance.runBonus.LevelUP(level);
+        StageData.Instance.LevelUP(level);
     }
 
     public void ApplyCard(BaseCardData card)
