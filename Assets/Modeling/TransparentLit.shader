@@ -15,23 +15,30 @@ Shader "Custom/TransparentLit"
             "RenderPipeline"="UniversalPipeline"
         }
         
+        // ============================================
         // Pass 1: 깊이값만 먼저 기록 (정렬 문제 해결)
+        // ============================================
         Pass
         {
             ZWrite On
             ColorMask 0
         }
         
-        // Pass 2: 실제 색상 렌더링
+        // ============================================
+        // Pass 2: 실제 색상 렌더링 (라이팅 포함)
+        // ============================================
         Pass
         {
+            Name "ForwardLit"
             Tags { "LightMode"="UniversalForward" }
+            
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite On
             
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             
@@ -47,6 +54,7 @@ Shader "Custom/TransparentLit"
                 float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
                 float3 normalWS : TEXCOORD1;
+                float3 positionWS : TEXCOORD2;
             };
             
             TEXTURE2D(_BaseMap);
@@ -62,6 +70,7 @@ Shader "Custom/TransparentLit"
             {
                 Varyings OUT;
                 OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.positionWS = TransformObjectToWorld(IN.positionOS.xyz);
                 OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
                 OUT.normalWS = TransformObjectToWorldNormal(IN.normalOS);
                 return OUT;
@@ -72,15 +81,43 @@ Shader "Custom/TransparentLit"
                 half4 texColor = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv);
                 half4 col = texColor * _BaseColor;
                 
-                // 간단한 디퓨즈 라이팅
-                Light mainLight = GetMainLight();
+                // 메인 라이트 + 그림자 받기
+                float4 shadowCoord = TransformWorldToShadowCoord(IN.positionWS);
+                Light mainLight = GetMainLight(shadowCoord);
+                
                 float NdotL = saturate(dot(normalize(IN.normalWS), mainLight.direction));
-                half3 lighting = mainLight.color * NdotL + 0.3; // 0.3은 앰비언트
+                half3 lighting = mainLight.color * NdotL * mainLight.shadowAttenuation + 0.3;
                 
                 col.rgb *= lighting;
                 col.a *= _Alpha;
                 return col;
             }
+            ENDHLSL
+        }
+        
+        // ============================================
+        // Pass 3: ShadowCaster - 다른 오브젝트에 그림자 드리우기
+        // ============================================
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            Tags { "LightMode" = "SRPDefaultUnlit" }
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull Back
+            
+            HLSLPROGRAM
+            #pragma vertex ShadowPassVertex
+            #pragma fragment ShadowPassFragment
+            
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+            
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
             ENDHLSL
         }
     }
