@@ -229,10 +229,23 @@ public class PlayerControl : PlayerStats
 
     private IEnumerator TryMove(Vector3 direction, float moveTime)
     {
+        // 플레이어 회전 기능 추가
+        if (meshTransform != null && direction != Vector3.zero)
+        {
+            meshTransform.rotation = Quaternion.LookRotation(direction);
+        }
+
         Debug.Log($"FinalMoveSpeed: {FinalMoveSpeed}, MoveTime: {MoveTime}, RunBonus: {runBonus.moveSpeed}");
-        // isMoving = true;
+        isMoving = true;
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = startPosition + (direction * gridSize);
+
+        // 유동적 맵 크기에 따른 이동 제한 범위 설정
+        if (StageMaker.Instance != null)
+        {
+            int halfSize = (StageMaker.Instance.finalGridSizeCount - 1) / 2;
+            moveLimit = halfSize * gridSize; // 그리드 크기에 따라 이동 제한 범위 동적 설정
+        }
 
         // 바닥의 중심으로부터 거리 계산
         float distanceFromCenterX = Mathf.Abs(targetPosition.x - centerX);
@@ -276,7 +289,7 @@ public class PlayerControl : PlayerStats
                 }
                 else
                 {
-                    wall.TakeDamage((int)FinalWallAttack);
+                    wall.TakeDamage(1);
                 }
             }
 
