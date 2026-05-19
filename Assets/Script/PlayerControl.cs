@@ -33,6 +33,8 @@ public class PlayerControl : PlayerStats
 
     [Header("Visuals")]
     public Transform meshTransform;
+    [Header("Animator")]
+    [SerializeField] private Animator animator;
 
     private Vector2 moveInput;
     private bool pendingMove = false;
@@ -68,6 +70,8 @@ public class PlayerControl : PlayerStats
                 return;
             }
             this.enabled = false; // 플레이어 컨트롤 비활성화
+            animator.SetBool("isDie", true);
+            StartCoroutine(ObjectManager.Instance.CleadupObject());
             StartCoroutine(HandleGameOver());
         }
     }
@@ -76,7 +80,7 @@ public class PlayerControl : PlayerStats
     private IEnumerator HandleGameOver()
     {
         Debug.Log("[Player] 게임 오버 - 서버에 결과 전송");
-
+        ObjectManager.Instance.enabled = false;
         // 이번 판 누적 치즈 (클리어된 라운드 합계 + 현재 라운드 진행분)
         int totalCheeseEarned = (int)(PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese);
         // Time.timeScale = 0f; // 게임 일시정지 (UI 표시를 위해)
@@ -91,6 +95,7 @@ public class PlayerControl : PlayerStats
             power        = PlayerStats.Instance.FinalWallAttack,
             attack_power = PlayerStats.Instance.FinalObjectAttack
         };
+        yield return new WaitForSeconds(2.5f);
 
         // UI 업데이트: 게임오버 패널 활성화 및 최종 결과 표시
         if (gameoverUI != null)
@@ -176,6 +181,9 @@ public class PlayerControl : PlayerStats
     private IEnumerator MoveLoop(Vector3 firstDirection)
     {
         isMoving = true;
+        animator.SetFloat("moveSpeed", FinalMoveSpeed);
+        animator.SetBool("isMove", true);
+
         Vector3 direction = firstDirection;
         while (true)
         {
@@ -191,6 +199,7 @@ public class PlayerControl : PlayerStats
             else direction = GetDirection(moveInput);
         }
         isMoving = false;
+        animator.SetBool("isMove", false);
     }
 
     private void UpdateRotation(Vector3 direction)
@@ -265,11 +274,17 @@ public class PlayerControl : PlayerStats
         {
             if (skill != null && skill.TryUseJump())
             {
+                animator.SetBool("isMove", false);
+                animator.SetBool("isJump", true);
+                yield return new WaitForSeconds(0.5f);
                 // Destroy(hit.collider.gameObject); // 벽 파괴
                 Debug.Log("[Player] 벽 넘기 스킬 사용");
-
                 // 점프 이동 루틴으로 전환 (벽을 뛰어넘어 목표 지점으로 이동)
                 yield return StartCoroutine(JumpRoutine(startPosition, targetPosition, moveTime));
+                animator.SetBool("isJump", false);
+                yield return new WaitForSeconds(0.1f);
+                animator.SetBool("isMove", true);
+
                 // 벽을 뛰어넘어 착지 시 자석 스킬 및 아드레날린 러시 효과 발동
                 if (skill != null)
                 {
