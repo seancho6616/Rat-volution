@@ -8,7 +8,7 @@ public class InventoryItem
     public float dot;
     public float rapidStrike;
     public float luckySeven;
-    public float specialMove;
+    public float specialMove = 1f;
     public bool magnet;
     public bool adrenaline;
     public bool slowMotion;

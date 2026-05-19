@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Mono.Cecil.Cil;
 
 public class ObjectManager : ObjectData
 {
@@ -188,6 +189,15 @@ public class ObjectManager : ObjectData
                 runBonus.minWarningTime -= amount;
                 runBonus.mixWarningTime -= amount;
                 break;
+        }
+    }
+
+    public IEnumerator CleadupObject()
+    {
+        yield return new WaitForSeconds(0.2f);
+        foreach(var obj in GameObject.FindGameObjectsWithTag("Object"))
+        {
+            obj.GetComponent<FallingObject>().SetVisualAlpha(0.3f);
         }
     }
 }
