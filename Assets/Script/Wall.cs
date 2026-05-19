@@ -17,14 +17,14 @@ public class Wall : MonoBehaviour
         currentHp = maxHp;
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        // 플레이어와 충돌 시 데미지 1
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            TakeDamage(1);
-        }
-    }
+    // private void OnCollisionEnter(Collision collision)
+    // {
+    //     // 플레이어와 충돌 시 데미지 1
+    //     if (collision.gameObject.CompareTag("Player"))
+    //     {
+    //         TakeDamage(1);
+    //     }
+    // }
 
     public void InstantDestroy()
     {
