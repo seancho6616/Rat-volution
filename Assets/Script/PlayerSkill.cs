@@ -1,20 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using Mono.Cecil.Cil;
 
 public class PlayerSkill : MonoBehaviour
 {
 
     [Header("Skills States")]
-    public bool canJumpOverWall = false; // 특수 이동
     public float lastUsedTime = -999f; // 마지막 점프 사용 시간
-    public bool isSharpFangsActive = false; // 날카로운 앞니 활성화 여부
-    public bool isSlowMotionActive = false; // 슬로우 모션 활성화 여부
-    public bool hasAdrenalineRush = false; // 아드레날린 러시 활성화 여부
-    public bool hasDoT = false; // 독 데미지 활성화 여부
-    public float dotDamage = 0f; // DoT 데미지 양
-    public bool hasRapidStrike = false; // 연속 공격 활성화 여부
-    public bool hasLuckySeven = false; // 777 활성화 여부
-    public bool hasDealWithDevil = false; // 악마와 거래 활성화 여부
     private Coroutine adrenalineCoroutine;
     private Coroutine slowMotionCoroutine;
 
@@ -22,11 +14,15 @@ public class PlayerSkill : MonoBehaviour
     public void UseMagnet(float range = 10f)
     {
         // 1칸 범위 내 치즈 탐색 후 플레이어 위치로 이동
+        if (!PlayerStats.Instance.item.magnet) return;
         Debug.Log("자석 스킬 사용");
         Collider[] cheeses = Physics.OverlapSphere(transform.position, range, LayerMask.GetMask("Cheese"));
         foreach (var col in cheeses)
         {
-            StartCoroutine(PullCheese(col.transform));
+            if (col != null)
+            {
+                StartCoroutine(PullCheese(col.transform));
+            }
         }
     }
 
@@ -56,37 +52,34 @@ public class PlayerSkill : MonoBehaviour
     }
 
     // [날카로운 앞니] 확률 계산
-    public void ActivateSharpFangs()
+    public bool CheckSharpFangs()
     {
-        isSharpFangsActive = true; // 일단 활성화 상태로 설정 (실제 확률 계산은 공격 시점에 적용)
-        Debug.Log("날카로운 앞니 활성화");
-        // float chance = 0.1f; // 10% 확률
-        // if (Random.value < chance)
-        // {
-        //     isSharpFangsActive = true;
-        //     Debug.Log("날카로운 앞니가 활성화되었습니다!");
-        // }
-        // else
-        // {
-        //     isSharpFangsActive = false;
-        //     Debug.Log("날카로운 앞니가 활성화되지 않았습니다.");
-        // }
+        float chance = PlayerStats.Instance.item.sharpFangs;
+
+        if (chance <= 0f) return false; // 스킬이 없는 경우
+
+        // 인벤토리에 저장된 수치에 따라 확률 계산
+        if (Random.value < chance)
+        {
+            Debug.Log("날카로운 앞니 효과 발동! 추가 치즈 획득!");
+            return true; // 효과 발동
+        }
+        return false;
     }
 
     // 슬로우 모션 활성화
     public void ActivateSlowMotion(float amount)
     {
+        if (!PlayerStats.Instance.item.slowMotion) return;
         if (slowMotionCoroutine != null)
             StopCoroutine(slowMotionCoroutine);
-        slowMotionCoroutine = StartCoroutine(SlowMotionRoutine(4f, amount)); // 4초 동안 슬로우 모션 효과 적용}
+        slowMotionCoroutine = StartCoroutine(SlowMotionRoutine(4f, amount)); // 4초 동안 슬로우 모션 효과 적용
     }
     private IEnumerator SlowMotionRoutine(float duration, float amount)
     {
-        isSlowMotionActive = true;
         Debug.Log("슬로우 모션 활성화");
-        float originalTimeScale = Time.timeScale;
-        // 게임 속도 느리게
-        Time.timeScale = 1f - amount;
+
+        Time.timeScale = Mathf.Clamp(1f - amount, 0.1f, 1f);
         Time.fixedDeltaTime = 0.02f * Time.timeScale; // 물리 업데이트도 조정
         Debug.Log($"슬로우 모션 적용: {amount * 100}% 느려짐");
 
@@ -94,43 +87,109 @@ public class PlayerSkill : MonoBehaviour
 
         Time.timeScale = 1f; // 원래 속도로 복구
         Time.fixedDeltaTime = 0.02f; // 물리 업데이트 원래대로
-        isSlowMotionActive = false;
         Debug.Log("슬로우 모션 비활성화");
     }
 
-    // public void TriggerAdrenalineRush()
-    // {
-    //     if (!hasAdrenalineRush) return;
+    public void TriggerAdrenalineRush()
+    {
+        if (!PlayerStats.Instance.item.adrenaline) return;
+        
+        if (adrenalineCoroutine != null)
+            StopCoroutine(adrenalineCoroutine);
+        adrenalineCoroutine = StartCoroutine(AdrenalineRushRoutine()); // 아드레날린 러시 지속 시간 동안 효과 적용
+    }
 
-    //     if (adrenalineCoroutine != null)
-    //         StopCoroutine(adrenalineCoroutine);
-    //     adrenalineCoroutine = StartCoroutine(AdrenalineRushRoutine()); // 아드레날린 러시 지속 시간 동안 효과 적용
-    // }
+    IEnumerator AdrenalineRushRoutine()
+    {
+        Debug.Log("아드레날린 러시 활성화");
+        // 임시 이동속도 보너스 적용
+        float boostAmount = PlayerStats.Instance.baseData.moveSpeed * 0.5f; // 기본 이동속도의 50% 추가
 
-    // IEnumerator AdrenalineRushRoutine()
-    // {
-    //     Debug.Log("아드레날린 러시 활성화");
-    //     // 임시 이동속도 보너스 적용
-    //     float originalBonus = playerStats.runBonus.moveSpeed;
-    //     float boostAmount = playerStats.baseData.moveSpeed * 0.5f; // 기본 이동속도의 50% 추가
+        PlayerStats.Instance.runBonus.moveSpeed += boostAmount;
 
-    //     playerStats.runBonus.moveSpeed += boostAmount;
+        yield return new WaitForSeconds(2f); // 2초 동안 지속
+        PlayerStats.Instance.runBonus.moveSpeed -= boostAmount; // 보너스 제거
+        Debug.Log("아드레날린 러시 비활성화");
+    }
 
-    //     yield return new WaitForSeconds(2f); // 2초 동안 지속
-    //     playerStats.runBonus.moveSpeed -= boostAmount; // 보너스 제거
-    //     Debug.Log("아드레날린 러시 비활성화");
-    // }
+    public bool CheckLuckySeven()
+    {
+        if (PlayerStats.Instance.item.luckySeven <= 0f) return false;
 
-    // public bool CheckLuckySeven()
-    // {
-    //     if (!hasLuckySeven) return false;
+        float luckBonus = PlayerStats.Instance.item.luckySeven + (0.1f * PlayerStats.Instance.FinalLuck);
+        if (Random.value < luckBonus)
+        {
+            Debug.Log("777 효과 발동! 치즈 3개 추가 획득!");
+            return true;
+        }
+        return false;
+    }
 
-    //     float luckBonus =0.07f + (0.1f * playerStats.FinalLuck);
-    //     if (Random.value < luckBonus)
-    //     {
-    //         Debug.Log("777 효과 발동! 치즈 3개 추가 획득!");
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    // 독 데미지 적용
+    public void TryApplyDoT(FallingObject target)
+    {
+        // DoT 효과가 활성화된 경우, 대상에게 독 데미지 적용
+        float dotPercent = PlayerStats.Instance.item.dot;
+
+        if (dotPercent <= 0f || target == null) return; // 스킬이 없거나 대상이 없는 경우
+        
+        float damage = PlayerStats.Instance.FinalObjectAttack * dotPercent; // DoT 데미지 계산
+        StartCoroutine(DoTRoutine(target, damage, 3f)); // 3초 동안 DoT 효과 적용
+    }
+
+    private IEnumerator DoTRoutine(FallingObject target, float damage, float duration)
+    {
+        float elapsed = 0f;
+        float tickInterval = 1f; // 1초마다 데미지 적용
+
+        while (elapsed < duration && target != null)
+        {
+            yield return new WaitForSeconds(tickInterval);
+            elapsed += tickInterval;
+
+            if (target != null)
+            {
+                target.TakeDamage(damage);
+                Debug.Log($"DoT 효과: {damage} 데미지 적용 (남은 시간: {duration - elapsed:F1}초)");
+            }
+        }
+    }
+
+    // 연속 공격 Rapid Strike
+    public bool CheckRapidStrike()
+    {
+        float rapidChance = PlayerStats.Instance.item.rapidStrike;
+        if (rapidChance <= 0f) return false;
+
+        // 연속 공격 확률 계산
+        if (Random.value < rapidChance)
+        {
+            Debug.Log("연속 공격 효과 발동! 추가 공격 기회!");
+            return true; // 연속 공격 발동
+        }
+        return false;
+    }
+
+    // 악마와의 계약 DealwithDevil
+    public bool TryResurrect()
+    {
+        if (!PlayerStats.Instance.item.dealWithDevil) return false;
+
+        Debug.Log("악마와의 계약 발동 - 즉시 부활");
+        
+        // 부활 시 체력 회복 등 추가 효과 적용 가능
+        float currentTotalCheese = PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese;
+        int cheeseCost = Mathf.RoundToInt(currentTotalCheese * 0.15f);
+
+        PlayerStats.Instance.currentCheese -= cheeseCost;
+
+        if (PlayerStats.Instance.currentCheese < 0)
+        {
+            PlayerStats.Instance.totalCheese += PlayerStats.Instance.currentCheese; // 부족한 치즈만큼 총 치즈에서 차감
+            PlayerStats.Instance.currentCheese = 0;
+        }
+        PlayerStats.Instance.item.dealWithDevil = false; // 계약은 한 번만 발동
+
+        return true; // 부활 성공
+    }
 }

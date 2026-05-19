@@ -54,6 +54,7 @@ Assets/Script/
  Bomb.cs
  CameraFollow.cs
  CardManager.cs
+ CardSkillTester.cs
  FallingObject.cs
  IDamageable.cs
  Inventory.cs
@@ -96,6 +97,8 @@ Assets/Script/
   DialogTutorial.cs
   GameoverUI.cs
   Gauge.cs
+  ItemSlot.cs
+  ItemSlotManager.cs
   LoginManager.cs
   Main1Manager.cs
   Main2Manager.cs
