@@ -6,7 +6,7 @@ public class ApiManager : MonoBehaviour
 {
     public static ApiManager instance;
 
-    private string baseUrl = "http://192.168.0.45:3000";
+    private string baseUrl = "http://10.20.38.145:3000";
 
     // JWT 토큰 (메모리 + PlayerPrefs 양쪽에 보관)
     private string authToken = "";
