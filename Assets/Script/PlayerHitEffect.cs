@@ -18,12 +18,12 @@ public class PlayerHitEffect : MonoBehaviour
     private void Start()
     {
         // 모든 자식의 렌더러와 원래 색상을 미리 저장해둡니다.
-        renderers.AddRange(GetComponentsInChildren<Renderer>());
-        foreach (var r in renderers)
-        {
-            // URP Lit 셰이더는 기본 색상 변수명이 "_BaseColor"입니다.
-            originalColors.Add(r.material.GetColor("_BaseColor"));
-        }
+        // renderers.AddRange(GetComponentsInChildren<Renderer>());
+        // foreach (var r in renderers)
+        // {
+        //     // URP Lit 셰이더는 기본 색상 변수명이 "_BaseColor"입니다.
+        //     originalColors.Add(r.material.GetColor("_BaseColor"));
+        // }
     }
 
     public void PlayHitEffect()
