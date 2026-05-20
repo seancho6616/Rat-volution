@@ -9,7 +9,7 @@ public class PlayerHitEffect : MonoBehaviour
     [SerializeField] private float flickerSpeed = 0.1f; // 깜빡임 속도
     
     // 맞았을 때 반짝일 색상 (인스펙터에서 하얀색이나 빨간색으로 설정해 보세요!)
-    [SerializeField] private Color hitColor = Color.white; 
+    [SerializeField] private Color hitColor = Color.red; 
 
     private List<Renderer> renderers = new List<Renderer>(); 
     private List<Color> originalColors = new List<Color>(); 
