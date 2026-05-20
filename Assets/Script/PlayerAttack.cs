@@ -6,7 +6,7 @@ public class PlayerAttack : MonoBehaviour
     private Transform meshTransform;
 
     [Header("Attack Settings")]
-    public Vector3 attackBoxSize = new Vector3(10f, 5f, 10f);
+    public Vector3 attackBoxSize = new Vector3(15f, 10f, 15f);
     public float attackOffset = 7f;
 
     private float lastAttackTime;
@@ -58,11 +58,11 @@ public class PlayerAttack : MonoBehaviour
             return;
         }
         // 바라보고 있는 방향으로 공격 중심점 계산
-        Vector3 boxSize = new Vector3 (15f, 10f, 15f);
+        // Vector3 boxSize = new Vector3 (15f, 10f, 15f);
         Vector3 attackCenter = transform.position + (meshTransform.forward * attackOffset);
 
         // 공격 범위 내의 레이어 탐색
-        Collider[] hitObjects = Physics.OverlapBox(attackCenter, boxSize / 2f, meshTransform.rotation, playerControl.objectLayer);
+        Collider[] hitObjects = Physics.OverlapBox(attackCenter, attackBoxSize / 2f, meshTransform.rotation, playerControl.objectLayer);
 
         if (hitObjects.Length == 0)
         {
@@ -81,19 +81,16 @@ public class PlayerAttack : MonoBehaviour
 
                 if (skill != null)
                 {
-                    if (skill != null)
+                    // DoT 효과 적용 시도
+                    skill.TryApplyDoT(target);
+                    // 연속 공격 시도
+                    if (skill.CheckRapidStrike())
                     {
-                        // DoT 효과 적용 시도
-                        skill.TryApplyDoT(target);
-                        // 연속 공격 시도
-                        if (skill.CheckRapidStrike())
-                        {
-                            float rapidDamagePercent = Random.Range(0.2f, 0.5f);
-                            float rapidDamage = finalDamage * rapidDamagePercent;
-                            
-                            target.TakeDamage(rapidDamage);
-                            Debug.Log($"연속 공격! 추가 데미지: {rapidDamage:F1}");
-                        }
+                        float rapidDamagePercent = Random.Range(0.2f, 0.5f);
+                        float rapidDamage = finalDamage * rapidDamagePercent;
+                        
+                        target.TakeDamage(rapidDamage);
+                        Debug.Log($"연속 공격! 추가 데미지: {rapidDamage:F1}");
                     }
                 }
             }
