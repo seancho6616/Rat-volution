@@ -15,6 +15,8 @@ public class FallingObject : MonoBehaviour, IDamageable
     private float currentHealth;
     // private bool isDestroyedByPlayer = false;
 
+    private Color originalColor;
+
     [Header("Grid Settings")]
     private float gridSize = 10f; // 한 칸의 길이
 
@@ -24,6 +26,12 @@ public class FallingObject : MonoBehaviour, IDamageable
     private void Awake()
     {
         objectColor = gameObject.GetComponent<Renderer>();
+
+        // 게임 시작 시 초기 색 백업
+        if (objectColor != null && objectColor.material != null)
+        {
+            originalColor = objectColor.material.GetColor("_BaseColor");
+        }
     }
 
     public void Init(float hp, float gSize)
@@ -33,6 +41,11 @@ public class FallingObject : MonoBehaviour, IDamageable
         this.gridSize = gSize;
          if (objectColor == null)
             objectColor = GetComponent<Renderer>();
+        // 오브젝트 초기화 시 색상과 투명도 설정
+        if (objectColor != null && objectColor.material != null)
+        {
+            objectColor.material.SetColor("_BaseColor", originalColor);
+        }
         StartCoroutine(LifecycleRoutine());
     }
 
@@ -158,10 +171,24 @@ public class FallingObject : MonoBehaviour, IDamageable
     {
         currentHealth -= amount;
         Debug.Log($"<color=red>[오브젝트 피격]</color> {gameObject.name} 남은 체력: {currentHealth} / {maxHealth}");
+
+        // 체력에 따라 색상 변화 (예시: 체력이 50% 이하일 때 붉은색으로)
+        UpdateObjectColor();
+
         if (currentHealth <= 0)
         {
             Debug.Log($"<color=green>[오브젝트 파괴]</color> {gameObject.name}이(가) 파괴되었습니다.");
             DestroyObject(true);
+        }
+    }
+
+    private void UpdateObjectColor()
+    {
+        if (objectColor != null && objectColor.material != null)
+        {
+            float hpRatio = currentHealth / maxHealth;
+            Color targetColor = Color.Lerp(Color.red, originalColor, hpRatio);
+            objectColor.material.SetColor("_BaseColor", targetColor);
         }
     }
 
