@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ObjWarningTime
   m_EditorClassIdentifier: Assembly-CSharp::CardDebuffData
   code: DEBUFF_OBJ_WARNING_TIME
-  cardName: ObjWarningTime
-  description: 
+  cardName: "\uACE0\uC591\uC774\uBC1C\uAC10\uC9C0\uC2DC\uAC04"
+  description: "\uACE0\uC591\uC774 \uBC1C \uAC10\uC9C0 -"
   cardType: 2
   cardRarity: 1
   amount: 0
