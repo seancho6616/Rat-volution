@@ -20,6 +20,9 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [Header("도감용")]
     public GameObject unknownCard; // 미획득 시 표시할 물음표 가림막
 
+    [Header("이펙트 제어")]
+    public CardGlowController glowController; 
+
     private BaseCardData currentData;
     private CardMode currentMode = CardMode.Reward;
     private bool isDiscovered = true;
@@ -41,6 +44,13 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
         Motion.transform.rotation = Quaternion.identity;
         isFlipped = false;
+
+        // 현재 모드에 따라 후광 이펙트 제어 (보상, 팝업 모드일 때만 true)
+        if (glowController != null)
+        {
+            bool shouldShowGlow = (currentMode == CardMode.Reward || currentMode == CardMode.Popup);
+            glowController.SetupGlow(data.cardRarity, shouldShowGlow);
+        }
 
         if (currentMode == CardMode.Inventory)
         {
