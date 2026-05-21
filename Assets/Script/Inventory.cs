@@ -7,6 +7,7 @@ public class Inventory : MonoBehaviour
     public static Inventory Instance;
     public readonly Dictionary<CardItemData, float> itemCheck = new Dictionary<CardItemData, float>();
     public InventoryItem item = new InventoryItem();
+    public GameObject shield;
     void Awake()
     {
         if(Instance ==null) Instance = this;
@@ -37,6 +38,7 @@ public class Inventory : MonoBehaviour
         {
             case "DisposableShield":
                 item.shield += amount;
+                shield.SetActive(true);
                 break;
             case "SharpFangs":
                 item.sharpFangs += amount;

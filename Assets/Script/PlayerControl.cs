@@ -54,6 +54,7 @@ public class PlayerControl : PlayerStats
         if (item.shield > 0)
         {
             Inventory.Instance.item.shield--;
+            if(item.shield == 0) Destroy(Inventory.Instance.shield);
             return;
         } // 보호막이 있으면 데미지 무효화
         currentHeart -= damage;

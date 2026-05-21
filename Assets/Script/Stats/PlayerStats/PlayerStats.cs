@@ -64,7 +64,7 @@ public class PlayerStats : MonoBehaviour
         level++;
         totalCheese += currentCheese;
         currentCheese = 0;
-        maxCheese += 5;
+        //maxCheese += 5;
 
         Debug.Log($"ObjectManager.Instance is null? {ObjectManager.Instance == null}");
         Debug.Log($"ObjectManager.Instance.runBonus is null? {ObjectManager.Instance?.runBonus == null}");
