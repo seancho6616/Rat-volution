@@ -24,19 +24,16 @@ public class LoginManager : MonoBehaviour
     public TextMeshProUGUI signupErrorText;
 
     [Header("계정 표시")]
-    //public TextMeshProUGUI accountButtonText;
     public TMP_Text hiUserTxt;
 
     private void Start()
     {
-        // 시작 시 일단 모든 그룹 숨기기 (세션 복원 결과 따라 띄울 거)
         accountGroup.SetActive(false);
         loginGroup.SetActive(false);
         signupGroup.SetActive(false);
         loginErrorText.text = "";
         signupErrorText.text = "";
 
-        // 저장된 토큰 있으면 자동 로그인 시도
         StartCoroutine(TryAutoLogin());
     }
 
@@ -64,13 +61,11 @@ public class LoginManager : MonoBehaviour
             },
             onFail: (error) =>
             {
-                // 토큰 만료/무효 → ApiManager가 자동으로 토큰 지움
                 Debug.LogWarning("[Login] 자동 로그인 실패 - 로그인 화면 표시");
                 ShowMainPanel();
             }
         ));
     }
-    
 
     // --- 에러 메시지 3초 표시 코루틴 ---
     private IEnumerator ShowErrorRoutine(TextMeshProUGUI errorTextUI, string message)
@@ -89,8 +84,17 @@ public class LoginManager : MonoBehaviour
         signupGroup.SetActive(false);
     }
 
+    // ★ Account 버튼 클릭 시 호출 - 로그인 상태면 진입 차단
     public void ShowLoginPanel()
     {
+        // 이미 로그인된 상태면 로그인 패널 안 띄움
+        if (ApiManager.instance != null && ApiManager.instance.HasToken())
+        {
+            Debug.Log("[Login] 이미 로그인된 상태 - 먼저 로그아웃 필요");
+            StartCoroutine(ShowErrorRoutine(loginErrorText, "이미 로그인 되어있습니다. 로그아웃 후 시도하세요"));
+            return;
+        }
+
         accountGroup.SetActive(false);
         loginGroup.SetActive(true);
         signupGroup.SetActive(false);
@@ -99,6 +103,13 @@ public class LoginManager : MonoBehaviour
 
     public void ShowSignupPanel()
     {
+        // 이미 로그인된 상태면 회원가입 패널도 안 띄움
+        if (ApiManager.instance != null && ApiManager.instance.HasToken())
+        {
+            Debug.Log("[Login] 이미 로그인된 상태 - 회원가입 불가");
+            return;
+        }
+
         accountGroup.SetActive(false);
         loginGroup.SetActive(false);
         signupGroup.SetActive(true);
@@ -129,12 +140,13 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("로그인 성공");
+
                 if (hiUserTxt != null)
                 {
-                    hiUserTxt.text = $"Hi, {login_id}";
-                    StartCoroutine(ShowErrorRoutine(loginErrorText, "로그인 성공!"));
-                    ShowMainPanel();
+                    hiUserTxt.text = $"Hi, {GameManager.instance.nickname}";
                 }
+                StartCoroutine(ShowErrorRoutine(loginErrorText, "로그인 성공!"));
+                ShowMainPanel();   // hiUserTxt 유무와 무관하게 패널 전환
             },
             onFail: (error) =>
             {
@@ -201,7 +213,6 @@ public class LoginManager : MonoBehaviour
                 {
                     hiUserTxt.text = "Hi, Guest!";
                 }
-                
             },
             onFail: (error) =>
             {
@@ -210,8 +221,7 @@ public class LoginManager : MonoBehaviour
         ));
     }
 
-    // --- 로그아웃 (선택) ---
-    // 나중에 옵션 F (logout) 작업할 때 사용
+    // --- 로그아웃 ---
     public void OnLogoutButtonClicked()
     {
         if (ApiManager.instance != null)
@@ -223,11 +233,14 @@ public class LoginManager : MonoBehaviour
             GameManager.instance.userId = "";
             GameManager.instance.nickname = "";
         }
-        // if (accountButtonText != null)
-        // {
-        //     accountButtonText.text = "Login";
-        // }
-        ShowLoginPanel();
+
+        // ★ hi 메시지 초기화 (자동 로그인 후 로그아웃 시 닉네임 안 바뀌던 버그 수정)
+        if (hiUserTxt != null)
+        {
+            hiUserTxt.text = "Hi, User!";
+        }
+
+        ShowMainPanel();   // 메인 패널 표시 (account 버튼 등 보이게)
         Debug.Log("[Login] 로그아웃 완료");
     }
 }
