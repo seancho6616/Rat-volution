@@ -27,6 +27,11 @@ public class Main1Manager : MonoBehaviour
     [Header("계정 표시 (선택)")]
     public TextMeshProUGUI hiUserTxt;   // 게스트 로그인 시 닉네임 표시용
 
+    [Header("Audio Sources")]
+    public AudioSource clickSound;
+    public AudioSource entrySound;
+    public AudioSource BGM;
+
     private bool isEntering = false;   // 중복 클릭 방지
 
     private void Start()
@@ -44,6 +49,9 @@ public class Main1Manager : MonoBehaviour
         // 중복 클릭 방지
         if (isEntering) return;
 
+        if (BGM != null) BGM.Stop();
+        if (entrySound != null) entrySound.Play();
+        
         // 이미 로그인됨 (일반 로그인 or 자동 로그인 토큰 살아있음)
         if (ApiManager.instance != null && ApiManager.instance.HasToken())
         {
@@ -147,16 +155,19 @@ public class Main1Manager : MonoBehaviour
 
     public void OnBackgroundClicked()
     {
+        if (clickSound != null) clickSound.Play();
         popupGroup.SetActive(true);
     }
 
     public void OnNoButtonClicked()
     {
+        if (clickSound != null) clickSound.Play();
         popupGroup.SetActive(false);
     }
 
     public void OnYesButtonClicked()
     {
+        if (clickSound != null) clickSound.Play();
         Debug.Log("게임을 종료합니다.");
         Application.Quit();
 
