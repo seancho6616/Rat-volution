@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ObjLivingTime
   m_EditorClassIdentifier: Assembly-CSharp::CardDebuffData
   code: DEBUFF_OBJ_LIVING_TIME
-  cardName: ObjLivingTime
-  description: 
+  cardName: "\uACE0\uC591\uC774\uBC1C \uC720\uC9C0\uC2DC\uAC04"
+  description: "\uACE0\uC591\uC774 \uBC1C \uC720\uC9C0 \uC2DC\uAC04 +"
   cardType: 2
   cardRarity: 1
   amount: 0

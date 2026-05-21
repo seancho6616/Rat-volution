@@ -123,7 +123,7 @@ public class CardInventoryUI : MonoBehaviour
 
             if (cardScript != null)
             {
-                cardScript.SetCardData(actualData, CardUI.CardMode.Inventory, isDiscovered);
+                cardScript.SetCardData(actualData, null, CardUI.CardMode.Inventory, isDiscovered);
             }
         }
 
@@ -158,7 +158,7 @@ public class CardInventoryUI : MonoBehaviour
         if (cardPopupPanel != null && popupCardUI != null)
         {
             cardPopupPanel.SetActive(true);
-            popupCardUI.SetCardData(cardData, CardUI.CardMode.Popup, true);
+            popupCardUI.SetCardData(cardData, null, CardUI.CardMode.Popup, true);
         }
     }
 

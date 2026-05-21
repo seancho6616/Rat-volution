@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CardManager : MonoBehaviour
@@ -35,7 +36,8 @@ public class CardManager : MonoBehaviour
         {
             cardUIs[i].SetActive(true);
             CardUI cardUI = cardUIs[i].GetComponent<CardUI>();
-            cardUI.SetCardData(pickCard[i]);
+            cardUI.SetCardData(pickCard[i], DebuffCardPickUP(pickCard[i]));
+            //cardUI.cardDebuffData = DebuffCardPickUP(pickCard[i]);
             // cardUI.frontView.SetActive(true);
             // cardUI.backView.SetActive(false);
         }
@@ -47,7 +49,7 @@ public class CardManager : MonoBehaviour
         var allCards = new List<BaseCardData>();
         allCards.AddRange(statCards);
         allCards.AddRange(itemCards);
-        allCards.AddRange(debuffCards);
+        //allCards.AddRange(debuffCards);
 
         var drawn = new List<BaseCardData>();
         var pool = new List<BaseCardData>(allCards);
@@ -90,6 +92,42 @@ public class CardManager : MonoBehaviour
         {
             ItemSlotManager.Instance.AddCardSlot(data);
         }
+    }
+
+    public CardDebuffData DebuffCardPickUP(BaseCardData data)
+    {
+        // 같은 이름 + 같은 타입 카드 찾기
+        var allCards = new List<BaseCardData>();
+        allCards.AddRange(statCards);
+        allCards.AddRange(itemCards);
+
+        var same = allCards.FindAll(card =>
+            card.cardType == data.cardType &&
+            card.cardName == data.cardName);
+
+        // 같은 카드가 없으면 null 반환
+        if (same.Count == 0) return null;
+
+        // 가장 높은 레어도 찾기
+        BaseCardData highCard = same[0];
+        for (int i = 1; i < same.Count; i++)
+        {
+            if ((int)same[i].cardRarity > (int)highCard.cardRarity)
+                highCard = same[i];
+        }
+
+        // data가 가장 높은 레어도가 아니면 null 반환
+        if (data.cardRarity != highCard.cardRarity) return null;
+
+        // 디버프 카드가 없으면 null 반환
+        if (debuffCards.Count == 0)
+        {
+            Debug.LogWarning("[CardManager] debuffCards가 비어있습니다!");
+            return null;
+        }
+
+        // 랜덤 디버프 카드 반환
+        return debuffCards[Random.Range(0, debuffCards.Count)];
     }
 
     // 카드 선택창 숨기기

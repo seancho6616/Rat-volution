@@ -24,18 +24,26 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public CardGlowController glowController; 
 
     private BaseCardData currentData;
+    public CardDebuffData cardDebuffData;
     private CardMode currentMode = CardMode.Reward;
     private bool isDiscovered = true;
     private bool isFlipped = false;
     private Coroutine flipCoroutine;
     private float flipDuration = 0.25f;
 
+    void Start()
+    {   
+        
+    }
     // 카드 데이터 설정
-    public void SetCardData(BaseCardData data, CardMode mode = CardMode.Reward, bool discovered = true)
+    public void SetCardData(BaseCardData data, CardDebuffData debuffData, CardMode mode = CardMode.Reward, bool discovered = true)
     {
         currentData = data;
         currentMode = mode;
         isDiscovered = discovered;
+        cardDebuffData = debuffData;
+        if(cardDebuffData ==null) Debug.Log(cardDebuffData);
+        else Debug.Log(cardDebuffData.cardName);
 
         if (imgIcon != null) imgIcon.sprite = data.icon;
         if (txtName != null) txtName.text = data.cardName;
