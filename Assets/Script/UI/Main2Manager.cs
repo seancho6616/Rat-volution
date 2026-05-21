@@ -10,6 +10,7 @@ public class Main2Manager : MonoBehaviour
     [Header("Scene")]
     public string homeSceneName = "FirstScene";
     public string inGameScene = "SampleScene";
+    public string tutorialScene = "TutorialScene";
 
     [Header("Hide")]
     public GameObject inventory;
@@ -109,6 +110,12 @@ public class Main2Manager : MonoBehaviour
     public void OnTrainingStartBtn()
     {
         SceneManager.LoadScene(inGameScene);
+    }
+
+    // 튜토리얼 시작하기 버튼 눌렀을 때
+    public void OnTutorialStartBtn()
+    {
+        SceneManager.LoadScene(tutorialScene);
     }
 
     // 사운드 조절
