@@ -23,6 +23,7 @@ public class Inventory : MonoBehaviour
             return;
         }
         if(card.cardName == "SharpFangs")   itemCheck[card] = currentStack + card.scalePerStack;
+        if(card.cardName == "RapidStrike")  itemCheck[card] = currentStack + card.scalePerStack;
         else itemCheck[card] = currentStack + 1;
         AddItemValue(card);
     }
