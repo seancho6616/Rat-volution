@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   code: CARD_777_RARE
   cardName: LuckySeven
-  description: "\uCE58\uC988\uB97C \uBA39\uC744 \uC2DC % \uCD94\uAC00\uB85C \uBA39\uC74C"
+  description: "\uCE58\uC988 \uD68D\uB4DD \uC2DC +10% \uCD94\uAC00 \uD68D\uB4DD"
   cardType: 1
   cardRarity: 1
   amount: 0.1

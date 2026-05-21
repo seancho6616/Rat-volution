@@ -54,19 +54,19 @@ public class CameraFollow : MonoBehaviour
 
     void SetWallAlpha(Renderer renderer, float alpha)
     {
-        Color color = renderer.material.GetColor("_BaseColor");
-        color.a = alpha;
-        renderer.material.SetColor("_BaseColor", color);
+        // Color color = renderer.material.GetColor("_BaseColor");
+        // color.a = alpha;
+        // renderer.material.SetColor("_BaseColor", color);
 
         if (alpha < 1f)
         {
-            renderer.material.SetInt("_ZWrite", 1);
-            renderer.material.renderQueue = 3000; // 투명 렌더링 큐
+            renderer.material.SetFloat("_float", 0.5f);
+            //renderer.material.renderQueue = 3000; // 투명 렌더링 큐
         }
         else
         {
-            renderer.material.SetInt("_ZWrite", 1);
-            renderer.material.renderQueue = -1; // 기본 렌더링 큐
+            renderer.material.SetFloat("_float", 1);
+            //renderer.material.renderQueue = -1; // 기본 렌더링 큐
         }
     }
 }

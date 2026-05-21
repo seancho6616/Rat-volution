@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   code: ITEM_VACUUM_RARE
   cardName: Magnet
-  description: "\uC8FC\uC704 1\uCE78 \uCE58\uC988\uB97C \uAC00\uC9C0\uACE0 \uC640\uC11C
-    \uBA39\uC74C"
+  description: "\uBC18\uACBD 1\uCE78 \uCE58\uC988 \uC790\uB3D9 \uD761\uC218"
   cardType: 1
   cardRarity: 1
   amount: 3

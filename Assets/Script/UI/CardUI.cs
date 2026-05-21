@@ -16,6 +16,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public TMP_Text txtName;
     public TMP_Text txtRarity;
     public TMP_Text txtDesc;
+    public TMP_Text txtDebuff;
 
     [Header("도감용")]
     public GameObject unknownCard; // 미획득 시 표시할 물음표 가림막
@@ -42,8 +43,8 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         currentMode = mode;
         isDiscovered = discovered;
         cardDebuffData = debuffData;
-        if(cardDebuffData ==null) Debug.Log(cardDebuffData);
-        else Debug.Log(cardDebuffData.cardName);
+        if(cardDebuffData !=null) txtDebuff.text = debuffData.description;
+        else txtDebuff.text = null;
 
         if (imgIcon != null) imgIcon.sprite = data.icon;
         if (txtName != null) txtName.text = data.cardName;

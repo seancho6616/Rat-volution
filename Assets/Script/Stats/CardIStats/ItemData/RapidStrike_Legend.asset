@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardItemData
   code: CARD_COMBO_LEGEND
   cardName: RapidStrike
-  description: "\uACF5\uACA9\uB825\uC758 %\uB85C \uD55C \uBC88 \uB354 \uACF5\uACA9\uD568"
+  description: "\uACF5\uACA9\uB825\uC758 20% \uCD94\uAC00 \uD0C0\uACA9"
   cardType: 1
   cardRarity: 2
   amount: 0.2
