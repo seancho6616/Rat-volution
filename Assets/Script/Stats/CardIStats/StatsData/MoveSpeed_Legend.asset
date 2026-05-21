@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MoveSpeed_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
   code: STAT_MOVE_SPEED_LEGEND
-  cardName: MoveSpeed
-  description: "\uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
+  cardName: "\uC774\uB3D9\uC18D\uB3C4"
+  description: "\uC774\uB3D9\uC18D\uB3C4 +0.4"
   cardType: 0
   cardRarity: 2
   amount: 0.4

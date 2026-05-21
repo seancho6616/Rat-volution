@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 331d5c47d8408e54893eaa7fb08fc4d1, type: 3}
-  m_Name: ObjAttack_Normal
+  m_Name: WallAttack_Legend
   m_EditorClassIdentifier: Assembly-CSharp::CardStatData
-  code: STAT_ATTACK_POWER_NORMAL
-  cardName: "\uACF5\uACA9\uB825"
-  description: "\uACE0\uC591\uC774 \uBC1C\uC5D0\uAC8C \uC904 \uC218 \uC788\uB294
-    \uD53C\uD574\n\uACF5\uACA9\uB825 +1"
+  code: WallAttack_Legend
+  cardName: "\uD798"
+  description: "\uBCBD\uC5D0\uAC8C \uC904 \uC218 \uC788\uB294 \uD53C\uD574\n\uD798
+    +4"
   cardType: 0
-  cardRarity: 0
-  amount: 1
-  icon: {fileID: 21300000, guid: 8a3a419e4a5ad364186d1207e473e1b4, type: 3}
-  statType: 5
+  cardRarity: 2
+  amount: 4
+  icon: {fileID: 21300000, guid: 848f61776837dc94eb7185c174931178, type: 3}
+  statType: 7

@@ -15,11 +15,14 @@ public class WallRunBonus
 
     public void LevelUP(int level)
     {
-        if (level % 3 == 0)
+        if (level <= 20)
         {
-            hp += 4;
-            objBuildTime += 0.5f;
-            objBuildCount += 3;
+            if (level % 3 == 0)
+            {
+                hp += 4;
+                objBuildTime += 0.5f;
+                objBuildCount += 3;
+            }
         }
     }
 }

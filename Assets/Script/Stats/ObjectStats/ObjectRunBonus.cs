@@ -24,19 +24,22 @@ public class ObjectRunBonus
     }
     public void LevelUP(int level)
     {
-        if (level % 3 == 0)
+        if(level <= 20)
         {
-            hp += 10;
-            minSpawnTime -= 0.5f;
-            mixSpawnTime -= 0.5f;
-        }
-        if (level % 2 == 0)
-        {
-            fallingTime -= 0.1f;
-        }
-        if (level % 4 == 0)
-        {
-            livingTime -= 0.5f;
+            if (level % 3 == 0)
+            {
+                hp += 10;
+                minSpawnTime -= 0.5f;
+                mixSpawnTime -= 0.5f;
+            }
+            if (level % 2 == 0)
+            {
+                fallingTime -= 0.1f;
+            }
+            if (level % 4 == 0)
+            {
+                livingTime -= 0.5f;
+            }
         }
     }
 }
