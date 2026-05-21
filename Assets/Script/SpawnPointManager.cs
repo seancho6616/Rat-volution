@@ -7,8 +7,8 @@ using UnityEngine;
 public class SpawnPointManager : MonoBehaviour
 {
     public static SpawnPointManager Instance;
-    [SerializeField] private int gridSize = 7;
-    [SerializeField] private int objectgridSize = 6;
+    [SerializeField] private int gridSize => StageMaker.Instance.finalGridSizeCount;
+    [SerializeField] private int objectgridSize => StageMaker.Instance.finalObjGridSizeCount;
     public readonly float cellSize = 10f;
 
     public readonly List<Vector3> objectsSpawnPositions = new List<Vector3>();
