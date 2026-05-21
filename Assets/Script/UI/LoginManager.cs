@@ -26,6 +26,10 @@ public class LoginManager : MonoBehaviour
     [Header("계정 표시")]
     public TMP_Text hiUserTxt;
 
+    [Header("Audio Sources")]
+    public AudioSource clickSound;
+    public AudioSource errorSound;
+
     private void Start()
     {
         accountGroup.SetActive(false);
@@ -70,6 +74,10 @@ public class LoginManager : MonoBehaviour
     // --- 에러 메시지 3초 표시 코루틴 ---
     private IEnumerator ShowErrorRoutine(TextMeshProUGUI errorTextUI, string message)
     {
+        if (errorSound != null) 
+        {
+            errorSound.Play();
+        }
         errorTextUI.text = message;
         yield return new WaitForSeconds(2f);
         errorTextUI.text = "";
@@ -119,6 +127,7 @@ public class LoginManager : MonoBehaviour
     // --- 로그인 버튼 ---
     public void OnLoginButtonClicked()
     {
+        if (clickSound != null) clickSound.Play();
         string login_id = loginUsernameInput.text;
         string password = loginPasswordInput.text;
 
