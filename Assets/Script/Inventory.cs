@@ -23,14 +23,15 @@ public class Inventory : MonoBehaviour
             return;
         }
         if(card.cardName == "SharpFangs")   itemCheck[card] = currentStack + card.scalePerStack;
-        if(card.cardName == "RapidStrike")  itemCheck[card] = currentStack + card.scalePerStack;
+        else if(card.cardName == "RapidStrike")  itemCheck[card] = currentStack + card.scalePerStack;
         else itemCheck[card] = currentStack + 1;
         AddItemValue(card);
     }
 
     private void AddItemValue(CardItemData card)
     {
-        float amount = itemCheck.ContainsKey(card) ? card.amount : card.scalePerStack;
+        float amount = itemCheck.ContainsKey(card) ?  card.scalePerStack : card.amount;
+        Debug.Log(amount);
         if (!item.invetory.ContainsKey(card))
         {
             item.invetory.Add(card, true);
@@ -55,6 +56,7 @@ public class Inventory : MonoBehaviour
                 break;
             case "SpecialMove":
                 item.specialMove += amount;
+                Debug.Log(item.specialMove);
                 break;
             case "Magnet":
                 item.magnet = true;
