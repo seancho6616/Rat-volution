@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
     public readonly Dictionary<CardItemData, float> itemCheck = new Dictionary<CardItemData, float>();
     public InventoryItem item = new InventoryItem();
     public GameObject shield;
+    private bool isHave;
     void Awake()
     {
         if(Instance ==null) Instance = this;
@@ -16,6 +17,7 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(CardItemData card)
     {
+        isHave = itemCheck.ContainsKey(card) ? true : false;
         float currentStack = itemCheck.ContainsKey(card) ? itemCheck[card] : 0;
         if (currentStack >= card.maxStack)
         {
@@ -23,14 +25,15 @@ public class Inventory : MonoBehaviour
             return;
         }
         if(card.cardName == "SharpFangs")   itemCheck[card] = currentStack + card.scalePerStack;
-        if(card.cardName == "RapidStrike")  itemCheck[card] = currentStack + card.scalePerStack;
+        else if(card.cardName == "RapidStrike")  itemCheck[card] = currentStack + card.scalePerStack;
         else itemCheck[card] = currentStack + 1;
         AddItemValue(card);
     }
 
     private void AddItemValue(CardItemData card)
     {
-        float amount = itemCheck.ContainsKey(card) ? card.amount : card.scalePerStack;
+        float amount = isHave ?  card.scalePerStack : card.amount;
+        Debug.Log(amount);
         if (!item.invetory.ContainsKey(card))
         {
             item.invetory.Add(card, true);
@@ -55,6 +58,7 @@ public class Inventory : MonoBehaviour
                 break;
             case "SpecialMove":
                 item.specialMove += amount;
+                Debug.Log(item.specialMove);
                 break;
             case "Magnet":
                 item.magnet = true;

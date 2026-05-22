@@ -47,7 +47,7 @@ public class CardManager : MonoBehaviour
     private List<BaseCardData> DrawCards(int count)
     {
         var allCards = new List<BaseCardData>();
-        allCards.AddRange(statCards);
+        //allCards.AddRange(statCards);
         allCards.AddRange(itemCards);
         //allCards.AddRange(debuffCards);
 
