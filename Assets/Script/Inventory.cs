@@ -8,6 +8,7 @@ public class Inventory : MonoBehaviour
     public readonly Dictionary<CardItemData, float> itemCheck = new Dictionary<CardItemData, float>();
     public InventoryItem item = new InventoryItem();
     public GameObject shield;
+    private bool isHave;
     void Awake()
     {
         if(Instance ==null) Instance = this;
@@ -16,6 +17,7 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(CardItemData card)
     {
+        isHave = itemCheck.ContainsKey(card) ? true : false;
         float currentStack = itemCheck.ContainsKey(card) ? itemCheck[card] : 0;
         if (currentStack >= card.maxStack)
         {
@@ -30,7 +32,7 @@ public class Inventory : MonoBehaviour
 
     private void AddItemValue(CardItemData card)
     {
-        float amount = itemCheck.ContainsKey(card) ?  card.scalePerStack : card.amount;
+        float amount = isHave ?  card.scalePerStack : card.amount;
         Debug.Log(amount);
         if (!item.invetory.ContainsKey(card))
         {
