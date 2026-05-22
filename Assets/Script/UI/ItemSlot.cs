@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -12,7 +13,8 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     [HideInInspector]
     public string cardID;         // 중복 획득 여부를 확인할 카드 고유 이름
-    private float currentCount;
+    private int currentCount;     // 카드 획득 개수
+    private float amount;
 
     void Start()
     {
@@ -24,16 +26,16 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public void SetItemSlot(BaseCardData data)
     {
         cardID = data.cardName;
+        currentCount += 1;
         switch (cardID)
         {
             case "Magnet":
             case "AdrenalineRush":
             case "SlowMotion":
             case "DealwithTheDevil":
-                currentCount += 1;
                 break;
             default:
-                currentCount = data.amount;
+                amount = data.amount;
                 break;
         }
 
@@ -47,31 +49,43 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
     // 이미 있는 카드를 또 먹었을 때 개수만 올려주는 함수
-    public void AddItemCount(BaseCardData data)
+    public void AddItemCount(CardItemData data)
     {
+        Dictionary<CardItemData, float> itemCheck = Inventory.Instance.itemCheck;
+        float currentStack = itemCheck.ContainsKey(data) ? itemCheck[data] : 0;
+        if (currentStack >= data.maxStack)
+        {
+            Debug.Log("최대 중복수 도달");
+            return;
+        }
+        else
+        {
+            currentCount += 1;            
+        }
         switch (data.cardName)
         {
             case "DisposableShield":
-                currentCount = Inventory.Instance.item.shield;
+                amount = Inventory.Instance.item.shield;
                 break;
             case "SharpFangs":
-                currentCount = Inventory.Instance.item.sharpFangs;
+                amount = Inventory.Instance.item.sharpFangs;
                 break;
             case "DoT":
-                currentCount = Inventory.Instance.item.dot;
+                amount = Inventory.Instance.item.dot;
                 break;
             case "RapidStrike":
-                currentCount = Inventory.Instance.item.rapidStrike;
+                amount = Inventory.Instance.item.rapidStrike;
                 break;
             case "LuckySeven":
-                currentCount = Inventory.Instance.item.luckySeven;
+                amount = Inventory.Instance.item.luckySeven;
                 break;
             case "SpecialMove":
-                currentCount = Inventory.Instance.item.specialMove;
+                amount = Inventory.Instance.item.specialMove;
                 break;
             default:
                 break;
         }
+        
         UpdateCountText();
     }
 
@@ -89,7 +103,7 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (itemNameTxt != null)
         {
-            itemNameTxt.text = cardID;
+            itemNameTxt.text = cardID + " : " + amount.ToString();
         }
     }
 

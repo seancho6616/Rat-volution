@@ -46,7 +46,7 @@ public class ItemSlotManager : MonoBehaviour
         if (existingSlot != null)
         {
             // 2-A. 이미 있다면 개수만 증가
-            existingSlot.AddItemCount(data);
+            existingSlot.AddItemCount((CardItemData)data);
         }
         else
         {
