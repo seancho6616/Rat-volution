@@ -26,9 +26,9 @@ public class LoginManager : MonoBehaviour
     [Header("계정 표시")]
     public TMP_Text hiUserTxt;
 
-    [Header("Audio Sources")]
-    public AudioSource clickSound;
-    public AudioSource errorSound;
+    [Header("로그인 상태별 버튼")]
+    public GameObject accountButton;   // 비로그인 상태에서 표시
+    public GameObject logoutButton;    // 로그인 상태에서 표시
 
     private void Start()
     {
@@ -39,6 +39,15 @@ public class LoginManager : MonoBehaviour
         signupErrorText.text = "";
 
         StartCoroutine(TryAutoLogin());
+    }
+
+    // 로그인 상태에 따라 account/logout 버튼 표시 교체
+    private void UpdateLoginStateUI()
+    {
+        bool isLoggedIn = ApiManager.instance != null && ApiManager.instance.HasToken();
+
+        if (accountButton != null) accountButton.SetActive(!isLoggedIn);
+        if (logoutButton != null) logoutButton.SetActive(isLoggedIn);
     }
 
     // --- 자동 로그인 (세션 복원) ---
@@ -74,10 +83,6 @@ public class LoginManager : MonoBehaviour
     // --- 에러 메시지 3초 표시 코루틴 ---
     private IEnumerator ShowErrorRoutine(TextMeshProUGUI errorTextUI, string message)
     {
-        if (errorSound != null) 
-        {
-            errorSound.Play();
-        }
         errorTextUI.text = message;
         yield return new WaitForSeconds(2f);
         errorTextUI.text = "";
@@ -90,12 +95,12 @@ public class LoginManager : MonoBehaviour
         accountGroup.SetActive(true);
         loginGroup.SetActive(false);
         signupGroup.SetActive(false);
+
+        UpdateLoginStateUI();   // 메인 화면 표시할 때마다 버튼 상태 갱신
     }
 
-    // ★ Account 버튼 클릭 시 호출 - 로그인 상태면 진입 차단
     public void ShowLoginPanel()
     {
-        // 이미 로그인된 상태면 로그인 패널 안 띄움
         if (ApiManager.instance != null && ApiManager.instance.HasToken())
         {
             Debug.Log("[Login] 이미 로그인된 상태 - 먼저 로그아웃 필요");
@@ -111,7 +116,6 @@ public class LoginManager : MonoBehaviour
 
     public void ShowSignupPanel()
     {
-        // 이미 로그인된 상태면 회원가입 패널도 안 띄움
         if (ApiManager.instance != null && ApiManager.instance.HasToken())
         {
             Debug.Log("[Login] 이미 로그인된 상태 - 회원가입 불가");
@@ -127,7 +131,6 @@ public class LoginManager : MonoBehaviour
     // --- 로그인 버튼 ---
     public void OnLoginButtonClicked()
     {
-        if (clickSound != null) clickSound.Play();
         string login_id = loginUsernameInput.text;
         string password = loginPasswordInput.text;
 
@@ -155,7 +158,7 @@ public class LoginManager : MonoBehaviour
                     hiUserTxt.text = $"Hi, {GameManager.instance.nickname}";
                 }
                 StartCoroutine(ShowErrorRoutine(loginErrorText, "로그인 성공!"));
-                ShowMainPanel();   // hiUserTxt 유무와 무관하게 패널 전환
+                ShowMainPanel();   // 내부에서 UpdateLoginStateUI() 호출됨
             },
             onFail: (error) =>
             {
@@ -222,6 +225,7 @@ public class LoginManager : MonoBehaviour
                 {
                     hiUserTxt.text = "Hi, Guest!";
                 }
+                UpdateLoginStateUI();   // 게스트 로그인 후 버튼 상태 갱신
             },
             onFail: (error) =>
             {
@@ -243,13 +247,12 @@ public class LoginManager : MonoBehaviour
             GameManager.instance.nickname = "";
         }
 
-        // ★ hi 메시지 초기화 (자동 로그인 후 로그아웃 시 닉네임 안 바뀌던 버그 수정)
         if (hiUserTxt != null)
         {
             hiUserTxt.text = "Hi, User!";
         }
 
-        ShowMainPanel();   // 메인 패널 표시 (account 버튼 등 보이게)
+        ShowMainPanel();   // 내부에서 UpdateLoginStateUI() 호출됨 (logout 숨김, account 표시)
         Debug.Log("[Login] 로그아웃 완료");
     }
 }
