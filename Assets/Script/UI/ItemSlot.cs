@@ -12,7 +12,7 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     [HideInInspector]
     public string cardID;         // 중복 획득 여부를 확인할 카드 고유 이름
-    private int currentCount = 0;
+    private float currentCount;
 
     void Start()
     {
@@ -23,8 +23,19 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // 카드를 처음 획득했을 때 슬롯을 초기화
     public void SetItemSlot(BaseCardData data)
     {
-        cardID = data.cardName; 
-        currentCount = 1;
+        cardID = data.cardName;
+        switch (cardID)
+        {
+            case "Magnet":
+            case "AdrenalineRush":
+            case "SlowMotion":
+            case "DealwithTheDevil":
+                currentCount += 1;
+                break;
+            default:
+                currentCount = data.amount;
+                break;
+        }
 
         if (itemIcon != null)
         {
@@ -36,9 +47,31 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
     // 이미 있는 카드를 또 먹었을 때 개수만 올려주는 함수
-    public void AddItemCount(int amount = 1)
+    public void AddItemCount(BaseCardData data)
     {
-        currentCount += amount;
+        switch (data.cardName)
+        {
+            case "DisposableShield":
+                currentCount = Inventory.Instance.item.shield;
+                break;
+            case "SharpFangs":
+                currentCount = Inventory.Instance.item.sharpFangs;
+                break;
+            case "DoT":
+                currentCount = Inventory.Instance.item.dot;
+                break;
+            case "RapidStrike":
+                currentCount = Inventory.Instance.item.rapidStrike;
+                break;
+            case "LuckySeven":
+                currentCount = Inventory.Instance.item.luckySeven;
+                break;
+            case "SpecialMove":
+                currentCount = Inventory.Instance.item.specialMove;
+                break;
+            default:
+                break;
+        }
         UpdateCountText();
     }
 
