@@ -28,13 +28,13 @@ public class Gauge : MonoBehaviour
             // 게이지 바 채우기
             if (gaugeImage != null)
             {
-                gaugeImage.fillAmount = current / max;
+                gaugeImage.fillAmount = (int)current / max;
             }
             
             // 텍스트 업데이트
             if (countText != null)
             {
-                countText.text = $"{current} / {max}";
+                countText.text = $"{(int)current} / {max}";
             }
         }
     }
