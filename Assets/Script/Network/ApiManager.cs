@@ -7,7 +7,7 @@ public class ApiManager : MonoBehaviour
     public static ApiManager instance;
 
     // private string baseUrl = "http://localhost:3000"; 개발용
-    private string baseUrl = "https://rat-volution-server.onrender.com"; //배포용
+    private string baseUrl = "https://rat-volutionbackend-production.up.railway.app/"; //배포용
 
     // JWT 토큰 (메모리 + PlayerPrefs 양쪽에 보관)
     private string authToken = "";
