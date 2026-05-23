@@ -7,12 +7,12 @@ using UnityEngine;
 public class SpawnPointManager : MonoBehaviour
 {
     public static SpawnPointManager Instance;
-    [SerializeField] private int gridSize => StageMaker.Instance.finalGridSizeCount;
-    [SerializeField] private int objectgridSize => StageMaker.Instance.finalObjGridSizeCount;
+    private int gridSize => StageMaker.Instance.finalGridSizeCount;
+    private int objectgridSize => StageMaker.Instance.finalObjGridSizeCount;
     public readonly float cellSize = 10f;
 
     public readonly List<Vector3> objectsSpawnPositions = new List<Vector3>();
-    public List<Vector3> itemSpawnPositions = new List<Vector3>();
+    public readonly List<Vector3> itemSpawnPositions = new List<Vector3>();
 
     // 마지막으로 생성된 위치를 저장하는 변수
     private Vector3 lastSpawnPos = new Vector3(-999f, -999f, -999f);
@@ -27,10 +27,16 @@ public class SpawnPointManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
 
+        UpdateSpawnPoint();
+    }
+
+    public void UpdateSpawnPoint()
+    {
+        objectsSpawnPositions.Clear();
+        itemSpawnPositions.Clear();
         GenerateGridItem();
         GenerateGridObject();
     }
-
     private void GenerateGridItem()
     {
         itemSpawnPositions.Clear();

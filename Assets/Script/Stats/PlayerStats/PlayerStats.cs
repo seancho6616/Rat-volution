@@ -71,8 +71,10 @@ public class PlayerStats : MonoBehaviour
     
         StageMaker.Instance.GridSizeUP(level);
         CardManager.Instance.LevelUP();
-        ObjectManager.Instance.runBonus.LevelUP(level);
-        WallManager.Instance.runBonus.LevelUP(level);
+        ObjectManager.Instance.LevelUP(level);
+        WallManager.Instance.LevelUP(level);
+        ItemManager.Instance.LevelUP();
+        SpawnPointManager.Instance.UpdateSpawnPoint();
     }
 
     public void ApplyCard(BaseCardData card)
