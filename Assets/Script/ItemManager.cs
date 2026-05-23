@@ -13,14 +13,8 @@ public class ItemManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null)   Instance = this;
+        else Destroy(gameObject);
     }
 
     private void Start()
@@ -49,7 +43,9 @@ public class ItemManager : MonoBehaviour
 
     private void NewMethod()
     {
-        int count = Random.Range(21, 35);
+        int x = StageMaker.Instance.finalGridSizeCount;
+        int y = StageMaker.Instance.finalObjGridSizeCount;
+        int count = Random.Range(y*(y-1),x*y);
         List<Vector3> emptyPoint = new List<Vector3>();
         // count 값만큼 반복을 사용하는데 아이템이 없는 랜덤한 포인트에 아이템이 있으면 다시 랜덤으로 포인트 생성
         for (int a = 0; a <= count; a++)
@@ -73,5 +69,11 @@ public class ItemManager : MonoBehaviour
         {
             itemDictionary[pos] = false;
         }
+    }
+
+    public void LevelUP()
+    {
+        point.Clear();
+        point = new List<Vector3>(SpawnPointManager.Instance.itemSpawnPositions);
     }
 }

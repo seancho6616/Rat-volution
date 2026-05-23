@@ -200,4 +200,17 @@ public class ObjectManager : ObjectData
             obj.GetComponent<FallingObject>().SetVisualAlpha(0.3f);
         }
     }
+    public void LevelUP(int level)
+    {
+        runBonus.LevelUP(level);
+        point.Clear();
+        point = new List<Vector3>(SpawnPointManager.Instance.objectsSpawnPositions);
+        foreach(Vector3 pos in point)
+        {
+            if (!objectDictionary.ContainsKey(pos))
+            {
+                objectDictionary[pos] = false;
+            }   
+        }
+    }
 }

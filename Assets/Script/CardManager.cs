@@ -37,9 +37,9 @@ public class CardManager : MonoBehaviour
             cardUIs[i].SetActive(true);
             CardUI cardUI = cardUIs[i].GetComponent<CardUI>();
             cardUI.SetCardData(pickCard[i], DebuffCardPickUP(pickCard[i]));
-            //cardUI.cardDebuffData = DebuffCardPickUP(pickCard[i]);
-            // cardUI.frontView.SetActive(true);
-            // cardUI.backView.SetActive(false);
+            cardUI.cardDebuffData = DebuffCardPickUP(pickCard[i]);
+            cardUI.frontView.SetActive(true);
+            cardUI.backView.SetActive(false);
         }
         pickCard.Clear();
     }

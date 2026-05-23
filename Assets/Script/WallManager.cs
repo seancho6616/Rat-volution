@@ -142,4 +142,11 @@ public class WallManager : WallStats
                 break;
         }
     }
+    public void LevelUP(int level)
+    {
+        runBonus.LevelUP(level);
+        point.Clear();   
+        point = new List<Vector3>(SpawnPointManager.Instance.objectsSpawnPositions);
+        
+    }
 }
