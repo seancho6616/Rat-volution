@@ -43,8 +43,12 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         currentMode = mode;
         isDiscovered = discovered;
         cardDebuffData = debuffData;
-        if(cardDebuffData !=null) txtDebuff.text = debuffData.description;
-        else txtDebuff.text = null;
+
+        if (txtDebuff != null)
+        {
+            if (cardDebuffData != null) txtDebuff.text = debuffData.description;
+            else txtDebuff.text = "";
+        }
 
         if (imgIcon != null) imgIcon.sprite = data.icon;
         if (txtName != null) txtName.text = data.cardName;
@@ -54,7 +58,6 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         Motion.transform.rotation = Quaternion.identity;
         isFlipped = false;
 
-        // 현재 모드에 따라 후광 이펙트 제어 (보상, 팝업 모드일 때만 true)
         if (glowController != null)
         {
             bool shouldShowGlow = (currentMode == CardMode.Reward || currentMode == CardMode.Popup);
@@ -63,14 +66,14 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
         if (currentMode == CardMode.Inventory)
         {
-            // 도감 모드: 획득 여부에 따라 앞면 or 물음표 완벽 고정 (뒷면은 무조건 끔)
+            // 도감 모드
             frontView.SetActive(isDiscovered);
             backView.SetActive(false);
             if (unknownCard != null) unknownCard.SetActive(!isDiscovered);
         }
         else
         {
-            // 보상 및 팝업 모드: 획득한 진짜 카드이므로 무조건 앞면 켬
+            // 보상 및 팝업 모드
             frontView.SetActive(true);
             backView.SetActive(false);
             if (unknownCard != null) unknownCard.SetActive(false);
