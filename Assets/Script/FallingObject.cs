@@ -11,9 +11,11 @@ public class FallingObject : MonoBehaviour, IDamageable
     public ObjectState CurrentState { get; private set; }
 
     [Header("Stats")]
-    public float maxHealth = 10f;
+    public float maxHealth;
     private float currentHealth;
     // private bool isDestroyedByPlayer = false;
+
+    // private ObjectData objectData;
 
     private Color originalColor;
 
@@ -36,11 +38,20 @@ public class FallingObject : MonoBehaviour, IDamageable
 
     public void Init(float hp, float gSize)
     {
-        this.maxHealth = hp;
-        this.currentHealth = hp;
+        if (ObjectManager.Instance != null)
+        {
+            this.maxHealth = ObjectManager.Instance.Finalhp;
+            this.currentHealth = ObjectManager.Instance.Finalhp;
+        }
+        else
+        {
+            this.maxHealth = hp;
+            this.currentHealth = hp;
+        }
+
         this.gridSize = gSize;
-         if (objectColor == null)
-            objectColor = GetComponent<Renderer>();
+
+        if (objectColor == null) objectColor = GetComponent<Renderer>();
         // 오브젝트 초기화 시 색상과 투명도 설정
         if (objectColor != null && objectColor.material != null)
         {
@@ -57,12 +68,25 @@ public class FallingObject : MonoBehaviour, IDamageable
             CurrentState = ObjectState.Warning;
             MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
             meshRenderer.enabled =false;
-            SetVisualAlpha(0f); 
-            yield return new WaitForSeconds(1f);
+            SetVisualAlpha(0f);
+
+            // objectData랑 연결된 objectManager로 반영
+            float randomDelay = 1f;
+            if (ObjectManager.Instance != null)
+            {
+                randomDelay = Random.Range(ObjectManager.Instance.FinalMinWarningTime, ObjectManager.Instance.FinalMaxWarningTime);
+            }
+            yield return new WaitForSeconds(randomDelay);
             meshRenderer.enabled = true;
+
             // 2. 예고 단계
             SetVisualAlpha(0.3f); // 반투명한 그림자 상태
-            yield return new WaitForSeconds(3f);
+            float randomDuration = 3f;
+            if (ObjectManager.Instance != null)
+            {
+                randomDuration = Random.Range(ObjectManager.Instance.FinalMinSpawnTime, ObjectManager.Instance.FinalMaxSpawnTime);
+            }
+            yield return new WaitForSeconds(randomDuration);
 
             // 2. 낙하 단계 (1초)
             CurrentState = ObjectState.Falling;
