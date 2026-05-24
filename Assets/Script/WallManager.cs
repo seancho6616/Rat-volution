@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 
 public enum WallType { Horizontal, Vertical }
@@ -48,36 +49,30 @@ public class WallManager : WallStats
 
     public int GetMaxWallCount()
     {
-        int currentLevel = PlayerStats.Instance != null ? PlayerStats.Instance.level : 1;
-
-        if (currentLevel <= 5) return 6;
-        if (currentLevel <= 10) return 8;
-        if (currentLevel <= 15) return 10;
-        if (currentLevel <= 20) return 15;
-        return 20; // 레벨 21 이상에서는 최대 20개까지 생성 가능
+        return FinalObjBuildCount;
     }
 
     public float GetWallSpawnInterval()
     {
-        int currentLevel = PlayerStats.Instance != null ? PlayerStats.Instance.level : 1;
-
-        if (currentLevel <= 5) return 5.0f;
-        if (currentLevel <= 10) return 4.0f;
-        if (currentLevel <= 15) return 3.0f;
-        if (currentLevel <= 20) return 2.0f;
-        return 1.5f; // 레벨 21 이상에서는 1.5초마다 생성
+        return FinalObjBuildTime;
     }
 
     private IEnumerator SpawnWallRoutine()
     {
+        float timer = 0f;
         while (true)
         {
             
-            yield return new WaitForSeconds(GetWallSpawnInterval());
-            if (activeWalls.Count < GetMaxWallCount())
+            timer += Time.deltaTime;
+            if (timer >= GetWallSpawnInterval())
             {
-                SpawnWallAtRandom();
+                if (activeWalls.Count < GetMaxWallCount())
+                {
+                    SpawnWallAtRandom();
+                }
+                timer = 0f;
             }
+            yield return null;
         }
     }
     private void SpawnWallAtRandom()

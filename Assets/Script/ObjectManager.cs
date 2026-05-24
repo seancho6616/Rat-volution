@@ -88,7 +88,7 @@ public class ObjectManager : ObjectData
         while (true)
         {
             // 레벨 1 기준 3~4초 간격 생성
-            yield return new WaitForSeconds(Random.Range(FinalMinSpawnTime, FinalMixSpawnTime));
+            yield return new WaitForSeconds(Random.Range(FinalMinSpawnTime, FinalMaxSpawnTime));
 
             // 생성 조건: 유예 기간이 아니고, 최대 개수(3개) 미만일 때
             if (!spawnPaused && activeObjects.Count < 3)

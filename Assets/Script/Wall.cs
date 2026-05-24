@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    [SerializeField] private int maxHp = 3;
+    [SerializeField] private int maxHp;
     private int currentHp;
     private Vector3 spawnPos;
 
@@ -13,6 +13,11 @@ public class Wall : MonoBehaviour
     public void Init(Vector3 pos)
     {
         spawnPos = pos;
+
+        if (WallManager.Instance != null)
+        {
+            this.maxHp = WallManager.Instance.Finalhp;
+        }
         // 벽이 생성될 때 HP 초기화
         currentHp = maxHp;
     }
@@ -28,6 +33,11 @@ public class Wall : MonoBehaviour
 
     public void InstantDestroy()
     {
+        Collider WallCollider = GetComponent<Collider>();
+        if (WallCollider != null)
+        {
+            WallCollider.enabled = false; // 충돌 비활성화
+        }
         if (WallManager.Instance != null)
         {
             // WallManager의 디렉토리에서 해당 위치를 다시 스폰 가능하게 함
