@@ -32,11 +32,10 @@ public class SpawnPointManager : MonoBehaviour
 
     public void UpdateSpawnPoint()
     {
-        objectsSpawnPositions.Clear();
-        itemSpawnPositions.Clear();
         GenerateGridItem();
         GenerateGridObject();
     }
+    
     private void GenerateGridItem()
     {
         itemSpawnPositions.Clear();

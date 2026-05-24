@@ -204,12 +204,13 @@ public class ObjectManager : ObjectData
     {
         runBonus.LevelUP(level);
         point.Clear();
-        point = new List<Vector3>(SpawnPointManager.Instance.objectsSpawnPositions);
+        point.AddRange(SpawnPointManager.Instance.objectsSpawnPositions);
         foreach(Vector3 pos in point)
         {
             if (!objectDictionary.ContainsKey(pos))
             {
                 objectDictionary[pos] = false;
+                Debug.Log("증가");
             }   
         }
     }

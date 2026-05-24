@@ -61,20 +61,20 @@ public class PlayerStats : MonoBehaviour
 
     public void LevelUP()
     {
-        level++;
+        ++level;
         totalCheese += currentCheese;
         currentCheese = 0;
         //maxCheese += 5;
 
+        StageMaker.Instance.GridSizeUP(level);
+        SpawnPointManager.Instance.UpdateSpawnPoint();
         Debug.Log($"ObjectManager.Instance is null? {ObjectManager.Instance == null}");
         Debug.Log($"ObjectManager.Instance.runBonus is null? {ObjectManager.Instance?.runBonus == null}");
     
-        StageMaker.Instance.GridSizeUP(level);
         CardManager.Instance.LevelUP();
         ObjectManager.Instance.LevelUP(level);
         WallManager.Instance.LevelUP(level);
         ItemManager.Instance.LevelUP();
-        SpawnPointManager.Instance.UpdateSpawnPoint();
     }
 
     public void ApplyCard(BaseCardData card)
