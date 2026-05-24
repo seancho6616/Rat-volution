@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: WallBaseStats
   m_EditorClassIdentifier: Assembly-CSharp::WallBaseStats
   hp: 6
-  objBuildTime: 0.5
+  objBuildTime: 5
   objBuildCount: 6
   reBuildTime: 5
