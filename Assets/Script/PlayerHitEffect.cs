@@ -1,76 +1,101 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerHitEffect : MonoBehaviour
 {
     [Header("효과 설정")]
-    [SerializeField] private float duration = 1.5f; // 총 지속 시간
-    [SerializeField] private float flickerSpeed = 0.1f; // 깜빡임 속도
-    
-    // 맞았을 때 반짝일 색상 (인스펙터에서 하얀색이나 빨간색으로 설정해 보세요!)
-    [SerializeField] private Color hitColor = Color.red; 
+    [SerializeField] private float duration = 1.5f;        // 총 지속 시간
+    [SerializeField] private float flickerSpeed = 0.1f;    // 깜빡임 속도
+    [SerializeField] private Color hitColor = Color.red;   // 피격 시 색상
 
-    private List<Renderer> renderers = new List<Renderer>(); 
-    private List<Color> originalColors = new List<Color>(); 
-    private bool isEffectRunning = false;
+    [Header("렌더러 (비우면 자식에서 자동 탐색)")]
+    [SerializeField] private Renderer[] renderers;
 
-    private void Start()
+    private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
+
+    private MaterialPropertyBlock propertyBlock;
+    private Color[] originalColors;
+    private Coroutine flashCoroutine;
+
+    private void Awake()
     {
-        // 모든 자식의 렌더러와 원래 색상을 미리 저장해둡니다.
-        // renderers.AddRange(GetComponentsInChildren<Renderer>());
-        // foreach (var r in renderers)
-        // {
-        //     // URP Lit 셰이더는 기본 색상 변수명이 "_BaseColor"입니다.
-        //     originalColors.Add(r.material.GetColor("_BaseColor"));
-        // }
+        if (renderers == null || renderers.Length == 0)
+            renderers = GetComponentsInChildren<Renderer>();
+
+        propertyBlock = new MaterialPropertyBlock();
+        originalColors = new Color[renderers.Length];
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            originalColors[i] = renderers[i].sharedMaterial.GetColor(BaseColorID);
+        }
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (renderers == null || renderers.Length == 0)
+            renderers = GetComponentsInChildren<Renderer>();
+    }
+#endif
 
     public void PlayHitEffect()
     {
-        if (isEffectRunning) return;
-        StartCoroutine(HitColorRoutine());
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+
+        flashCoroutine = StartCoroutine(HitColorRoutine());
     }
 
     private IEnumerator HitColorRoutine()
     {
-        isEffectRunning = true;
         Debug.Log("<color=red>[Player] 피격! 색상 깜빡임 시작</color>");
 
         float timer = 0f;
+        var wait = new WaitForSeconds(flickerSpeed);
+
         while (timer < duration)
         {
-            // 1. 모든 부위를 '피격 색상'으로 바꿉니다. (Opaque여도 아주 잘 보임!)
+            // 1. 피격 색상으로 변경
             SetColor(hitColor);
-            yield return new WaitForSeconds(flickerSpeed);
+            yield return wait;
             timer += flickerSpeed;
 
-            // 2. 다시 '원래 색상'으로 돌립니다.
-            SetColor(originalColors);
-            yield return new WaitForSeconds(flickerSpeed);
+            // 2. 원래 색상으로 복구
+            RestoreOriginalColors();
+            yield return wait;
             timer += flickerSpeed;
         }
 
-        // 마지막에는 무조건 원래 색상으로 복구
-        SetColor(originalColors);
-        isEffectRunning = false;
+        // 마지막에 무조건 원래 색상으로 복구
+        RestoreOriginalColors();
+        flashCoroutine = null;
     }
 
-    // 전체 색상 변경 함수
+    // 모든 렌더러를 같은 색으로 설정
     private void SetColor(Color color)
     {
-        foreach (var r in renderers)
+        for (int i = 0; i < renderers.Length; i++)
         {
-            if (r != null) r.material.SetColor("_BaseColor", color);
+            if (renderers[i] == null) continue;
+
+            renderers[i].GetPropertyBlock(propertyBlock);
+            propertyBlock.SetColor(BaseColorID, color);
+            renderers[i].SetPropertyBlock(propertyBlock);
         }
     }
 
-    // 리스트에 저장된 개별 원본 색상으로 복구하는 함수
-    private void SetColor(List<Color> colors)
+    // 각 렌더러를 자신의 원래 색으로 복구
+    private void RestoreOriginalColors()
     {
-        for (int i = 0; i < renderers.Count; i++)
+        for (int i = 0; i < renderers.Length; i++)
         {
-            if (renderers[i] != null) renderers[i].material.SetColor("_BaseColor", colors[i]);
+            if (renderers[i] == null) continue;
+
+            renderers[i].GetPropertyBlock(propertyBlock);
+            propertyBlock.SetColor(BaseColorID, originalColors[i]);
+            renderers[i].SetPropertyBlock(propertyBlock);
         }
     }
 }
