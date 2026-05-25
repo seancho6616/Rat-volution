@@ -64,4 +64,18 @@ public class ItemSlotManager : MonoBehaviour
             }
         }
     }
+    public void RefreshItemSlot(string cardName)
+    {
+        ItemSlot targetSlot = activeSlots.Find(slot => slot.cardID == cardName);
+        if (targetSlot != null)
+        {
+            targetSlot.RefreshAmount();
+        }
+    }
+
+    public void StartSpecialMoveCooldown()
+    {
+        ItemSlot slot = activeSlots.Find(s => s.cardID == "SpecialMove");
+        if (slot != null) slot.StartCooldown();
+    }
 }

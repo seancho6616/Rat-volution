@@ -48,6 +48,7 @@ public class PlayerSkill : MonoBehaviour
         }
         lastUsedTime = Time.time; // 사용 시간 기록
         Debug.Log("벽 넘기 스킬 사용");
+        ItemSlotManager.Instance.StartSpecialMoveCooldown();
         return true; // 스킬 사용 가능
     }
 
@@ -87,6 +88,9 @@ public class PlayerSkill : MonoBehaviour
 
         Time.timeScale = 1f; // 원래 속도로 복구
         Time.fixedDeltaTime = 0.02f; // 물리 업데이트 원래대로
+
+        Inventory.Instance.UseItem("SlowMotion");
+
         Debug.Log("슬로우 모션 비활성화");
     }
 
@@ -188,7 +192,9 @@ public class PlayerSkill : MonoBehaviour
             PlayerStats.Instance.totalCheese += PlayerStats.Instance.currentCheese; // 부족한 치즈만큼 총 치즈에서 차감
             PlayerStats.Instance.currentCheese = 0;
         }
+        
         PlayerStats.Instance.item.dealWithDevil = false; // 계약은 한 번만 발동
+        Inventory.Instance.UseItem("DealwithTheDevil");
 
         return true; // 부활 성공
     }

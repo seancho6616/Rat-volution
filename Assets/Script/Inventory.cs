@@ -74,4 +74,29 @@ public class Inventory : MonoBehaviour
                 break;
         }
     }
+
+    public void UseItem(string cardName, float useAmount = 1f)
+    {
+        switch (cardName)
+        {
+            case "DisposableShield":
+                item.shield -= useAmount;
+                if (item.shield <= 0)
+                {
+                    item.shield = 0;
+                    shield.SetActive(false);
+                }
+                break;
+
+            case "SlowMotion":
+                item.slowMotion = false;
+                break;
+            case "DealwithTheDevil":
+                //item.dealWithDevil = false;
+                break;
+
+        }
+
+        ItemSlotManager.Instance.RefreshItemSlot(cardName);
+    }
 }
