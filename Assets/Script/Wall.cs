@@ -9,6 +9,7 @@ public class Wall : MonoBehaviour
 
     private bool isInvincible = false;
     private float invincivilityDuration = 0.5f; // 무적 시간
+    [SerializeField] private Wall_HitFlashEffect wall_HitFlashEffect;
 
     public void Init(Vector3 pos)
     {
@@ -50,6 +51,7 @@ public class Wall : MonoBehaviour
     {
         if (isInvincible) return; // 무적 상태면 데미지 무시
 
+        wall_HitFlashEffect.Flash();
         currentHp -= damage;
         Debug.Log($"[Wall] HP: {currentHp}/{maxHp}");
 

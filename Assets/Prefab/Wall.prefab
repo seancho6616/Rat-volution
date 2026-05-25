@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8661501284736843067}
   - component: {fileID: 9132793417087122176}
   - component: {fileID: 3356341364605924200}
+  - component: {fileID: 3191970316538828070}
   m_Layer: 3
   m_Name: Wall
   m_TagString: Wall
@@ -125,3 +126,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wall
   maxHp: 0
+  wall_HitFlashEffect: {fileID: 3191970316538828070}
+--- !u!114 &3191970316538828070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5163214921476425002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc5e6e1c2376573488061fc043dea2e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Wall_HitFlashEffect
+  meshRenderer: {fileID: 8661501284736843067}
+  flashColor: {r: 0.29559743, g: 0.0065068128, b: 0.0065068128, a: 1}
+  flashDuration: 0.5
