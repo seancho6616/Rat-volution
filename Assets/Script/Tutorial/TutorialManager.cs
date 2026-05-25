@@ -25,7 +25,7 @@ public class TutorialManager : MonoBehaviour
         public string[] successDialogueLines;
     }
 
-    public static TutorialManager Instance { get; private set; }
+    public static TutorialManager Instance;
 
     [Header("단계 목록")]
     [SerializeField] private List<TutorialStep> steps;
@@ -99,6 +99,7 @@ public class TutorialManager : MonoBehaviour
             CompleteTutorial();
             return;
         }
+        Time.timeScale = 0f;
 
         // 새 단계는 항상 시작 대사부터
         currentPhase = DialoguePhase.Intro;
@@ -160,7 +161,7 @@ public class TutorialManager : MonoBehaviour
         for (int i = 0; i < line.Length; i++)
         {
             dialogueText.text += line[i];
-            yield return new WaitForSeconds(typingSpeed);
+            yield return new WaitForSecondsRealtime(typingSpeed);
         }
 
         isTyping = false;
@@ -201,6 +202,8 @@ public class TutorialManager : MonoBehaviour
         waitingForMission = true;
         ShowDialoguePanel(false);
 
+        Time.timeScale = 1f;
+
         // 미션 힌트 표시
         if (!string.IsNullOrWhiteSpace(CurrentStep.missionHintText))
         {
@@ -226,6 +229,8 @@ public class TutorialManager : MonoBehaviour
         // 성공 대사가 있으면 출력, 없으면 바로 다음 단계
         if (CurrentStep.successDialogueLines != null && CurrentStep.successDialogueLines.Length > 0)
         {
+            Time.timeScale = 0f;
+
             currentPhase = DialoguePhase.Success;
             currentLineIndex = 0;
             ShowDialoguePanel(true);
@@ -244,6 +249,8 @@ public class TutorialManager : MonoBehaviour
 
     private void CompleteTutorial()
     {
+        Time.timeScale = 1f;
+
         dialoguePanel.SetActive(false);
         missionPanel.SetActive(false);
 
