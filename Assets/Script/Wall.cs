@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Wall : MonoBehaviour
 {
-    [SerializeField] private int maxHp;
+    [SerializeField] public int maxHp;
     private int currentHp;
     private Vector3 spawnPos;
 

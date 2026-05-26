@@ -301,12 +301,12 @@ public class PlayerControl : PlayerStats
             {
                 if (skill != null && skill.CheckSharpFangs())
                 {
-                    wall.TakeDamage(3);
+                    wall.TakeDamage(wall.maxHp);
                     Debug.Log("[Player] 날카로운 앞니 효과로 벽 한번에 파괴");
                 }
                 else
                 {
-                    wall.TakeDamage(1);
+                    wall.TakeDamage((int)PlayerStats.Instance.FinalWallAttack);
                 }
             }
 
