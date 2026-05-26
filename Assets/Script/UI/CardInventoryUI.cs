@@ -99,8 +99,14 @@ public class CardInventoryUI : MonoBehaviour
         foreach (var card in spawnedCards) Destroy(card);
         spawnedCards.Clear();
 
-        // 실제 연결된 카드 DB의 총 개수를 가져옴
-        int totalCards = allCardDatabase.Count;
+        // 도감에서는 디버프 카드 제외 (cardType으로 판별)
+        var visibleCards = allCardDatabase.FindAll(c => c.cardType != CardType.Debuff);
+
+        // 디버그: 어떤 카드들이 그려지는지 확인
+        Debug.Log($"[Dex DEBUG] 전체 {allCardDatabase.Count}장 → 필터링 후 {visibleCards.Count}장");
+        Debug.Log($"[Dex DEBUG] 현재 페이지 {currentPage}, 그릴 슬롯 {CardsPerSpread}개");
+
+        int totalCards = visibleCards.Count;
         int startIndex = currentPage * CardsPerSpread;
 
         for (int i = 0; i < CardsPerSpread; i++)
@@ -108,14 +114,17 @@ public class CardInventoryUI : MonoBehaviour
             int cardIndex = startIndex + i;
             if (cardIndex >= totalCards) break;
 
+            // 디버그: 슬롯마다 어떤 카드가 그려지는지
+            Debug.Log($"  슬롯[{i}] = visibleCards[{cardIndex}] = {visibleCards[cardIndex].cardName} (type: {visibleCards[cardIndex].cardType})");
+
             Transform parentGrid = (i < CardsPerSpread / 2) ? leftPageGrid : rightPageGrid;
             GameObject newCard = Instantiate(cardPrefab, parentGrid);
             spawnedCards.Add(newCard);
 
             CardUI cardScript = newCard.GetComponent<CardUI>();
 
-            // DB 리스트에서 순서대로 실제 카드 데이터를 꺼내옴
-            BaseCardData actualData = allCardDatabase[cardIndex];
+            // 필터링된 리스트에서 카드 데이터 꺼내옴
+            BaseCardData actualData = visibleCards[cardIndex];
 
             // 실제 획득 여부 검사 (서버 응답 기반)
             bool isDiscovered = !string.IsNullOrEmpty(actualData.code)
