@@ -38,33 +38,39 @@ public class ObjectManager : ObjectData
     // 오브젝트 상승 후 재배치 루틴
     public void ReleasePosition(Vector3 pos)
     {
-        if (objectDictionary.ContainsKey(pos))
+        // 오브젝트가 낙하하는 도중 소멸하면 좌표 오차 발생 -> 강제 변환
+        Vector3 groundPos = new Vector3 (pos.x, 0f, pos.z);
+        if (objectDictionary.ContainsKey(groundPos))
         {
-            objectDictionary[pos] = false;
+            objectDictionary[groundPos] = false;
         }
     }
 
     // 생성된 오브젝트 위치 변환
     public Vector3 GetNextSpawnPosition()
     {
-        Vector2 playerIdx = GetPlayerPointIndex();
+        Vector3 playerGridPos = GetPlayerGridCenter();
+        float offset = SpawnPointManager.Instance.cellSize;
+        
+        // 3D 평면 좌표 수정
         List<Vector3> candidates = new List<Vector3>
         {
-            new Vector3(playerIdx.x + 5f, 0, playerIdx.y + 5f),
-            new Vector3(playerIdx.x + 5f, 0, playerIdx.y - 5f),
-            new Vector3(playerIdx.x - 5f, 0, playerIdx.y + 5f),
-            new Vector3(playerIdx.x - 5f, 0, playerIdx.y - 5f)
+            new Vector3(playerGridPos.x + offset, 0f, playerGridPos.z + offset),
+            new Vector3(playerGridPos.x + offset, 0f, playerGridPos.z - offset),
+            new Vector3(playerGridPos.x - offset, 0f, playerGridPos.z + offset),
+            new Vector3(playerGridPos.x - offset, 0f, playerGridPos.z - offset)
         };
         List<Vector3> validCandidates = candidates.FindAll(c =>
-        point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
+            point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
 
         validCandidates = validCandidates.FindAll(c =>
         {
             foreach (var obj in activeObjects)
             {
-                if (obj != null && Vector3.Distance(c, obj.transform.position) < 18f)
+                if (obj != null)
                 {
-                    return false; // 너무 가까운 위치는 제외
+                    Vector3 objPosXZ = new Vector3(obj.transform.position.x, 0, obj.transform.position.z);
+                    if (Vector3.Distance(c, objPosXZ) < 5f) return false; 
                 }
             }
             return true;
@@ -100,17 +106,21 @@ public class ObjectManager : ObjectData
 
     private void SpawnFallingObject()
     {
-        Vector2 playerIdx = GetPlayerPointIndex();
+        Vector3 playerGridPos = GetPlayerGridCenter();
+        float offset = SpawnPointManager.Instance.cellSize;
+
         List<Vector3> candidates = new List<Vector3>
         {
-            new Vector3(playerIdx.x + 5f, 0, playerIdx.y + 5f),
-            new Vector3(playerIdx.x + 5f, 0, playerIdx.y - 5f),
-            new Vector3(playerIdx.x - 5f, 0, playerIdx.y + 5f),
-            new Vector3(playerIdx.x - 5f, 0, playerIdx.y - 5f)
+            new Vector3(playerGridPos.x, 0f, playerGridPos.z),
+            
+            new Vector3(playerGridPos.x + offset, 0f, playerGridPos.z + offset),
+            new Vector3(playerGridPos.x + offset, 0f, playerGridPos.z - offset),
+            new Vector3(playerGridPos.x - offset, 0f, playerGridPos.z + offset),
+            new Vector3(playerGridPos.x - offset, 0f, playerGridPos.z - offset)
         };
 
         List<Vector3> validCandidates = candidates.FindAll(c => 
-        point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
+            point.Contains(c) && objectDictionary.ContainsKey(c) && !objectDictionary[c]);
 
         validCandidates = validCandidates.FindAll(c =>
         {
@@ -119,7 +129,7 @@ public class ObjectManager : ObjectData
                 if (obj != null)
                 {
                     Vector3 objPosXZ = new Vector3(obj.transform.position.x, 0, obj.transform.position.z);
-                    if (Vector3.Distance(c, objPosXZ) < 18f)
+                    if (Vector3.Distance(c, objPosXZ) < 5f)
                     {
                         return false; // 너무 가까운 위치는 제외
                     }
@@ -136,23 +146,31 @@ public class ObjectManager : ObjectData
         // 유닛 사이즈 10을 곱해 실제 좌표 계산 (중심점 보정 +5)
         Vector3 spawnPos = validCandidates[Random.Range(0, validCandidates.Count)];
         objectDictionary[spawnPos] = true;
-        Vector3 pos = new Vector3(0f, 90f, 0f) * (int)Random.Range(0, 3);
-        GameObject obj = Instantiate(objectPrefab, spawnPos, Quaternion.Euler(pos));
-        obj.GetComponent<FallingObject>().Init(10f, unitSize); // HP 10 전달
+        Vector3 rot = new Vector3(0f, 90f, 0f) * (int)Random.Range(0, 4);
+        GameObject obj = Instantiate(objectPrefab, spawnPos, Quaternion.Euler(rot));
+        if (obj.GetComponent<FallingObject>() != null)
+        {
+            obj.GetComponent<FallingObject>().Init(Finalhp, unitSize);
+        }
         activeObjects.Add(obj);
     }
 
-    private Vector2 GetPlayerPointIndex()
+    private Vector3 GetPlayerGridCenter()
     {
-        int cellSize = (int)SpawnPointManager.Instance.cellSize;
-        int xIdx = Mathf.RoundToInt(player.transform.position.x / cellSize);
-        int zIdx = Mathf.RoundToInt(player.transform.position.z / cellSize);
-        return new Vector2Int(xIdx*cellSize, zIdx*cellSize);
+        float cellSize = SpawnPointManager.Instance.cellSize;
+
+        // 플레이어 좌표 계산
+        int xGrid = Mathf.FloorToInt(player.transform.position.x / cellSize);
+        int zGrid = Mathf.FloorToInt(player.transform.position.z / cellSize);
+
+        return new Vector3((xGrid * cellSize) + 5f, 0f, (zGrid * cellSize) + 5f);
     }
 
     public void OnObjectRemoved(GameObject obj, bool byPlayer)
     {
-        objectDictionary[obj.transform.position] = false;
+        Vector3 groundPos = new Vector3(obj.transform.position.x, 0f, obj.transform.position.z);
+        objectDictionary[groundPos] = false;
+        
         activeObjects.Remove(obj);
         if (byPlayer)
         {
@@ -164,7 +182,8 @@ public class ObjectManager : ObjectData
     {
         spawnPaused = true;
         Debug.Log("플레이어가 물체 파괴! 5초간 생성 중단");
-        yield return new WaitForSeconds(5f);
+        float delayTime = FinalReBuildTime;
+        yield return new WaitForSeconds(delayTime);
         spawnPaused = false;
     }
 
