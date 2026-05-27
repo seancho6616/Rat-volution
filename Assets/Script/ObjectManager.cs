@@ -163,7 +163,8 @@ public class ObjectManager : ObjectData
         int xGrid = Mathf.FloorToInt(player.transform.position.x / cellSize);
         int zGrid = Mathf.FloorToInt(player.transform.position.z / cellSize);
 
-        return new Vector3((xGrid * cellSize) + 5f, 0f, (zGrid * cellSize) + 5f);
+        float half = cellSize / 2f;
+        return new Vector3((xGrid * cellSize) + half, 0f, (zGrid * cellSize) + half);
     }
 
     public void OnObjectRemoved(GameObject obj, bool byPlayer)
