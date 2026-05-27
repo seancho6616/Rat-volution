@@ -50,7 +50,7 @@ public class ObjectManager : ObjectData
     public Vector3 GetNextSpawnPosition()
     {
         Vector3 playerGridPos = GetPlayerGridCenter();
-        float offset = SpawnPointManager.Instance.cellSize;
+        float offset = SpawnPointManager.Instance.cellSize/2f;
         
         // 3D 평면 좌표 수정
         List<Vector3> candidates = new List<Vector3>
@@ -107,11 +107,11 @@ public class ObjectManager : ObjectData
     private void SpawnFallingObject()
     {
         Vector3 playerGridPos = GetPlayerGridCenter();
-        float offset = SpawnPointManager.Instance.cellSize;
+        float offset = SpawnPointManager.Instance.cellSize / 2f;
 
         List<Vector3> candidates = new List<Vector3>
         {
-            new Vector3(playerGridPos.x, 0f, playerGridPos.z),
+            //new Vector3(playerGridPos.x, 0f, playerGridPos.z),
             
             new Vector3(playerGridPos.x + offset, 0f, playerGridPos.z + offset),
             new Vector3(playerGridPos.x + offset, 0f, playerGridPos.z - offset),
@@ -162,9 +162,10 @@ public class ObjectManager : ObjectData
         // 플레이어 좌표 계산
         int xGrid = Mathf.FloorToInt(player.transform.position.x / cellSize);
         int zGrid = Mathf.FloorToInt(player.transform.position.z / cellSize);
-
         float half = cellSize / 2f;
-        return new Vector3((xGrid * cellSize) + half, 0f, (zGrid * cellSize) + half);
+        Vector3 p = new Vector3(xGrid * cellSize, 0f, zGrid * cellSize);
+        Debug.Log(player.transform.position + "  " + p);
+        return p;
     }
 
     public void OnObjectRemoved(GameObject obj, bool byPlayer)
@@ -182,7 +183,7 @@ public class ObjectManager : ObjectData
     private IEnumerator RespawnDelayRoutine()
     {
         spawnPaused = true;
-        Debug.Log("플레이어가 물체 파괴! 5초간 생성 중단");
+        // Debug.Log("플레이어가 물체 파괴! 5초간 생성 중단");
         float delayTime = FinalReBuildTime;
         yield return new WaitForSeconds(delayTime);
         spawnPaused = false;
@@ -230,7 +231,7 @@ public class ObjectManager : ObjectData
             if (!objectDictionary.ContainsKey(pos))
             {
                 objectDictionary[pos] = false;
-                Debug.Log("증가");
+                // Debug.Log("증가");
             }   
         }
     }
