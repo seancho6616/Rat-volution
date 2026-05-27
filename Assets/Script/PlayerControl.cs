@@ -43,6 +43,7 @@ public class PlayerControl : PlayerStats
     public AudioClip dieSound; // 쓰러질 때 나는 소리
     [Range(0f, 1f)] public float dieVolume = 0.5f;
 
+    private bool isInAdrenalineZone = false;
     private Vector2 moveInput;
     private bool pendingMove = false;
 
@@ -241,21 +242,31 @@ public class PlayerControl : PlayerStats
 
         // 현재 위치 주변에 있는 오브젝트 탐색
         Collider[] hitObjects = Physics.OverlapBox(checkPos, new Vector3(4.5f, 2f, 4.5f), Quaternion.identity, objectLayer);
+        bool foundWarningObject = false;
         foreach (var obj in hitObjects)
         {
             FallingObject fallingObject = obj.GetComponent<FallingObject>();
-
-            // 오브젝트 예고 상태일 때만 아드레날린 러시 효과 발동
             if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Warning)
             {
-                PlayerSkill skill = GetComponent<PlayerSkill>();
-                if (skill != null)
-                {
-                    skill.TriggerAdrenalineRush();
-                    Debug.Log("<color=cyan>[Player] 아드레날린 러시 발동! - 이동 속도 증가!");
-                    break;
-                }
+                foundWarningObject = true;
+                break;
             }
+        }
+
+        // 오브젝트 예고 상태일 때만 아드레날린 러시 효과 발동
+        if (foundWarningObject && !isInAdrenalineZone)
+        {
+            isInAdrenalineZone = true;
+            PlayerSkill skill = GetComponent<PlayerSkill>();
+            if (skill != null)
+            {
+                skill.TriggerAdrenalineRush();
+                Debug.Log("<color=cyan>[Player] 아드레날린 러시 발동! - 이동 속도 증가!");
+            }
+        }
+        else if (!foundWarningObject)
+        {
+            isInAdrenalineZone = false;
         }
     }
 

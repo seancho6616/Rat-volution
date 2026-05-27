@@ -28,6 +28,7 @@ public class FallingObject : MonoBehaviour, IDamageable
 
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
+    private float fallingSpeedMultiplier = 1f;
 
     
     private void Awake()
@@ -43,6 +44,8 @@ public class FallingObject : MonoBehaviour, IDamageable
 
     public void Init(float hp, float gSize)
     {
+        fallingSpeedMultiplier = 1f;
+
         if (ObjectManager.Instance != null)
         {
             this.maxHealth = ObjectManager.Instance.Finalhp;
@@ -63,6 +66,10 @@ public class FallingObject : MonoBehaviour, IDamageable
             objectColor.material.SetColor("_BaseColor", originalColor);
         }
         StartCoroutine(LifecycleRoutine());
+    }
+    public void SetFallSpeed(float multiplier)
+    {
+        fallingSpeedMultiplier = multiplier;
     }
 
     // --- 파티클과 소리를 한 번에 재생하는 함수 ---
@@ -111,16 +118,31 @@ public class FallingObject : MonoBehaviour, IDamageable
             }
             yield return new WaitForSeconds(randomDuration);
 
-            // 2. 낙하 단계 (1초)
+            // 3. 낙하 단계 (1초)
             CurrentState = ObjectState.Falling;
             SetVisualAlpha(1.0f);
+
+            // 슬로우모션 코드 발동
+            float slowAmount = 0f;
+            foreach (var pair in Inventory.Instance.itemCheck)
+            {
+                if (pair.Key.cardName == "SlowMotion")
+                {
+                    slowAmount = pair.Key.amount;
+                    break;
+                }
+            }
+            PlayerSkill skill = FindAnyObjectByType<PlayerSkill>();
+            skill?.ActivateSlowMotion(slowAmount);
+
             Vector3 startPos = transform.position + Vector3.up * 35f;
             Vector3 endPos = transform.position;
             
             float elapsed = 0;
-            while (elapsed < 1f)
+            float fallDuration = Mathf.Max(ObjectManager.Instance.baseData.fallingTime, 0.3f) / fallingSpeedMultiplier;
+            while (elapsed < fallDuration)
             {
-                transform.position = Vector3.Lerp(startPos, endPos, elapsed / 1f);
+                transform.position = Vector3.Lerp(startPos, endPos, elapsed / fallDuration);
                 elapsed += Time.deltaTime;
                 yield return null;
             }
@@ -135,10 +157,10 @@ public class FallingObject : MonoBehaviour, IDamageable
             // 3. 착지 시 벽 충돌 체크 (2x2 범위 = 20x20 유닛)
             CheckWallCollision();
 
-            // 4. 유지 단계 (3초)
+            // 5. 유지 단계 (3초)
             CurrentState = ObjectState.Grounded;
             yield return new WaitForSeconds(3f);
-            // 5. 상승 단계
+            // 6. 상승 단계
             elapsed = 0;
             while (elapsed < 1f)
             {
