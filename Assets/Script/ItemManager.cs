@@ -20,13 +20,13 @@ public class ItemManager : MonoBehaviour
     private void Start()
     {
         point = new List<Vector3>(SpawnPointManager.Instance.itemSpawnPositions);
-        foreach (Vector3 pos in point)
-        {
-            itemDictionary[pos] = true;
-            Vector3 pos2 = new Vector3(pos.x, 1.5f, pos.z);
-            GameObject obj = Instantiate(itemPrefab, pos2, itemPrefab.transform.rotation);
-            itemSpawnCount++;
-        }
+        // foreach (Vector3 pos in point)
+        // {
+        //     itemDictionary[pos] = true;
+        //     Vector3 pos2 = new Vector3(pos.x, 1.5f, pos.z);
+        //     GameObject obj = Instantiate(itemPrefab, pos2, itemPrefab.transform.rotation);
+        //     itemSpawnCount++;
+        // }
         StartCoroutine(ItemSpawn());
     }
 

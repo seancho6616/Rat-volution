@@ -195,7 +195,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             if (wall != null)
             {
                 Bomb.Instance.ParticlePlay(transform.position);
-                Debug.Log("벽과 직접 충돌 - 둘 다 파괴");
+                // Debug.Log("벽과 직접 충돌 - 둘 다 파괴");
                 wall.InstantDestroy(); // 벽 즉시 파괴
                 DestroyObject(false); // 자신도 파괴
                 return;
@@ -215,7 +215,7 @@ public class FallingObject : MonoBehaviour, IDamageable
                 player.TakeDamage(1);
             }
             CurrentState = ObjectState.Grounded;
-            Debug.Log("플레이어 공격, 데미지 -1");
+            // Debug.Log("플레이어 공격, 데미지 -1");
             
             PlayGroundEffect();
         }
@@ -246,14 +246,14 @@ public class FallingObject : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        Debug.Log($"<color=red>[오브젝트 피격]</color> {gameObject.name} 남은 체력: {currentHealth} / {maxHealth}");
+        // Debug.Log($"<color=red>[오브젝트 피격]</color> {gameObject.name} 남은 체력: {currentHealth} / {maxHealth}");
 
         // 체력에 따라 색상 변화 (예시: 체력이 50% 이하일 때 붉은색으로)
         UpdateObjectColor();
 
         if (currentHealth <= 0)
         {
-            Debug.Log($"<color=green>[오브젝트 파괴]</color> {gameObject.name}이(가) 파괴되었습니다.");
+            // Debug.Log($"<color=green>[오브젝트 파괴]</color> {gameObject.name}이(가) 파괴되었습니다.");
             DestroyObject(true);
         }
     }

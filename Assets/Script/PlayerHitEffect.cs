@@ -50,7 +50,7 @@ public class PlayerHitEffect : MonoBehaviour
 
     private IEnumerator HitColorRoutine()
     {
-        Debug.Log("<color=red>[Player] 피격! 색상 깜빡임 시작</color>");
+        // Debug.Log("<color=red>[Player] 피격! 색상 깜빡임 시작</color>");
 
         float timer = 0f;
         var wait = new WaitForSeconds(flickerSpeed);

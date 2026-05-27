@@ -84,7 +84,7 @@ public class ObjectManager : ObjectData
         }
         else
         {
-            Debug.Log("유효한 스폰 위치 없음");
+            // Debug.Log("유효한 스폰 위치 없음");
             return Vector3.zero; // 유효한 위치가 없을 때
         }
     }
@@ -97,7 +97,7 @@ public class ObjectManager : ObjectData
             yield return new WaitForSeconds(Random.Range(FinalMinSpawnTime, FinalMaxSpawnTime));
 
             // 생성 조건: 유예 기간이 아니고, 최대 개수(3개) 미만일 때
-            if (!spawnPaused && activeObjects.Count < 3)
+            if (!spawnPaused && activeObjects.Count < FinalObjBuildCount)
             {
                 SpawnFallingObject();
             }
@@ -139,7 +139,7 @@ public class ObjectManager : ObjectData
         });
         if (validCandidates.Count == 0)
         {
-            Debug.Log("유효한 스폰 위치 없음");
+            // Debug.Log("유효한 스폰 위치 없음");
             return;
         }
 
@@ -164,7 +164,7 @@ public class ObjectManager : ObjectData
         int zGrid = Mathf.FloorToInt(player.transform.position.z / cellSize);
         float half = cellSize / 2f;
         Vector3 p = new Vector3(xGrid * cellSize, 0f, zGrid * cellSize);
-        Debug.Log(player.transform.position + "  " + p);
+        // Debug.Log(player.transform.position + "  " + p);
         return p;
     }
 

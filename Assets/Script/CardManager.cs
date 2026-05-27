@@ -122,7 +122,7 @@ public class CardManager : MonoBehaviour
         // 디버프 카드가 없으면 null 반환
         if (debuffCards.Count == 0)
         {
-            Debug.LogWarning("[CardManager] debuffCards가 비어있습니다!");
+            // Debug.LogWarning("[CardManager] debuffCards가 비어있습니다!");
             return null;
         }
 

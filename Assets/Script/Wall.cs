@@ -71,7 +71,7 @@ public class Wall : MonoBehaviour
 
         wall_HitFlashEffect.Flash();
         currentHp -= damage;
-        Debug.Log($"[Wall] HP: {currentHp}/{maxHp}");
+        // Debug.Log($"[Wall] HP: {currentHp}/{maxHp}");
 
         if (currentHp <= 0)
         {

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBaseStatsData
   maxHP: 3
   wallCount: 6
-  moveSpeed: 0.8
+  moveSpeed: 0.6
   attackSpeed: 0.4
   objectAttack: 1
   wallAttack: 2

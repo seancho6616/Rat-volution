@@ -21,7 +21,7 @@ public class Inventory : MonoBehaviour
         float currentStack = itemCheck.ContainsKey(card) ? itemCheck[card] : 0;
         if (currentStack >= card.maxStack)
         {
-            Debug.Log("최대 중복수 도달");
+            // Debug.Log("최대 중복수 도달");
             return;
         }
         if(card.cardName == "SharpFangs")   itemCheck[card] = currentStack + card.scalePerStack;
@@ -33,7 +33,7 @@ public class Inventory : MonoBehaviour
     private void AddItemValue(CardItemData card)
     {
         float amount = isHave ?  card.scalePerStack : card.amount;
-        Debug.Log(amount);
+        // Debug.Log(amount);
         if (!item.invetory.ContainsKey(card))
         {
             item.invetory.Add(card, true);
@@ -58,7 +58,7 @@ public class Inventory : MonoBehaviour
                 break;
             case "SpecialMove":
                 item.specialMove += amount;
-                Debug.Log(item.specialMove);
+                // Debug.Log(item.specialMove);
                 break;
             case "Magnet":
                 item.magnet = true;
