@@ -25,6 +25,11 @@ public class GameoverUI : MonoBehaviour
     [Header("Management")]
     public StopManager stopManager;
 
+    [Header("Audio Sources")]
+    public AudioSource clickSound;
+    public AudioSource GameoverSound;
+    public AudioSource BGM;
+
     //정보 데이터 연결 필요
 
     //정보 데이터 설정 필요
@@ -38,7 +43,9 @@ public class GameoverUI : MonoBehaviour
 
     public void SetupGameOverUI(int level, int cheese, ApiManager.Stats stats)
     {
+        if (BGM != null) BGM.Stop();
         GameoverGroup.SetActive(true); // 게임오버 창 켜기
+        if (GameoverSound != null) GameoverSound.Play();
 
         // 1. 중앙 상단 텍스트 (웨이브 & 치즈)
         if (waveTxt != null)
@@ -59,6 +66,7 @@ public class GameoverUI : MonoBehaviour
     // 로비버튼 클릭 시
     public void OnLobbyButtonClicked()
     {
+        if (clickSound != null) clickSound.Play();
         Time.timeScale = 1f;
         SceneManager.LoadScene(lobbySceneName);
     }
@@ -66,6 +74,7 @@ public class GameoverUI : MonoBehaviour
     // 게임 종료 버튼 클릭 시
     public void OnExitButtonClicked()
     {
+        if (clickSound != null) clickSound.Play();
         if (stopManager != null)
         {
             // StopManager에게 종료 팝업을 띄워달라고 요청

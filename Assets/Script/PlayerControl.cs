@@ -36,6 +36,13 @@ public class PlayerControl : PlayerStats
     [Header("Animator")]
     [SerializeField] private Animator animator;
 
+    [Header("Audio Sources")]
+    public AudioSource walkSound;
+
+    [Header("Sound Settings")]
+    public AudioClip dieSound; // 쓰러질 때 나는 소리
+    [Range(0f, 1f)] public float dieVolume = 0.5f;
+
     private Vector2 moveInput;
     private bool pendingMove = false;
 
@@ -71,6 +78,20 @@ public class PlayerControl : PlayerStats
                 Debug.Log("[Player] 악마와의 계약으로 부활 성공!");
                 return;
             }
+
+            // --- 죽는 소리 재생 ---
+            if (dieSound != null)
+            {
+                if (Camera.main != null)
+                {
+                    AudioSource.PlayClipAtPoint(dieSound, Camera.main.transform.position, dieVolume);
+                }
+                else
+                {
+                    AudioSource.PlayClipAtPoint(dieSound, transform.position, dieVolume);
+                }
+            }
+            
             this.enabled = false; // 플레이어 컨트롤 비활성화
             animator.SetBool("isDie", true);
             StartCoroutine(ObjectManager.Instance.CleadupObject());
@@ -399,11 +420,24 @@ public class PlayerControl : PlayerStats
 
     private IEnumerator SmoothMove(Vector3 from, Vector3 to, float moveTime)
     {
+        // 1. 출발할 때 첫 번째 발소리 재생 (예: 오른발)
+        if (walkSound != null && walkSound.clip != null) 
+            walkSound.PlayOneShot(walkSound.clip, walkSound.volume);
+
         float elapsed = 0f;
         float duration = MoveTime * Vector3.Distance(from, to) / gridSize; // 거리 비례 시간
+        bool secondStepPlayed = false; // 두 번째 발소리 재생 여부 체크
 
         while (elapsed < duration)
         {
+            // 2. 전체 이동 시간의 절반(50%)이 지났을 때 두 번째 발소리 재생 (예: 왼발)
+            if (!secondStepPlayed && elapsed >= duration / 2f)
+            {
+                if (walkSound != null && walkSound.clip != null) 
+                    walkSound.PlayOneShot(walkSound.clip, walkSound.volume);
+                secondStepPlayed = true;
+            }
+
             transform.position = Vector3.Lerp(from, to, elapsed / duration);
             elapsed += Time.deltaTime;
             yield return null;

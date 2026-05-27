@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FallingObject
   groundParticle: {fileID: 5724762051593527133}
+  dropSound: {fileID: 8300000, guid: a981f2e82f4341447abd29dfce23a01b, type: 3}
+  dropVolume: 0.3
   maxHealth: 0
 --- !u!54 &8445403039333912946
 Rigidbody:

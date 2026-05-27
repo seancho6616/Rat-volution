@@ -12,6 +12,9 @@ public class StopManager : MonoBehaviour
     [Header("Scene")]
     public string lobbySceneName = "SecondScene";
 
+    [Header("Audio Sources")]
+    public AudioSource clickSound;
+
     // 현재 어떤 목적으로 창이 열렸는지 확인하기 위한 상태값
     private bool isLobbyMode = false;
 
@@ -41,6 +44,7 @@ public class StopManager : MonoBehaviour
     // 게임오버 창에서 종료 클릭 시 (완전 종료용)
     public void ShowExitPopup()
     {
+        if (clickSound != null) clickSound.Play();
         isLobbyMode = false;
         if (mainTxt != null)
             mainTxt.text = "게임을 종료하시겠습니까?";
@@ -54,6 +58,7 @@ public class StopManager : MonoBehaviour
     // 'YES' 버튼을 눌렀을 때 실행될 함수
     public void OnClickYes()
     {
+        if (clickSound != null) clickSound.Play();
         Time.timeScale = 1f;
 
         if (isLobbyMode)
@@ -73,6 +78,7 @@ public class StopManager : MonoBehaviour
     // 'NO' 버튼을 눌렀을 때 실행될 함수
     public void OnClickNo()
     {
+        if (clickSound != null) clickSound.Play();
         stopGroup.SetActive(false); // 창 숨기기
         Time.timeScale = 1f;         // 게임 다시 진행하기
     }
