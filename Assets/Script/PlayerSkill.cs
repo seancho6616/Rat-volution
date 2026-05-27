@@ -79,18 +79,27 @@ public class PlayerSkill : MonoBehaviour
     private IEnumerator SlowMotionRoutine(float duration, float amount)
     {
         Debug.Log("슬로우 모션 활성화");
-
-        Time.timeScale = Mathf.Clamp(1f - amount, 0.1f, 1f);
-        Time.fixedDeltaTime = 0.02f * Time.timeScale; // 물리 업데이트도 조정
-        Debug.Log($"슬로우 모션 적용: {amount * 100}% 느려짐");
-
-        yield return new WaitForSecondsRealtime(duration);
-
-        Time.timeScale = 1f; // 원래 속도로 복구
-        Time.fixedDeltaTime = 0.02f; // 물리 업데이트 원래대로
-
         Inventory.Instance.UseItem("SlowMotion");
 
+        foreach (var obj in GameObject.FindGameObjectsWithTag("Object"))
+        {
+            FallingObject fallingObj = obj.GetComponent<FallingObject>();
+            if (fallingObj != null && fallingObj.CurrentState == FallingObject.ObjectState.Falling)
+            {
+                fallingObj.SetFallSpeed(1f - amount);
+            }
+        }
+        yield return new WaitForSecondsRealtime(duration);
+        
+        foreach (var obj in GameObject.FindGameObjectsWithTag("Object"))
+        {
+            FallingObject fallingObj = obj.GetComponent<FallingObject>();
+            if (fallingObj != null)
+            {
+                fallingObj.SetFallSpeed(1f);
+            }
+        }
+        Inventory.Instance.UseItem("SlowMotion");
         Debug.Log("슬로우 모션 비활성화");
     }
 
