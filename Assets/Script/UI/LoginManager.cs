@@ -101,6 +101,7 @@ public class LoginManager : MonoBehaviour
 
     public void ShowLoginPanel()
     {
+
         if (ApiManager.instance != null && ApiManager.instance.HasToken())
         {
             Debug.Log("[Login] 이미 로그인된 상태 - 먼저 로그아웃 필요");
