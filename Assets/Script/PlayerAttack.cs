@@ -50,7 +50,7 @@ public class PlayerAttack : MonoBehaviour
         }
         else
         {
-            Debug.Log($"공격 쿨타임: {attackInterval - (Time.time - lastAttackTime):F2}초 남음");
+            // Debug.Log($"공격 쿨타임: {attackInterval - (Time.time - lastAttackTime):F2}초 남음");
         }
     }
 
@@ -58,7 +58,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (meshTransform == null)
         {
-            Debug.LogWarning("Mesh Transform이 설정되지 않았습니다.");
+            // Debug.LogWarning("Mesh Transform이 설정되지 않았습니다.");
             return;
         }
 
@@ -78,7 +78,7 @@ public class PlayerAttack : MonoBehaviour
 
         if (hitObjects.Length == 0)
         {
-            Debug.Log("공격 범위 내에 대상이 없습니다.");
+            // Debug.Log("공격 범위 내에 대상이 없습니다.");
         }
 
         PlayerSkill skill = GetComponent<PlayerSkill>();
@@ -100,7 +100,7 @@ public class PlayerAttack : MonoBehaviour
                         float rapidDamage = finalDamage * rapidDamagePercent;
 
                         target.TakeDamage(rapidDamage);
-                        Debug.Log($"연속 공격! 추가 데미지: {rapidDamage:F1}");
+                        // Debug.Log($"연속 공격! 추가 데미지: {rapidDamage:F1}");
                     }
                 }
             }

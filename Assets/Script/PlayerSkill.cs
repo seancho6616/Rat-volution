@@ -15,7 +15,7 @@ public class PlayerSkill : MonoBehaviour
     {
         // 1칸 범위 내 치즈 탐색 후 플레이어 위치로 이동
         if (!PlayerStats.Instance.item.magnet) return;
-        Debug.Log("자석 스킬 사용");
+        // Debug.Log("자석 스킬 사용");
         Collider[] cheeses = Physics.OverlapSphere(transform.position, range, LayerMask.GetMask("Cheese"));
         foreach (var col in cheeses)
         {
@@ -43,11 +43,11 @@ public class PlayerSkill : MonoBehaviour
         if (Time.time < lastUsedTime + coolTime)
         {
             float remain = (lastUsedTime + coolTime) - Time.time;
-            Debug.Log($"쿨타임 중: {remain:F1}초");
+            // Debug.Log($"쿨타임 중: {remain:F1}초");
             return false; // 아직 쿨타임이 끝나지 않음
         }
         lastUsedTime = Time.time; // 사용 시간 기록
-        Debug.Log("벽 넘기 스킬 사용");
+        // Debug.Log("벽 넘기 스킬 사용");
         ItemSlotManager.Instance.StartSpecialMoveCooldown();
         return true; // 스킬 사용 가능
     }
@@ -62,7 +62,7 @@ public class PlayerSkill : MonoBehaviour
         // 인벤토리에 저장된 수치에 따라 확률 계산
         if (Random.value < chance)
         {
-            Debug.Log("날카로운 앞니 효과 발동! 추가 치즈 획득!");
+            // Debug.Log("날카로운 앞니 효과 발동! 추가 치즈 획득!");
             return true; // 효과 발동
         }
         return false;
@@ -78,7 +78,7 @@ public class PlayerSkill : MonoBehaviour
     }
     private IEnumerator SlowMotionRoutine(float duration, float amount)
     {
-        Debug.Log("슬로우 모션 활성화");
+        // Debug.Log("슬로우 모션 활성화");
         Inventory.Instance.UseItem("SlowMotion");
 
         foreach (var obj in GameObject.FindGameObjectsWithTag("Object"))
@@ -100,7 +100,7 @@ public class PlayerSkill : MonoBehaviour
             }
         }
         Inventory.Instance.UseItem("SlowMotion");
-        Debug.Log("슬로우 모션 비활성화");
+        // Debug.Log("슬로우 모션 비활성화");
     }
 
     public void TriggerAdrenalineRush()
@@ -114,7 +114,7 @@ public class PlayerSkill : MonoBehaviour
 
     IEnumerator AdrenalineRushRoutine()
     {
-        Debug.Log("아드레날린 러시 활성화");
+        // Debug.Log("아드레날린 러시 활성화");
         // 임시 이동속도 보너스 적용
         float boostAmount = PlayerStats.Instance.baseData.moveSpeed * 0.5f; // 기본 이동속도의 50% 추가
 
@@ -122,7 +122,7 @@ public class PlayerSkill : MonoBehaviour
 
         yield return new WaitForSeconds(2f); // 2초 동안 지속
         PlayerStats.Instance.runBonus.moveSpeed -= boostAmount; // 보너스 제거
-        Debug.Log("아드레날린 러시 비활성화");
+        // Debug.Log("아드레날린 러시 비활성화");
     }
 
     public bool CheckLuckySeven()
@@ -132,7 +132,7 @@ public class PlayerSkill : MonoBehaviour
         float luckBonus = PlayerStats.Instance.item.luckySeven + (0.1f * PlayerStats.Instance.FinalLuck);
         if (Random.value < luckBonus)
         {
-            Debug.Log("777 효과 발동! 치즈 3개 추가 획득!");
+            // Debug.Log("777 효과 발동! 치즈 3개 추가 획득!");
             return true;
         }
         return false;
@@ -163,7 +163,7 @@ public class PlayerSkill : MonoBehaviour
             if (target != null)
             {
                 target.TakeDamage(damage);
-                Debug.Log($"DoT 효과: {damage} 데미지 적용 (남은 시간: {duration - elapsed:F1}초)");
+                // Debug.Log($"DoT 효과: {damage} 데미지 적용 (남은 시간: {duration - elapsed:F1}초)");
             }
         }
     }
@@ -177,7 +177,7 @@ public class PlayerSkill : MonoBehaviour
         // 연속 공격 확률 계산
         if (Random.value < rapidChance)
         {
-            Debug.Log("연속 공격 효과 발동! 추가 공격 기회!");
+            // Debug.Log("연속 공격 효과 발동! 추가 공격 기회!");
             return true; // 연속 공격 발동
         }
         return false;
@@ -188,7 +188,7 @@ public class PlayerSkill : MonoBehaviour
     {
         if (!PlayerStats.Instance.item.dealWithDevil) return false;
 
-        Debug.Log("악마와의 계약 발동 - 즉시 부활");
+        // Debug.Log("악마와의 계약 발동 - 즉시 부활");
         
         // 부활 시 체력 회복 등 추가 효과 적용 가능
         float currentTotalCheese = PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese;

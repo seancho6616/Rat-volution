@@ -67,7 +67,7 @@ public class PlayerControl : PlayerStats
             return;
         } // 보호막이 있으면 데미지 무효화
         currentHeart -= damage;
-        Debug.Log($"[Player] 목숨 -1, 남은 목숨: {currentHeart}");
+        // Debug.Log($"[Player] 목숨 -1, 남은 목숨: {currentHeart}");
 
         UpdateHeartUI();
         if (currentHeart <= 0)
@@ -76,7 +76,7 @@ public class PlayerControl : PlayerStats
             {
                 currentHeart = maxHeart;
                 UpdateHeartUI();
-                Debug.Log("[Player] 악마와의 계약으로 부활 성공!");
+                // Debug.Log("[Player] 악마와의 계약으로 부활 성공!");
                 return;
             }
 
@@ -103,7 +103,7 @@ public class PlayerControl : PlayerStats
     // 게임오버 처리: 서버에 결과 전송 후 씬 재시작 (API-GAM-002 / REQ-043)
     private IEnumerator HandleGameOver()
     {
-        Debug.Log("[Player] 게임 오버 - 서버에 결과 전송");
+        // Debug.Log("[Player] 게임 오버 - 서버에 결과 전송");
         ObjectManager.Instance.enabled = false;
         // 이번 판 누적 치즈 (클리어된 라운드 합계 + 현재 라운드 진행분)
         int totalCheeseEarned = (int)(PlayerStats.Instance.totalCheese + PlayerStats.Instance.currentCheese);
@@ -169,7 +169,7 @@ public class PlayerControl : PlayerStats
 
     private void RestartGame()
     {
-        Debug.Log("[Player] 게임 재시작");
+        // Debug.Log("[Player] 게임 재시작");
         // 현재 활성화된 씬을 다시 로드함
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -278,7 +278,7 @@ public class PlayerControl : PlayerStats
             meshTransform.rotation = Quaternion.LookRotation(direction);
         }
 
-        Debug.Log($"FinalMoveSpeed: {FinalMoveSpeed}, MoveTime: {MoveTime}, RunBonus: {runBonus.moveSpeed}");
+        // Debug.Log($"FinalMoveSpeed: {FinalMoveSpeed}, MoveTime: {MoveTime}, RunBonus: {runBonus.moveSpeed}");
         isMoving = true;
         Vector3 startPosition = transform.position;
         Vector3 targetPosition = startPosition + (direction * gridSize);
@@ -296,7 +296,7 @@ public class PlayerControl : PlayerStats
 
         if (distanceFromCenterX > moveLimit || distanceFromCenterZ > moveLimit)
         {
-            Debug.Log("[Player] 판 밖으로 이동 시도 - 이동 불가");
+            // Debug.Log("[Player] 판 밖으로 이동 시도 - 이동 불가");
             yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
             isMoving = false;
             yield break;
@@ -312,7 +312,7 @@ public class PlayerControl : PlayerStats
                 animator.SetBool("isJump", true);
                 yield return new WaitForSeconds(0.5f);
                 // Destroy(hit.collider.gameObject); // 벽 파괴
-                Debug.Log("[Player] 벽 넘기 스킬 사용");
+                // Debug.Log("[Player] 벽 넘기 스킬 사용");
                 // 점프 이동 루틴으로 전환 (벽을 뛰어넘어 목표 지점으로 이동)
                 yield return StartCoroutine(JumpRoutine(startPosition, targetPosition, moveTime));
                 animator.SetBool("isJump", false);
@@ -334,7 +334,7 @@ public class PlayerControl : PlayerStats
                 if (skill != null && skill.CheckSharpFangs())
                 {
                     wall.TakeDamage(wall.maxHp);
-                    Debug.Log("[Player] 날카로운 앞니 효과로 벽 한번에 파괴");
+                    // Debug.Log("[Player] 날카로운 앞니 효과로 벽 한번에 파괴");
                 }
                 else
                 {
@@ -361,7 +361,7 @@ public class PlayerControl : PlayerStats
         }
         if (isBlocked)
         {
-            Debug.Log("[Player] 오브젝트로 인해 이동 불가");
+            // Debug.Log("[Player] 오브젝트로 인해 이동 불가");
             yield return StartCoroutine(BumpAndReturn(startPosition, direction, moveTime));
             isMoving = false;
             yield break;

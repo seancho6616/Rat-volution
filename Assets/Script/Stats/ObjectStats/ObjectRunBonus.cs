@@ -24,6 +24,8 @@ public class ObjectRunBonus
     }
     public void LevelUP(int level)
     {
+        if(level % 2==0) objBuildCount += 1.5f;
+        
         if(level <= 20)
         {
             if (level % 3 == 0)
@@ -34,7 +36,7 @@ public class ObjectRunBonus
             }
             if (level % 2 == 0)
             {
-                fallingTime -= 0.1f;
+                fallingTime -= 0.05f;
             }
             if (level % 4 == 0)
             {

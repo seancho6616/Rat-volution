@@ -37,11 +37,11 @@ public class PlayerStats : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            Debug.Log($"PlayerStats Instance 설정됨: {gameObject.name}"); // ✅ 어떤 오브젝트인지 확인
+            // Debug.Log($"PlayerStats Instance 설정됨: {gameObject.name}"); // ✅ 어떤 오브젝트인지 확인
         }
         else
         {
-            Debug.LogWarning($"중복 PlayerStats 발견: {gameObject.name}"); // ✅ 중복 여부 확인
+            // Debug.LogWarning($"중복 PlayerStats 발견: {gameObject.name}"); // ✅ 중복 여부 확인
             Destroy(gameObject);
         }
         // runBonus.Reset();
@@ -64,17 +64,19 @@ public class PlayerStats : MonoBehaviour
         ++level;
         totalCheese += currentCheese;
         currentCheese = 0;
-        //maxCheese += 5;
+        maxCheese += 5;
 
         StageMaker.Instance.GridSizeUP(level);
         SpawnPointManager.Instance.UpdateSpawnPoint();
-        Debug.Log($"ObjectManager.Instance is null? {ObjectManager.Instance == null}");
-        Debug.Log($"ObjectManager.Instance.runBonus is null? {ObjectManager.Instance?.runBonus == null}");
+        // Debug.Log($"ObjectManager.Instance is null? {ObjectManager.Instance == null}");
+        // Debug.Log($"ObjectManager.Instance.runBonus is null? {ObjectManager.Instance?.runBonus == null}");
     
         CardManager.Instance.LevelUP();
         ObjectManager.Instance.LevelUP(level);
         WallManager.Instance.LevelUP(level);
         ItemManager.Instance.LevelUP();
+
+        Debug.Log(ObjectManager.Instance.FinalObjBuildCount);
     }
 
     public void ApplyCard(BaseCardData card)
@@ -100,7 +102,7 @@ public class PlayerStats : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogError("Inventory 인스턴스가 존재하지 않습니다!");
+                        // Debug.LogError("Inventory 인스턴스가 존재하지 않습니다!");
                     }
                 break;
             case CardType.Debuff:
@@ -130,7 +132,7 @@ public class PlayerStats : MonoBehaviour
     {
         if (runBonus == null)
         {
-            Debug.LogError("runBonus가 null입니다!");
+            // Debug.LogError("runBonus가 null입니다!");
             return;
         }
         switch (type)
@@ -143,7 +145,7 @@ public class PlayerStats : MonoBehaviour
                 break;
             case StatType.MoveSpeed:
                 runBonus.moveSpeed += amount;
-                Debug.Log($"moveSpeed 적용 후: {runBonus.moveSpeed}"); // 값 확인
+                // Debug.Log($"moveSpeed 적용 후: {runBonus.moveSpeed}"); // 값 확인
                 break;
             case StatType.ObjectAttack:
                 runBonus.objectAttack += amount;
