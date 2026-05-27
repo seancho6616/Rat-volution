@@ -22,6 +22,11 @@ public class RewardUIManager : MonoBehaviour
     public TMP_Text txtMoveSpeed;
     public TMP_Text txtStrength;
 
+    [Header("Audio Sources")]
+    public AudioSource clickSound;
+    public AudioSource click2Sound;
+    public AudioSource selectSound;
+
     // 이전 레벨을 기억해 둘 변수
     private int lastLevel; 
     private bool isViewMode = false; // 현재 창이 '단순 보기' 모드인지 확인
@@ -145,6 +150,7 @@ public class RewardUIManager : MonoBehaviour
     // 카드 선택을 골랐을 때
     public void ShowPickCardUI()
     {
+        if (click2Sound != null) click2Sound.Play();
         HideRewardUI();
         if(pickCardGroup != null)
         {
@@ -160,16 +166,19 @@ public class RewardUIManager : MonoBehaviour
 
     public void ButtonCard1()
     {
+        if (selectSound != null) selectSound.Play();
         HideUIGameObj(pickCardGroup);
     }
 
     public void ButtonCard2()
     {
+        if (selectSound != null) selectSound.Play();
         HideUIGameObj(pickCardGroup);
     }
 
     public void ButtonCard3()
     {
+        if (selectSound != null) selectSound.Play();
         HideUIGameObj(pickCardGroup);
     }
 
@@ -178,6 +187,7 @@ public class RewardUIManager : MonoBehaviour
     // 스탯 선택을 골랐을 때
     public void ShowPickStatUI()
     {
+        if (click2Sound != null) click2Sound.Play();
         isViewMode = false; // 레벨업으로 들어온 경우 '강화 모드'
         Time.timeScale = 0f;
         UpdateStatTexts();
@@ -226,6 +236,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonAttackPower()
     {
         if (isViewMode) return; // 보기 모드면 클릭 무시
+        if (selectSound != null) selectSound.Play();
         PlayerStats.Instance.InvestStatPoint(StatType.ObjectAttack, 0.1f);
         Debug.Log(PlayerStats.Instance.runBonus.objectAttack);
         HideUIGameObj(pickStatGroup);
@@ -233,6 +244,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonAttackSpeed()
     {
         if (isViewMode) return;
+        if (selectSound != null) selectSound.Play();
         PlayerStats.Instance.InvestStatPoint(StatType.AttackSpeed, 0.1f);
         Debug.Log(PlayerStats.Instance.runBonus.attackSpeed);
         HideUIGameObj(pickStatGroup);
@@ -240,6 +252,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonHealth()
     {
         if (isViewMode) return;
+        if (selectSound != null) selectSound.Play();
         PlayerStats.Instance.InvestStatPoint(StatType.MaxHP, 1f);
         Debug.Log(PlayerStats.Instance.runBonus.maxHP);
         HideUIGameObj(pickStatGroup);
@@ -247,6 +260,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonLuck()
     {
         if (isViewMode) return;
+        if (selectSound != null) selectSound.Play();
         PlayerStats.Instance.InvestStatPoint(StatType.Luck, 0.05f);
         Debug.Log(PlayerStats.Instance.runBonus.luck);
         HideUIGameObj(pickStatGroup);
@@ -254,6 +268,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonMoveSpeed()
     {
         if (isViewMode) return;
+        if (selectSound != null) selectSound.Play();
         PlayerStats.Instance.InvestStatPoint(StatType.MoveSpeed, 0.1f);
         Debug.Log(StatType.MoveSpeed);
         Debug.Log(PlayerStats.Instance.runBonus.moveSpeed);
@@ -262,6 +277,7 @@ public class RewardUIManager : MonoBehaviour
     public void ButtonStrength()
     {
         if (isViewMode) return;
+        if (selectSound != null) selectSound.Play();
         PlayerStats.Instance.InvestStatPoint(StatType.WallAttack, 1f);
         Debug.Log(PlayerStats.Instance.runBonus.wallAttack);
         HideUIGameObj(pickStatGroup);

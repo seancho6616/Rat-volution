@@ -127,6 +127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Wall
   maxHp: 0
   wall_HitFlashEffect: {fileID: 3191970316538828070}
+  destroySound: {fileID: 8300000, guid: 0d70cd3fc83687d47ad9b090bc452db8, type: 3}
+  soundVolume: 0.3
 --- !u!114 &3191970316538828070
 MonoBehaviour:
   m_ObjectHideFlags: 0

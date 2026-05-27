@@ -103,6 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 040cdad6e5cb96043bf4be7d2f06aae2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  eatSound: {fileID: 8300000, guid: dba81217b8765374ca44cab8f1e3a36e, type: 3}
+  volume: 0.1
   count: 1
   pos: {x: 5, y: 20, z: 5}
 --- !u!136 &5397813644376861951

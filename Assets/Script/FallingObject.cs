@@ -10,6 +10,10 @@ public class FallingObject : MonoBehaviour, IDamageable
     public enum ObjectState { Warning, Falling, Grounded }
     public ObjectState CurrentState { get; private set; }
 
+    [Header("Sound Settings")]
+    public AudioClip dropSound; // 바닥에 닿을 때 나는 소리
+    [Range(0f, 1f)] public float dropVolume = 0.5f;
+
     [Header("Stats")]
     public float maxHealth;
     private float currentHealth;
@@ -25,6 +29,7 @@ public class FallingObject : MonoBehaviour, IDamageable
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
 
+    
     private void Awake()
     {
         objectColor = gameObject.GetComponent<Renderer>();
@@ -58,6 +63,24 @@ public class FallingObject : MonoBehaviour, IDamageable
             objectColor.material.SetColor("_BaseColor", originalColor);
         }
         StartCoroutine(LifecycleRoutine());
+    }
+
+    // --- 파티클과 소리를 한 번에 재생하는 함수 ---
+    private void PlayGroundEffect()
+    {
+        if (groundParticle != null)
+        {
+            groundParticle.Clear();
+            groundParticle.Play();
+        }
+
+        if (dropSound != null)
+        {
+            if (Camera.main != null)
+                AudioSource.PlayClipAtPoint(dropSound, Camera.main.transform.position, dropVolume);
+            else
+                AudioSource.PlayClipAtPoint(dropSound, transform.position, dropVolume);
+        }
     }
 
     private IEnumerator LifecycleRoutine()
@@ -102,6 +125,12 @@ public class FallingObject : MonoBehaviour, IDamageable
                 yield return null;
             }
             transform.position = endPos;
+
+            //이펙트 + 소리 재생
+            if (CurrentState == ObjectState.Falling) 
+            {
+                PlayGroundEffect();
+            }
 
             // 3. 착지 시 벽 충돌 체크 (2x2 범위 = 20x20 유닛)
             CheckWallCollision();
@@ -165,13 +194,14 @@ public class FallingObject : MonoBehaviour, IDamageable
             }
             CurrentState = ObjectState.Grounded;
             Debug.Log("플레이어 공격, 데미지 -1");
-            groundParticle.Clear();
-            groundParticle.Play();
+            
+            PlayGroundEffect();
         }
+
         if (other.CompareTag("Ground"))
         {
-            groundParticle.Clear();
-            groundParticle.Play();
+            // 기존의 긴 코드 수정
+            PlayGroundEffect(); 
         }
         
     }

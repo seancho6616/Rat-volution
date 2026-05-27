@@ -11,6 +11,10 @@ public class Wall : MonoBehaviour
     private float invincivilityDuration = 0.5f; // 무적 시간
     [SerializeField] private Wall_HitFlashEffect wall_HitFlashEffect;
 
+    [Header("Sound Settings")]
+    public AudioClip destroySound; // 벽이 부서질 때 날 소리
+    [Range(0f, 1f)] public float soundVolume = 0.5f; // 볼륨 조절 슬라이더
+
     public void Init(Vector3 pos)
     {
         spawnPos = pos;
@@ -34,6 +38,20 @@ public class Wall : MonoBehaviour
 
     public void InstantDestroy()
     {
+        // --- 파괴 사운드 재생 (오브젝트가 사라져도 소리가 끝까지 재생됨) ---
+        if (destroySound != null)
+        {
+            // 카메라 위치에서 재생시켜 거리에 상관없이 선명하게 들리도록 처리
+            if (Camera.main != null)
+            {
+                AudioSource.PlayClipAtPoint(destroySound, Camera.main.transform.position, soundVolume);
+            }
+            else
+            {
+                AudioSource.PlayClipAtPoint(destroySound, transform.position, soundVolume);
+            }
+        }
+        
         Collider WallCollider = GetComponent<Collider>();
         if (WallCollider != null)
         {
