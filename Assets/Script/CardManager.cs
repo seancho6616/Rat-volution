@@ -30,7 +30,7 @@ public class CardManager : MonoBehaviour
 
     public void LevelUP()
     {
-        Debug.Log("ss");
+        // Debug.Log("ss");
         List<BaseCardData> pickCard = DrawCards(cardUIs.Count);
         for(int i=0; i<pickCard.Count; i++)
         {

@@ -56,7 +56,10 @@ public class GameoverUI : MonoBehaviour
 
         // 2. 좌측 텍스트 (카드별 획득 개수)
         if (cardTxt != null)
-            cardTxt.text = "일반 : 0\n레어 : 0\n전설 : 0\n디버프 : 0";
+            cardTxt.text = $"일반 : {Inventory.Instance.item.countNomalCard}\n" +
+            $"레어 : {Inventory.Instance.item.countRareCard}\n"+ 
+            $"전설 : {Inventory.Instance.item.countLegendCard}\n" + 
+            $"디버프 : {Inventory.Instance.item.countDebuffCard}";
 
         // 3. 우측 텍스트 (최종 스탯)
         if (statTxt != null)

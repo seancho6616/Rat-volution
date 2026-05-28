@@ -104,7 +104,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             float randomDelay = 1f;
             if (ObjectManager.Instance != null)
             {
-                randomDelay = Random.Range(ObjectManager.Instance.FinalMinWarningTime, ObjectManager.Instance.FinalMaxWarningTime);
+                randomDelay = Random.Range(ObjectManager.Instance.FinalMinSpawnTime, ObjectManager.Instance.FinalMaxSpawnTime);
             }
             yield return new WaitForSeconds(randomDelay);
             meshRenderer.enabled = true;
@@ -114,7 +114,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             float randomDuration = 3f;
             if (ObjectManager.Instance != null)
             {
-                randomDuration = Random.Range(ObjectManager.Instance.FinalMinSpawnTime, ObjectManager.Instance.FinalMaxSpawnTime);
+                randomDuration = Random.Range(ObjectManager.Instance.FinalMinWarningTime, ObjectManager.Instance.FinalMaxWarningTime);
             }
             yield return new WaitForSeconds(randomDuration);
 
