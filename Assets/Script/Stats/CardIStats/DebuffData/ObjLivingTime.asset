@@ -16,7 +16,7 @@ MonoBehaviour:
   cardName: "\uACE0\uC591\uC774\uBC1C \uC720\uC9C0\uC2DC\uAC04"
   description: "\uACE0\uC591\uC774 \uBC1C \uC720\uC9C0 \uC2DC\uAC04 +"
   cardType: 2
-  cardRarity: 1
+  cardRarity: 3
   amount: 0
   icon: {fileID: 0}
   debuffType: 3

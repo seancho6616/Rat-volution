@@ -76,7 +76,7 @@ public class PlayerStats : MonoBehaviour
         WallManager.Instance.LevelUP(level);
         ItemManager.Instance.LevelUP();
 
-        Debug.Log(ObjectManager.Instance.FinalObjBuildCount);
+        // Debug.Log(ObjectManager.Instance.FinalObjBuildCount);
     }
 
     public void ApplyCard(BaseCardData card)
@@ -87,7 +87,23 @@ public class PlayerStats : MonoBehaviour
             GameManager.instance.AddDiscoveredCard(card.code);
         }   
         totalCardCount += 1;
-        Debug.Log(totalCardCount);
+        // Debug.Log(totalCardCount);
+        switch (card.cardRarity)
+        {
+            case CardRarity.Normal:
+                Inventory.Instance.item.countNomalCard += 1;
+                break;
+            case CardRarity.Rare:
+                Inventory.Instance.item.countRareCard  += 1;
+                break;
+            case CardRarity.Legend:
+                Inventory.Instance.item.countLegendCard  += 1;
+                break;
+            case CardRarity.Debuff:
+                Inventory.Instance.item.countDebuffCard  += 1;
+                Debug.Log(Inventory.Instance.item.countDebuffCard);
+                break;
+        }
         switch (card.cardType)
         {
             case CardType.StatUp:

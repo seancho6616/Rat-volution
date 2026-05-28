@@ -15,6 +15,11 @@ public class InventoryItem
     public bool dealWithDevil;
     public Dictionary<BaseCardData, bool> invetory = new Dictionary<BaseCardData, bool>();
 
+    public int countNomalCard;
+    public int countRareCard;
+    public int countLegendCard;
+    public int countDebuffCard;
+
     public void Reset()
     {
         shield = 0f;
