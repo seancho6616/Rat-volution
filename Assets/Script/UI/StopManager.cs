@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; 
 using TMPro; 
+using UnityEngine.UI;
 
 public class StopManager : MonoBehaviour
 {
+    [Header("버튼 연결")]
+    public Button stopBtn;   // 일시정지(로비 호출) 버튼
+
     [Header("UI")]
     public GameObject stopGroup;
     public TMP_Text mainTxt;
@@ -25,18 +29,22 @@ public class StopManager : MonoBehaviour
         {
             stopGroup.SetActive(false);
         }
+
+        // 스크립트에서 버튼 클릭 이벤트 직접 할당
+        if (stopBtn != null) stopBtn.onClick.AddListener(OpenLobbyPopup);
     }
 
     // 우측 상단 'Stop BT'를 눌렀을 때 실행될 함수
     public void OpenLobbyPopup()
     {
+        stopGroup.SetActive(true);
         isLobbyMode = true;
         if (mainTxt != null)
             mainTxt.text = "로비로 돌아가시겠습니까?";
         if (warningTxt != null)
             warningTxt.text = "※ 플레이 내용이 저장되지 않습니다.";
 
-        stopGroup.SetActive(true);
+        
         Time.timeScale = 0f; // 게임 일시정지
     }
 
