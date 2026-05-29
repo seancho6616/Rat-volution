@@ -25,6 +25,7 @@ public class LoginManager : MonoBehaviour
 
     [Header("계정 표시")]
     public TMP_Text hiUserTxt;
+    public int maxNameLength = 6; // 줄바꿈 기준이 될 이름 길이
 
     [Header("로그인 상태별 버튼")]
     public GameObject accountButton;   // 비로그인 상태에서 표시
@@ -48,6 +49,22 @@ public class LoginManager : MonoBehaviour
 
         if (accountButton != null) accountButton.SetActive(!isLoggedIn);
         if (logoutButton != null) logoutButton.SetActive(isLoggedIn);
+    }
+
+    private void UpdateGreetingText(string userName)
+    {
+        if (hiUserTxt == null) return;
+
+        // 이름이 설정한 길이보다 길면 'Hi,' 뒤에 엔터(\n) 추가
+        if (userName.Length > maxNameLength)
+        {
+            hiUserTxt.text = $"Hi,\n{userName}";
+        }
+        else
+        {
+            // 짧으면 한 줄로 표시
+            hiUserTxt.text = $"Hi, {userName}";
+        }
     }
 
     // --- 자동 로그인 (세션 복원) ---
