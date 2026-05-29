@@ -94,7 +94,6 @@ public class PlayerControl : PlayerStats
             }
             
             this.enabled = false; // 플레이어 컨트롤 비활성화
-            GetComponent<PlayerInput>().enabled = false;
             animator.SetBool("isDie", true);
             StartCoroutine(ObjectManager.Instance.CleadupObject());
             StartCoroutine(HandleGameOver());
