@@ -38,6 +38,16 @@ public class Wall : MonoBehaviour
 
     public void InstantDestroy()
     {
+        Collider WallCollider = GetComponent<Collider>();
+        if (WallCollider != null)
+        {
+            WallCollider.enabled = false; // 충돌 비활성화
+        }
+        if (WallManager.Instance != null)
+        {
+            // WallManager의 디렉토리에서 해당 위치를 다시 스폰 가능하게 함
+            WallManager.Instance.ReleaseWall(gameObject);
+        }
         // --- 파괴 사운드 재생 (오브젝트가 사라져도 소리가 끝까지 재생됨) ---
         if (destroySound != null)
         {
@@ -51,17 +61,13 @@ public class Wall : MonoBehaviour
                 AudioSource.PlayClipAtPoint(destroySound, transform.position, soundVolume);
             }
         }
-        
-        Collider WallCollider = GetComponent<Collider>();
-        if (WallCollider != null)
-        {
-            WallCollider.enabled = false; // 충돌 비활성화
-        }
-        if (WallManager.Instance != null)
-        {
-            // WallManager의 디렉토리에서 해당 위치를 다시 스폰 가능하게 함
-            WallManager.Instance.ReleaseWall(gameObject);
-        }
+        StartCoroutine(DestroyNextFrame());
+    }
+
+    // 한 프레임 뒤에서 파괴되어 공중에서 파괴되는 일이 없도록 함
+    private System.Collections.IEnumerator DestroyNextFrame()
+    {
+        yield return null;
         Destroy(gameObject);
     }
 
