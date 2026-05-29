@@ -159,7 +159,7 @@ public class FallingObject : MonoBehaviour, IDamageable
 
             // 5. 유지 단계 (3초)
             CurrentState = ObjectState.Grounded;
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(ObjectManager.Instance.FinalLivingTime);
             // 6. 상승 단계
             elapsed = 0;
             while (elapsed < 1f)
@@ -177,6 +177,7 @@ public class FallingObject : MonoBehaviour, IDamageable
             if (nextPos != Vector3.zero)
             {
                 transform.position = nextPos;
+               // Debug.Log($"AddActiveObject 호출: {gameObject.name}, 현재 count: {ObjectManager.Instance.activeObjects.Count}");
             }
             // if (CurrentState == ObjectState.Grounded) 
             //     DestroyObject(false);
