@@ -315,9 +315,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09dcd80158b097b4ebbcbc5eda704e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  sword1: {fileID: 0}
-  sword2: {fileID: 0}
-  swordShowDuration: 0.2
+  sword1: {fileID: 1156320907611791285}
+  sword2: {fileID: 7567053014679725352}
+  swordShowDuration: 1
   attackBoxSize: {x: 10, y: 5, z: 10}
   attackOffset: 7
 --- !u!114 &6187430698438849048
@@ -536,6 +536,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64fbe2cfa25cf614889c23b6c236db92, type: 3}
+--- !u!1 &1156320907611791285 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2704337363249026283, guid: 64fbe2cfa25cf614889c23b6c236db92, type: 3}
+  m_PrefabInstance: {fileID: 3858370185551973214}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2959227624836114499 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2061213652210000669, guid: 64fbe2cfa25cf614889c23b6c236db92, type: 3}
@@ -812,5 +817,10 @@ PrefabInstance:
 --- !u!4 &5773272749810602718 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3551806814341624401, guid: 3c6616def0feef14f804a0dd0e0406a6, type: 3}
+  m_PrefabInstance: {fileID: 7013306939610472591}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7567053014679725352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 601185603904275879, guid: 3c6616def0feef14f804a0dd0e0406a6, type: 3}
   m_PrefabInstance: {fileID: 7013306939610472591}
   m_PrefabAsset: {fileID: 0}

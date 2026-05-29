@@ -14,7 +14,7 @@ public class PlayerControl : PlayerStats
     [Header("Movement Settings")]
     public float gridSize = 10f;       // 한 칸의 길이 10
     public float MoveTime => 1f / FinalMoveSpeed;    // 이동 속도 0.8칸/초 기준 (1 / 0.8 = 1.25초 소요)
-    private bool isMoving = false;    // 이동 중 중복 입력 방지
+    public bool isMoving = false;    // 이동 중 중복 입력 방지
 
     // 이동 제한 범위 설정 (중앙 기준으로 ±20 범위)
     [Header("Boundary Settings")]
@@ -306,45 +306,52 @@ public class PlayerControl : PlayerStats
 
         if (Physics.Raycast(startPosition, direction, out RaycastHit hit, gridSize * 1.1f, wallLayer))
         {
-            if (skill != null && skill.TryUseJump())
+            if (hit.collider == null || !hit.collider.enabled || !hit.collider.gameObject.activeInHierarchy)
             {
-                animator.SetBool("isMove", false);
-                animator.SetBool("isJump", true);
-                yield return new WaitForSeconds(0.5f);
-                // Destroy(hit.collider.gameObject); // 벽 파괴
-                // Debug.Log("[Player] 벽 넘기 스킬 사용");
-                // 점프 이동 루틴으로 전환 (벽을 뛰어넘어 목표 지점으로 이동)
-                yield return StartCoroutine(JumpRoutine(startPosition, targetPosition, moveTime));
-                animator.SetBool("isJump", false);
-                yield return new WaitForSeconds(0.1f);
-                animator.SetBool("isMove", true);
-
-                // 벽을 뛰어넘어 착지 시 자석 스킬 및 아드레날린 러시 효과 발동
-                if (skill != null)
+                // 이미 파괴된 벽 무시하고 정상 이동
+            }
+            else
+            {
+                if (skill != null && skill.TryUseJump())
                 {
-                    skill.UseMagnet();
-                    ActiveAdrenalineRush(targetPosition);
+                    animator.SetBool("isMove", false);
+                    animator.SetBool("isJump", true);
+                    yield return new WaitForSeconds(0.5f);
+                    // Destroy(hit.collider.gameObject); // 벽 파괴
+                    // Debug.Log("[Player] 벽 넘기 스킬 사용");
+                    // 점프 이동 루틴으로 전환 (벽을 뛰어넘어 목표 지점으로 이동)
+                    yield return StartCoroutine(JumpRoutine(startPosition, targetPosition, moveTime));
+                    animator.SetBool("isJump", false);
+                    yield return new WaitForSeconds(0.1f);
+                    animator.SetBool("isMove", true);
+
+                    // 벽을 뛰어넘어 착지 시 자석 스킬 및 아드레날린 러시 효과 발동
+                    if (skill != null)
+                    {
+                        skill.UseMagnet();
+                        ActiveAdrenalineRush(targetPosition);
+                    }
+                    yield break;
                 }
+                
+                Wall wall = hit.collider.GetComponent<Wall>();
+                if (wall != null)
+                {
+                    if (skill != null && skill.CheckSharpFangs())
+                    {
+                        wall.TakeDamage(wall.maxHp);
+                        // Debug.Log("[Player] 날카로운 앞니 효과로 벽 한번에 파괴");
+                    }
+                    else
+                    {
+                        wall.TakeDamage((int)PlayerStats.Instance.FinalWallAttack);
+                    }
+                }
+
+                yield return StartCoroutine(BumpAndReturn(startPosition, direction, MoveTime));
+                // isMoving = false;
                 yield break;
             }
-            
-            Wall wall = hit.collider.GetComponent<Wall>();
-            if (wall != null)
-            {
-                if (skill != null && skill.CheckSharpFangs())
-                {
-                    wall.TakeDamage(wall.maxHp);
-                    // Debug.Log("[Player] 날카로운 앞니 효과로 벽 한번에 파괴");
-                }
-                else
-                {
-                    wall.TakeDamage((int)PlayerStats.Instance.FinalWallAttack);
-                }
-            }
-
-            yield return StartCoroutine(BumpAndReturn(startPosition, direction, MoveTime));
-            // isMoving = false;
-            yield break;
         }
         // 오브젝트 진입 차단
         Collider[] hitObjects = Physics.OverlapBox(targetPosition, new Vector3(4.5f, 2f, 4.5f), Quaternion.identity, objectLayer);
@@ -352,6 +359,8 @@ public class PlayerControl : PlayerStats
 
         foreach (var obj in hitObjects)
         {
+            if (obj == null || !obj.enabled) continue;
+
             FallingObject fallingObject = obj.GetComponent<FallingObject>();
             if (fallingObject != null && fallingObject.CurrentState == FallingObject.ObjectState.Grounded)
             {
@@ -464,6 +473,14 @@ public class PlayerControl : PlayerStats
         float snappedZ = Mathf.Round((transform.position.z - centerZ) / gridSize) * gridSize + centerZ;
 
         transform.position = new Vector3(snappedX, transform.position.y, snappedZ);
+    }
+
+    public void ResetMovement()
+    {
+        moveInput = Vector2.zero;
+        isMoving = false;
+        animator.SetBool("isMove", false);
+        SnapToGrid();
     }
 
     private void OnDrawGizmos()

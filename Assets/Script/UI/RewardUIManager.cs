@@ -215,6 +215,13 @@ public class RewardUIManager : MonoBehaviour
         {
             gameObject.SetActive(false);
             Time.timeScale = 1f;
+
+            // 보상 창 이후에 플레이어 상태 초기화
+            PlayerControl playerControl = FindAnyObjectByType<PlayerControl>();
+            if (playerControl != null)
+            {
+                playerControl.ResetMovement();
+            }
         }
         
         
