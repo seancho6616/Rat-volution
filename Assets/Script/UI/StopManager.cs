@@ -34,6 +34,14 @@ public class StopManager : MonoBehaviour
         if (stopBtn != null) stopBtn.onClick.AddListener(OpenLobbyPopup);
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OpenLobbyPopup();
+        }
+    }
+
     // 우측 상단 'Stop BT'를 눌렀을 때 실행될 함수
     public void OpenLobbyPopup()
     {
