@@ -268,7 +268,7 @@ public class RewardUIManager : MonoBehaviour
     {
         if (isViewMode) return;
         if (selectSound != null) selectSound.Play();
-        PlayerStats.Instance.InvestStatPoint(StatType.Luck, 0.05f);
+        PlayerStats.Instance.InvestStatPoint(StatType.Luck, 0.01f);
         Debug.Log(PlayerStats.Instance.runBonus.luck);
         HideUIGameObj(pickStatGroup);
     }
