@@ -24,6 +24,10 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     [Header("이펙트 제어")]
     public CardGlowController glowController; 
 
+    [Header("Sound Settings")]
+    public AudioClip flipSound; // 카드가 회전할 때 날 소리
+    [Range(0f, 1f)] public float flipVolume = 0.5f;
+
     private BaseCardData currentData;
     public CardDebuffData cardDebuffData;
     private CardMode currentMode = CardMode.Reward;
@@ -142,6 +146,20 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     // 회전 애니메이션 로직 (인게임 보상창 전용 또는 팝업창에서 재활용)
     IEnumerator RotateCard(float targetY)
     {
+        // --- 카드 회전 사운드 재생 ---
+        if (flipSound != null)
+        {
+            // UI 소리는 카메라 위치에서 재생
+            if (Camera.main != null)
+            {
+                AudioSource.PlayClipAtPoint(flipSound, Camera.main.transform.position, flipVolume);
+            }
+            else
+            {
+                AudioSource.PlayClipAtPoint(flipSound, transform.position, flipVolume);
+            }
+        }
+
         float elapsed = 0f;
         Quaternion startRot = Motion.transform.rotation;
         Quaternion endRot = Quaternion.Euler(0, targetY, 0);
