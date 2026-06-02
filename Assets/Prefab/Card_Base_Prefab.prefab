@@ -1074,6 +1074,8 @@ MonoBehaviour:
   txtDebuff: {fileID: 6209073849754026737}
   unknownCard: {fileID: 8892334815065886720}
   glowController: {fileID: 2861577402543417865}
+  flipSound: {fileID: 8300000, guid: 7da61316ff6b3684292cf341389b7537, type: 3}
+  flipVolume: 0.3
   cardDebuffData: {fileID: 0}
 --- !u!114 &2861577402543417865
 MonoBehaviour:

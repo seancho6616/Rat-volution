@@ -96,7 +96,10 @@ public class StopManager : MonoBehaviour
     {
         if (clickSound != null) clickSound.Play();
         stopGroup.SetActive(false); // 창 숨기기
-        Time.timeScale = 1f;         // 게임 다시 진행하기
+        if (isLobbyMode)
+        {
+            Time.timeScale = 1f;         
+        }
     }
 
 }
