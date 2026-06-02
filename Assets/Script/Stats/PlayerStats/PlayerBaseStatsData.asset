@@ -18,5 +18,5 @@ MonoBehaviour:
   attackSpeed: 0.4
   objectAttack: 1
   wallAttack: 2
-  luck: 0.1
+  luck: 0.01
   insight: 0

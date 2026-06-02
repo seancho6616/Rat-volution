@@ -77,6 +77,7 @@ public class GameoverUI : MonoBehaviour
     // 게임 종료 버튼 클릭 시
     public void OnExitButtonClicked()
     {
+        Time.timeScale = 0f;
         if (clickSound != null) clickSound.Play();
         if (stopManager != null)
         {

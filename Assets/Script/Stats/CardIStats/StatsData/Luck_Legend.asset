@@ -15,9 +15,9 @@ MonoBehaviour:
   code: STAT_LUCK_LEGEND
   cardName: "\uD589\uC6B4"
   description: "\uD589\uC6B4 \uD655\uB960\uB85C \uCE58\uC988 \uCD94\uAC00 \uD68D\uB4DD\n\uD589\uC6B4
-    +0.2"
+    +0.05"
   cardType: 0
   cardRarity: 2
-  amount: 0.2
+  amount: 0.05
   icon: {fileID: 21300000, guid: 1ae7343f3a4c3b742b4afb2f7f72b04a, type: 3}
   statType: 2
