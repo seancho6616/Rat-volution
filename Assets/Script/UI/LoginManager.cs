@@ -218,6 +218,11 @@ public class LoginManager : MonoBehaviour
             {
                 Debug.Log("회원가입 성공");
                 StartCoroutine(ShowErrorRoutine(signupErrorText, "회원가입 성공! 로그인 해주세요"));
+
+                if(hiUserTxt != null && GameManager.instance != null)
+                {
+                    hiUserTxt.text = $"Hi, {GameManager.instance.nickname}!";
+                }
                 ShowLoginPanel();
             },
             onFail: (error) =>
