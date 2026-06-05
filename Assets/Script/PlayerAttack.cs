@@ -13,6 +13,10 @@ public class PlayerAttack : MonoBehaviour
     public Vector3 attackBoxSize = new Vector3(15f, 10f, 15f);
     public float attackOffset = 7f;
 
+    [Header("Sound Settings")]
+    public AudioClip attackSound; // 공격 시 재생될 사운드
+    [Range(0f, 1f)] public float attackVolume = 0.5f; // 볼륨 조절
+
     private float lastAttackTime;
     private Coroutine swordCoroutine;
 
@@ -56,6 +60,18 @@ public class PlayerAttack : MonoBehaviour
 
     private void PerformAttack()
     {
+        if (attackSound != null)
+        {
+            // 카메라 위치에서 재생시켜 어느 방향을 보든 선명하게 들리도록 처리
+            if (Camera.main != null)
+            {
+                AudioSource.PlayClipAtPoint(attackSound, Camera.main.transform.position, attackVolume);
+            }
+            else
+            {
+                AudioSource.PlayClipAtPoint(attackSound, transform.position, attackVolume);
+            }
+        }
         if (meshTransform == null)
         {
             // Debug.LogWarning("Mesh Transform이 설정되지 않았습니다.");

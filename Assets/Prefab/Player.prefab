@@ -190,6 +190,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   gridSize: 10
+  isMoving: 0
   moveLimit: 32
   centerX: 8.70429
   centerZ: 0.70631
@@ -320,6 +321,8 @@ MonoBehaviour:
   swordShowDuration: 1
   attackBoxSize: {x: 10, y: 5, z: 10}
   attackOffset: 7
+  attackSound: {fileID: 8300000, guid: 5a84622ec00ac8145beacb7c87ec04bd, type: 3}
+  attackVolume: 0.5
 --- !u!114 &6187430698438849048
 MonoBehaviour:
   m_ObjectHideFlags: 0
