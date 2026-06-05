@@ -130,6 +130,8 @@ MonoBehaviour:
   dropSound: {fileID: 8300000, guid: a981f2e82f4341447abd29dfce23a01b, type: 3}
   dropVolume: 0.3
   maxHealth: 0
+  matOpaque: {fileID: 2100000, guid: cd3e8a1d90aa0054d9bc7fb41155805b, type: 2}
+  matTransparent: {fileID: 2100000, guid: 0d18a71acbe11784abc1abc18836606d, type: 2}
 --- !u!54 &8445403039333912946
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -138,7 +140,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3730455710120345039}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.0000001
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

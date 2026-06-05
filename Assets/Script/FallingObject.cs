@@ -2,10 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Linq.Expressions;
 using UnityEngine.Rendering;
+using Unity.Mathematics;
 
 public class FallingObject : MonoBehaviour, IDamageable
 {
-    private Renderer objectColor;
+    private MeshRenderer objectColor;
     public ParticleSystem groundParticle;
     public enum ObjectState { Warning, Falling, Grounded }
     public ObjectState CurrentState { get; private set; }
@@ -29,12 +30,14 @@ public class FallingObject : MonoBehaviour, IDamageable
     public float MaxHealth => maxHealth;
     public float CurrentHealth => currentHealth;
     private float fallingSpeedMultiplier = 1f;
+    [SerializeField] Material matOpaque;
+    [SerializeField] Material matTransparent;
 
     
     private void Awake()
     {
-        objectColor = gameObject.GetComponent<Renderer>();
-
+        objectColor = gameObject.GetComponent<MeshRenderer>();
+        matOpaque = new Material(objectColor.sharedMaterial);
         // 게임 시작 시 초기 색 백업
         if (objectColor != null && objectColor.material != null)
         {
@@ -59,7 +62,7 @@ public class FallingObject : MonoBehaviour, IDamageable
 
         this.gridSize = gSize;
 
-        if (objectColor == null) objectColor = GetComponent<Renderer>();
+        if (objectColor == null) objectColor = GetComponent<MeshRenderer>();
         // 오브젝트 초기화 시 색상과 투명도 설정
         if (objectColor != null && objectColor.material != null)
         {
@@ -104,20 +107,22 @@ public class FallingObject : MonoBehaviour, IDamageable
             float randomDelay = 1f;
             if (ObjectManager.Instance != null)
             {
-                randomDelay = Random.Range(ObjectManager.Instance.FinalMinSpawnTime, ObjectManager.Instance.FinalMaxSpawnTime);
+                randomDelay = UnityEngine.Random.Range(ObjectManager.Instance.FinalMinSpawnTime, ObjectManager.Instance.FinalMaxSpawnTime);
             }
             yield return new WaitForSeconds(randomDelay);
             meshRenderer.enabled = true;
 
+            BoxCollider box = GetComponent<BoxCollider>();
+            box.enabled = false;
             // 2. 예고 단계
             SetVisualAlpha(0.3f); // 반투명한 그림자 상태
             float randomDuration = 3f;
             if (ObjectManager.Instance != null)
             {
-                randomDuration = Random.Range(ObjectManager.Instance.FinalMinWarningTime, ObjectManager.Instance.FinalMaxWarningTime);
+                randomDuration = UnityEngine.Random.Range(ObjectManager.Instance.FinalMinWarningTime, ObjectManager.Instance.FinalMaxWarningTime);
             }
             yield return new WaitForSeconds(randomDuration);
-
+            box.enabled = true;
             // 3. 낙하 단계 (1초)
             CurrentState = ObjectState.Falling;
             SetVisualAlpha(1.0f);
@@ -265,7 +270,7 @@ public class FallingObject : MonoBehaviour, IDamageable
         {
             float hpRatio = currentHealth / maxHealth;
             Color targetColor = Color.Lerp(Color.red, originalColor, hpRatio);
-            objectColor.material.SetColor("_BaseColor", targetColor);
+            matOpaque.SetColor("_BaseColor", targetColor);
         }
     }
 
@@ -280,9 +285,18 @@ public class FallingObject : MonoBehaviour, IDamageable
 
     public void SetVisualAlpha(float alpha)
     {
-        if (objectColor != null && objectColor.material != null)
+        if (objectColor == null) return;
+
+        if (alpha < 1f)
         {
-            objectColor.material.SetFloat("_Alpha", alpha);
+            objectColor.material = matTransparent;
+            Color color = objectColor.material.GetColor("_BaseColor");
+            color.a = alpha;
+            objectColor.material.SetColor("_BaseColor", color);
+        }
+        else
+        {
+            objectColor.material = matOpaque;
         }
     }
 
