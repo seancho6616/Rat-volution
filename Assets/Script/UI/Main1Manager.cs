@@ -24,8 +24,12 @@ public class Main1Manager : MonoBehaviour
     public GameObject popupGroup;
     public GameObject exitGroup;
 
-    [Header("계정 표시 (선택)")]
+    [Header("텍스트 표시")]
     public TextMeshProUGUI hiUserTxt;   // 게스트 로그인 시 닉네임 표시용
+    public TextMeshProUGUI entryTxt;
+
+    [Header("텍스트 페이드 설정")]
+    public float textFadeSpeed = 1.5f;  // 텍스트가 깜빡이는 속도 조절
 
     [Header("Audio Sources")]
     public AudioSource clickSound;
@@ -39,6 +43,29 @@ public class Main1Manager : MonoBehaviour
         // 시작할 때 페이드 이미지, 팝업 off
         if (fadeImage != null) fadeImage.gameObject.SetActive(false);
         if (popupGroup != null) popupGroup.SetActive(false);
+
+        // 엔트리 텍스트 깜빡임 코루틴 시작
+        if (entryTxt != null) 
+        {
+            StartCoroutine(FadeTextCoroutine());
+        }
+    }
+
+    // --- 텍스트 페이드 코루틴 추가 ---
+    private IEnumerator FadeTextCoroutine()
+    {
+        // 원래 텍스트의 색상
+        Color textColor = entryTxt.color;
+
+        // 씬 전환이 시작되지 않았을 때만 반복
+        while (!isEntering) 
+        {
+            // Time.time에 속도를 곱한 값을 PingPong에 넣어 0 ~ 1 사이를 왕복하는 알파 값을 만듭니다.
+            textColor.a = Mathf.PingPong(Time.time * textFadeSpeed, 1f);
+            entryTxt.color = textColor;
+
+            yield return null; // 매 프레임 실행
+        }
     }
 
     // --- 씬 전환 및 페이드 효과 ---
