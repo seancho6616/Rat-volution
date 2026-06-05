@@ -217,7 +217,7 @@ public class LoginManager : MonoBehaviour
             onSuccess: () =>
             {
                 Debug.Log("회원가입 성공");
-                StartCoroutine(ShowErrorRoutine(signupErrorText, "회원가입 성공! 로그인 해주세요"));
+                StartCoroutine(ShowErrorRoutine(signupErrorText, "회원가입 성공! 자동 로그인 되었습니다."));
 
                 if(hiUserTxt != null && GameManager.instance != null)
                 {
