@@ -1,4 +1,5 @@
 // Wall.cs
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Wall : MonoBehaviour
@@ -14,6 +15,7 @@ public class Wall : MonoBehaviour
     [Header("Sound Settings")]
     public AudioClip destroySound; // 벽이 부서질 때 날 소리
     [Range(0f, 1f)] public float soundVolume = 0.5f; // 볼륨 조절 슬라이더
+    [SerializeField] List<ParticleSystem> effectPrefab;
 
     public void Init(Vector3 pos)
     {
@@ -92,7 +94,18 @@ public class Wall : MonoBehaviour
     private System.Collections.IEnumerator InvincibilityCoroutine()
     {
         isInvincible = true;
+        ParticlePlay();
         yield return new WaitForSeconds(invincivilityDuration);
         isInvincible = false;
+    }
+
+    private void ParticlePlay()
+    {
+        int num = Random.Range(1, effectPrefab.Count);
+        for(int i = 0; i<=num; i++)
+        {
+            effectPrefab[i].Clear();
+            effectPrefab[i].Play();
+        }
     }
 }
